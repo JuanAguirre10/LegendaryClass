@@ -1,0 +1,448 @@
+// Prisma Schema — LegendaryClass
+// NestJS + PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ─────────────────────────────────────────────────────────────────
+
+enum Role {
+  student
+  teacher
+  director
+  parent
+  admin
+}
+
+enum CharacterType {
+  mago
+  guerrero
+  ninja
+  arquero
+  lanzador
+}
+
+enum CharacterBonusType {
+  knowledge
+  strength
+  agility
+  precision
+  creativity
+}
+
+enum BehaviorType {
+  positive
+  negative
+}
+
+enum BehaviorCategory {
+  participation
+  homework
+  behavior
+  creativity
+  teamwork
+  punctuality
+  respect
+  effort
+}
+
+enum RewardType {
+  xp_boost
+  stat_boost
+  level_boost
+  character_upgrade
+  special_ability
+}
+
+enum RewardEffectType {
+  experience
+  stat
+  ability
+  cosmetic
+}
+
+enum Rarity {
+  common
+  rare
+  epic
+  legendary
+}
+
+enum RewardStatus {
+  pending
+  approved
+  delivered
+  cancelled
+}
+
+enum QuestStatus {
+  active
+  completed
+  expired
+}
+
+// ─── User ──────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(student)
+  avatar    String?
+  isActive  Boolean  @default(true)
+
+  // Student gamification fields
+  characterType      CharacterType?
+  characterBonusType CharacterBonusType?
+  experiencePoints   Int     @default(0)
+  level              Int     @default(1)
+  points             Int     @default(100)
+  achievementsCount  Int     @default(0)
+  questsCompleted    Int     @default(0)
+  positivePoints     Int     @default(0)
+  negativePoints     Int     @default(0)
+  rewardsEarned      Int     @default(0)
+  loginStreak        Int     @default(0)
+  homeworkCompleted  Int     @default(0)
+  booksRead          Int     @default(0)
+  peersHelped        Int     @default(0)
+  creativeProjects   Int     @default(0)
+  studentsMentored   Int     @default(0)
+  weeklyPositive     Int     @default(0)
+  weeklyTasks        Int     @default(0)
+  weeklyXp           Int     @default(0)
+  firstCharacterSelection Boolean @default(false)
+
+  // Character stats
+  strength     Int @default(10)
+  intelligence Int @default(10)
+  agility      Int @default(10)
+  creativity   Int @default(10)
+  leadership   Int @default(10)
+  resilience   Int @default(10)
+
+  // Metadata
+  gradeLevel    String?
+  dateOfBirth   DateTime?
+  phone         String?
+  institutionId String?
+  preferences   Json?
+  lastLogin     DateTime?
+  emailVerifiedAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  taughtClassrooms  Classroom[]       @relation("TeacherClassrooms")
+  enrollments       ClassroomStudent[]
+  studentPoints     StudentPoint[]
+  studentBehaviors  StudentBehavior[] @relation("StudentBehaviors")
+  awardedBehaviors  StudentBehavior[] @relation("AwardedBehaviors")
+  experienceLogs    ExperienceLog[]
+  achievements      Achievement[]
+  questsAsStudent   QuestStudent[]
+  createdQuests     Quest[]           @relation("TeacherQuests")
+  studentRewards    StudentReward[]   @relation("StudentRewards")
+  approvedRewards   StudentReward[]   @relation("ApprovedRewards")
+  createdBehaviors  Behavior[]
+  createdRewards    Reward[]
+
+  // Parent relations
+  children    ParentChild[] @relation("ParentChildren")
+  parents     ParentChild[] @relation("ChildParents")
+
+  @@map("users")
+}
+
+// ─── Classroom ─────────────────────────────────────────────────────────────
+
+model Classroom {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  subject     String?
+  gradeLevel  String?
+  schoolYear  String?
+  classCode   String  @unique
+  slug        String  @unique
+  avatar      String?
+  isActive    Boolean @default(true)
+  settings    Json?
+
+  teacherId String
+  teacher   User   @relation("TeacherClassrooms", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  students       ClassroomStudent[]
+  behaviors      Behavior[]
+  studentBehaviors StudentBehavior[]
+  rewards        Reward[]
+  studentPoints  StudentPoint[]
+  experienceLogs ExperienceLog[]
+  quests         Quest[]
+
+  @@map("classrooms")
+}
+
+// ─── ClassroomStudent (many-to-many junction) ──────────────────────────────
+
+model ClassroomStudent {
+  id          String   @id @default(cuid())
+  classroomId String
+  studentId   String
+  joinedAt    DateTime @default(now())
+
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  student   User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([classroomId, studentId])
+  @@map("classroom_students")
+}
+
+// ─── StudentPoint (per-classroom progress) ─────────────────────────────────
+
+model StudentPoint {
+  id               String    @id @default(cuid())
+  studentId        String
+  classroomId      String
+  totalPoints      Int       @default(0)
+  level            Int       @default(1)
+  experiencePoints Int       @default(0)
+  pointsSpent      Int       @default(0)
+  streakDays       Int       @default(0)
+  lastActivity     DateTime?
+  achievements     Json?
+
+  student   User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, classroomId])
+  @@map("student_points")
+}
+
+// ─── ExperienceLog ─────────────────────────────────────────────────────────
+
+model ExperienceLog {
+  id          String   @id @default(cuid())
+  userId      String
+  points      Int
+  action      String
+  description String?
+  sourceType  String?
+  sourceId    String?
+  classroomId String?
+  multiplier  Float    @default(1.0)
+  createdAt   DateTime @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classroom Classroom? @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+
+  @@map("experience_logs")
+}
+
+// ─── Behavior ──────────────────────────────────────────────────────────────
+
+model Behavior {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+  points      Int
+  type        BehaviorType
+  category    BehaviorCategory
+  icon        String?
+  color       String?
+  isActive    Boolean          @default(true)
+  classroomId String
+  createdById String
+
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  creator   User      @relation(fields: [createdById], references: [id])
+
+  studentBehaviors StudentBehavior[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("behaviors")
+}
+
+// ─── StudentBehavior ───────────────────────────────────────────────────────
+
+model StudentBehavior {
+  id             String   @id @default(cuid())
+  studentId      String
+  behaviorId     String
+  classroomId    String
+  pointsAwarded  Int
+  date           DateTime @default(now())
+  notes          String?
+  awardedById    String
+  isApproved     Boolean  @default(true)
+  isManual       Boolean  @default(false)
+
+  student    User      @relation("StudentBehaviors", fields: [studentId], references: [id], onDelete: Cascade)
+  behavior   Behavior  @relation(fields: [behaviorId], references: [id])
+  classroom  Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  awardedBy  User      @relation("AwardedBehaviors", fields: [awardedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("student_behaviors")
+}
+
+// ─── Reward ────────────────────────────────────────────────────────────────
+
+model Reward {
+  id                String           @id @default(cuid())
+  name              String
+  description       String
+  costPoints        Int
+  type              RewardType
+  rewardType        RewardEffectType
+  icon              String?
+  isActive          Boolean          @default(true)
+  stockQuantity     Int?
+  xpBonus           Int              @default(0)
+  statBonuses       Json?
+  levelRequirement  Int?
+  characterSpecific Json?            // Array of CharacterType
+  durationHours     Int?
+  maxUsesPerStudent Int?
+  rarity            Rarity           @default(common)
+  effectDescription String?
+  requirements      Json?
+  classroomId       String
+  createdById       String
+
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  creator   User      @relation(fields: [createdById], references: [id])
+
+  studentRewards StudentReward[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("rewards")
+}
+
+// ─── StudentReward ─────────────────────────────────────────────────────────
+
+model StudentReward {
+  id             String       @id @default(cuid())
+  studentId      String
+  rewardId       String
+  classroomId    String
+  pointsSpent    Int
+  status         RewardStatus @default(pending)
+  redeemedAt     DateTime     @default(now())
+  approvedById   String?
+  approvedAt     DateTime?
+  notes          String?
+  effectsApplied Json?
+  expiresAt      DateTime?
+  isPermanent    Boolean      @default(false)
+
+  student    User    @relation("StudentRewards", fields: [studentId], references: [id], onDelete: Cascade)
+  reward     Reward  @relation(fields: [rewardId], references: [id])
+  approvedBy User?   @relation("ApprovedRewards", fields: [approvedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("student_rewards")
+}
+
+// ─── Achievement ───────────────────────────────────────────────────────────
+
+model Achievement {
+  id          String    @id @default(cuid())
+  userId      String
+  key         String
+  name        String
+  description String?
+  icon        String?
+  xpReward    Int       @default(0)
+  rarity      Rarity    @default(common)
+  category    String?
+  unlockedAt  DateTime?
+  progress    Int       @default(0)
+  maxProgress Int       @default(1)
+  isCompleted Boolean   @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, key])
+  @@map("achievements")
+}
+
+// ─── Quest ─────────────────────────────────────────────────────────────────
+
+model Quest {
+  id             String      @id @default(cuid())
+  title          String
+  description    String?
+  xpReward       Int         @default(50)
+  type           String?
+  status         QuestStatus @default(active)
+  classroomId    String
+  teacherId      String
+  dueDate        DateTime?
+  completionDate DateTime?
+  requirements   Json?
+
+  classroom Classroom     @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  teacher   User          @relation("TeacherQuests", fields: [teacherId], references: [id])
+  students  QuestStudent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("quests")
+}
+
+// ─── QuestStudent (junction) ───────────────────────────────────────────────
+
+model QuestStudent {
+  id          String    @id @default(cuid())
+  questId     String
+  studentId   String
+  completedAt DateTime?
+  isCompleted Boolean   @default(false)
+
+  quest   Quest @relation(fields: [questId], references: [id], onDelete: Cascade)
+  student User  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([questId, studentId])
+  @@map("quest_students")
+}
+
+// ─── ParentChild ───────────────────────────────────────────────────────────
+
+model ParentChild {
+  id        String   @id @default(cuid())
+  parentId  String
+  childId   String
+  linkedAt  DateTime @default(now())
+
+  parent User @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  child  User @relation("ChildParents", fields: [childId], references: [id], onDelete: Cascade)
+
+  @@unique([parentId, childId])
+  @@map("parent_children")
+}

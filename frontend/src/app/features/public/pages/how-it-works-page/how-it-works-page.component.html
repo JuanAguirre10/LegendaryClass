@@ -1,0 +1,53 @@
+<section class="py-20 min-h-screen">
+  <div class="max-w-5xl mx-auto px-4">
+
+    <!-- Header -->
+    <div class="text-center mb-12 animate-fade-in-up">
+      <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Guía del Aventurero</p>
+      <h1 class="font-cinzel-decorative text-4xl md:text-6xl font-black epic-title-static mb-4">¿Cómo Funciona?</h1>
+      <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+        LegendaryClass está diseñado para toda la comunidad educativa.
+        Elige tu rol y descubre tu camino épico.
+      </p>
+    </div>
+
+    <!-- Tabs de roles -->
+    <div class="flex flex-wrap justify-center gap-3 mb-10">
+      @for (tab of roleTabs; track tab) {
+        <button (click)="setRole(tab)"
+                class="font-cinzel text-xs uppercase tracking-widest px-6 py-3 rounded-xl border-2 transition-all duration-300"
+                [ngClass]="activeRole() === tab
+                  ? [roleData[tab].tabColor, 'shadow-lg scale-105']
+                  : 'border-gray-200 text-gray-500 hover:border-amber-300 bg-white/60 hover:bg-white/80'">
+          {{ roleData[tab].icon }} {{ roleData[tab].label }}
+        </button>
+      }
+    </div>
+
+    <!-- Pasos del rol activo -->
+    <div class="glass-panel p-8 md:p-12 mb-10 animate-fade-in-up">
+      <h2 class="font-cinzel font-bold text-center text-lg text-gray-700 uppercase tracking-widest mb-8">
+        {{ roleData[activeRole()].icon }} Camino del {{ roleData[activeRole()].label }}
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        @for (step of roleData[activeRole()].steps; track step.title; let i = $index) {
+          <div class="text-center">
+            <div class="w-10 h-10 rounded-full bg-amber-50 border-2 border-amber-300 flex items-center justify-center font-cinzel font-black text-amber-700 text-sm mx-auto mb-4">
+              {{ i + 1 }}
+            </div>
+            <div class="text-4xl mb-3">{{ step.icon }}</div>
+            <h4 class="font-cinzel font-bold text-gray-800 text-sm mb-2 uppercase tracking-wide">{{ step.title }}</h4>
+            <p class="font-playfair text-gray-500 text-xs leading-relaxed">{{ step.desc }}</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center">
+      <a routerLink="/auth/register" class="btn-epic btn-gold text-base px-10 py-4">
+        ✨ COMENZAR MI AVENTURA
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,96 @@
+<section class="py-20 min-h-screen">
+  <div class="max-w-6xl mx-auto px-4">
+
+    <!-- Header -->
+    <div class="text-center mb-16 animate-fade-in-up">
+      <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Elige tu Destino</p>
+      <h1 class="font-cinzel-decorative text-4xl md:text-6xl font-black epic-title-static mb-4">Clases de Héroe</h1>
+      <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+        Cada estudiante elige una clase al unirse. Cada clase tiene bonificaciones únicas
+        que recompensan distintos tipos de esfuerzo y talento académico.
+      </p>
+    </div>
+
+    <!-- Cards de personajes -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-16 items-stretch">
+      @for (char of characters; track char.name) {
+        <div class="legendary-card p-6 text-center group hover:-translate-y-3 transition-all duration-300
+                    border-2 overflow-hidden flex flex-col"
+             [class]="char.bg + ' ' + char.border">
+
+          <!-- Ícono -->
+          <div class="text-6xl mb-4 inline-block group-hover:scale-110 transition-transform duration-300 animate-float flex-shrink-0">
+            {{ char.icon }}
+          </div>
+
+          <!-- Nombre — altura fija de 2 líneas -->
+          <h3 class="font-cinzel-decorative font-black text-xl mb-2 leading-tight" [class]="char.color">
+            {{ char.name }}
+          </h3>
+
+          <!-- Bono — min-h para que todos ocupen el mismo espacio -->
+          <div class="font-cinzel text-xs font-bold px-3 py-1.5 rounded-full bg-white/80 mb-3 inline-block leading-tight mx-auto"
+               [class]="char.color">
+            {{ char.bonus }}
+          </div>
+
+          <!-- Descripción — crece para empujar el stat al fondo -->
+          <p class="font-playfair text-gray-500 text-sm leading-relaxed mb-4 flex-grow">
+            {{ char.desc }}
+          </p>
+
+          <!-- Stat badge — siempre al fondo -->
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border mx-auto mt-auto"
+               [class]="char.border">
+            <div class="w-2 h-2 rounded-full flex-shrink-0" [class]="char.statColor"></div>
+            <span class="font-cinzel text-xs font-bold" [class]="char.color">{{ char.stat }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Tabla comparativa -->
+    <div class="glass-panel p-8 mb-12">
+      <h2 class="font-cinzel font-bold text-center text-gray-700 uppercase tracking-widest text-sm mb-6">
+        ⚖️ Comparativa de Bonificaciones
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-max">
+          <thead>
+            <tr class="border-b-2 border-amber-100">
+              <th class="font-cinzel text-xs text-gray-500 uppercase tracking-wide text-left py-3 px-4">Clase</th>
+              @for (h of tableHeaders; track h) {
+                <th class="font-cinzel text-xs text-gray-500 uppercase tracking-wide text-center py-3 px-3">{{ h }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (char of characters; track char.name) {
+              <tr class="border-b border-gray-100 hover:bg-amber-50/30 transition-colors">
+                <td class="py-3 px-4 font-cinzel font-bold text-sm" [class]="char.color">
+                  {{ char.icon }} {{ char.name }}
+                </td>
+                @for (h of tableHeaders; track h) {
+                  <td class="py-3 px-3 text-center font-cinzel text-xs">
+                    {{ char.bonusKey === h ? '⭐ +20%' : '✓' }}
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="font-playfair text-gray-400 text-xs text-center mt-4">
+        ✓ = XP base &nbsp;·&nbsp; ⭐ +20% = Bonificación especial de la clase
+      </p>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center">
+      <a routerLink="/auth/register" class="btn-epic btn-gold text-base px-10 py-4">
+        ⚔️ ELEGIR MI PERSONAJE
+      </a>
+      <p class="font-playfair text-gray-400 text-sm mt-4">Podrás elegir tu clase al crear tu cuenta</p>
+    </div>
+  </div>
+</section>

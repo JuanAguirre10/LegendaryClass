@@ -1,0 +1,156 @@
+<!-- Navegación épica — tema púrpura director -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/director/dashboard" class="legendary-logo text-xl">👑 LegendaryClass</a>
+
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/director/dashboard"  routerLinkActive="active" class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/director/teachers"   routerLinkActive="active" class="nav-link-epic">👩‍🏫 Profesores</a>
+      <a routerLink="/director/students"   routerLinkActive="active" class="nav-link-epic">🎓 Estudiantes</a>
+      <a routerLink="/director/reports"    routerLinkActive="active" class="nav-link-epic">📊 Reportes</a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <span class="font-cinzel text-sm text-gray-600 font-semibold">{{ user?.name }}</span>
+      <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Header épico — tema púrpura -->
+<header class="section-header-purple py-10 px-6">
+  <div class="max-w-7xl mx-auto text-center">
+    <h1 class="font-cinzel font-black text-white mb-2" style="font-size: clamp(1.8rem,4vw,3rem); text-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+      👑 Portal de la Dirección
+    </h1>
+    <p class="font-cinzel text-purple-200 text-sm tracking-widest uppercase">
+      Vista global del sistema — LegendaryClass
+    </p>
+  </div>
+</header>
+
+@if (loading()) {
+  <div class="min-h-[60vh] flex items-center justify-center">
+    <div class="glass-panel p-12 text-center animate-fade-in-up">
+      <div class="text-8xl mb-6 animate-float">👑</div>
+      <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">Cargando estadísticas...</h2>
+      <p class="font-playfair text-gray-500">Preparando la vista global del reino</p>
+    </div>
+  </div>
+} @else if (stats()) {
+
+<main class="z-content py-8">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <!-- Stats grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      @for (s of [
+        { icon: '👩‍🏫', label: 'Profesores',       value: stats().totalTeachers,         color: 'text-blue-600' },
+        { icon: '🎓',   label: 'Estudiantes',      value: stats().totalStudents,          color: 'text-green-600' },
+        { icon: '🏫',   label: 'Aulas Activas',    value: stats().activeClassrooms,       color: 'text-purple-600' },
+        { icon: '🎁',   label: 'Canjes Totales',   value: stats().totalRewardsRedeemed,   color: 'text-amber-600' },
+        { icon: '📋',   label: 'Comportamientos',  value: stats().totalBehaviorsAwarded,  color: 'text-blue-600' },
+        { icon: '👨‍👩‍👧',  label: 'Padres',          value: stats().totalParents,           color: 'text-green-600' },
+        { icon: '📅',   label: 'Nuevos (30 días)', value: stats().monthly?.newStudents,   color: 'text-purple-600' },
+        { icon: '🏆',   label: 'Total Aulas',      value: stats().totalClassrooms,        color: 'text-amber-600' }
+      ]; track s.label) {
+        <div class="legendary-card p-5 text-center animate-fade-in-up">
+          <div class="text-4xl mb-2">{{ s.icon }}</div>
+          <div class="font-cinzel font-black text-3xl mb-1" [class]="s.color">{{ s.value ?? 0 }}</div>
+          <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">{{ s.label }}</div>
+        </div>
+      }
+    </div>
+
+    <!-- Acciones de gestión -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+      <div class="adventure-card p-7">
+        <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+          <span class="text-2xl">👩‍🏫</span> Gestión de Profesores
+        </h3>
+        <p class="font-playfair text-gray-600 text-sm mb-5">Supervisa y gestiona el cuerpo docente de la institución.</p>
+        <div class="space-y-3">
+          <a routerLink="/director/teachers" class="btn-epic btn-blue w-full text-center block text-xs py-3">
+            📋 Ver Todos los Profesores
+          </a>
+        </div>
+      </div>
+
+      <div class="adventure-card p-7">
+        <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+          <span class="text-2xl">🎓</span> Gestión de Estudiantes
+        </h3>
+        <p class="font-playfair text-gray-600 text-sm mb-5">Monitorea el progreso y actividad de todos los aventureros.</p>
+        <div class="space-y-3">
+          <a routerLink="/director/students" class="btn-epic btn-green w-full text-center block text-xs py-3">
+            📋 Ver Todos los Estudiantes
+          </a>
+        </div>
+      </div>
+
+      <div class="adventure-card p-7">
+        <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+          <span class="text-2xl">📊</span> Reportes y Análisis
+        </h3>
+        <p class="font-playfair text-gray-600 text-sm mb-5">Obtén insights y métricas sobre el desempeño del sistema.</p>
+        <div class="space-y-3">
+          <a routerLink="/director/reports" class="btn-epic btn-purple w-full text-center block text-xs py-3">
+            📈 Ver Reportes
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Resumen del sistema -->
+    <div class="adventure-card p-8">
+      <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3">
+        <span class="text-3xl">🌟</span>
+        Resumen del Sistema LegendaryClass
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="rounded-2xl p-5"
+          style="background: linear-gradient(135deg, rgba(88,28,135,0.08), rgba(124,58,237,0.05)); border: 2px solid rgba(124,58,237,0.15);">
+          <h4 class="font-cinzel font-bold text-purple-700 mb-3">Actividad del Mes</h4>
+          <div class="space-y-2">
+            <div class="flex justify-between font-playfair text-sm">
+              <span class="text-gray-600">Nuevos estudiantes:</span>
+              <span class="font-bold text-purple-600">{{ stats().monthly?.newStudents ?? 0 }}</span>
+            </div>
+            <div class="flex justify-between font-playfair text-sm">
+              <span class="text-gray-600">Nuevos profesores:</span>
+              <span class="font-bold text-blue-600">{{ stats().monthly?.newTeachers ?? 0 }}</span>
+            </div>
+            <div class="flex justify-between font-playfair text-sm">
+              <span class="text-gray-600">Comportamientos otorgados:</span>
+              <span class="font-bold text-green-600">{{ stats().monthly?.behaviorsAwarded ?? 0 }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl p-5"
+          style="background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.05)); border: 2px solid rgba(16,185,129,0.15);">
+          <h4 class="font-cinzel font-bold text-green-700 mb-3">Estado Global</h4>
+          <div class="space-y-2">
+            <div class="flex justify-between font-playfair text-sm">
+              <span class="text-gray-600">Total usuarios:</span>
+              <span class="font-bold text-gray-800">{{ (stats().totalTeachers ?? 0) + (stats().totalStudents ?? 0) + (stats().totalParents ?? 0) }}</span>
+            </div>
+            <div class="flex justify-between font-playfair text-sm">
+              <span class="text-gray-600">Aulas totales:</span>
+              <span class="font-bold text-gray-800">{{ stats().totalClassrooms ?? 0 }}</span>
+            </div>
+            <div class="flex justify-between font-playfair text-sm">
+              <span class="text-gray-600">Canjes aprobados:</span>
+              <span class="font-bold text-amber-600">{{ stats().totalRewardsRedeemed ?? 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+}

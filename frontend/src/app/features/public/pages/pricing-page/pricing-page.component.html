@@ -1,0 +1,167 @@
+<section class="py-20 min-h-screen">
+  <div class="max-w-6xl mx-auto px-4">
+
+    <!-- Header -->
+    <div class="text-center mb-16 animate-fade-in-up">
+      <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Planes y Rangos</p>
+      <h1 class="font-cinzel-decorative text-4xl md:text-6xl font-black epic-title-static mb-4">Escoge tu Rango</h1>
+      <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+        Comienza gratis y escala según tus necesidades. Sin contratos ocultos,
+        sin sorpresas. Cancela cuando quieras.
+      </p>
+    </div>
+
+    <!-- Cards de precios — todos a la misma altura, popular resaltado sin mover -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      @for (plan of plans; track plan.name) {
+
+        <!-- Badge "popular" fuera de la card, en posición absoluta -->
+        <div class="relative flex flex-col">
+          @if (plan.popular) {
+            <div class="absolute -top-4 left-0 right-0 flex justify-center z-10">
+              <span class="font-cinzel text-xs font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-lg"
+                    style="background: linear-gradient(135deg, #fbbf24, #d97706); color: #78350f;">
+                ⚡ MÁS POPULAR
+              </span>
+            </div>
+          }
+
+          <div class="legendary-card overflow-hidden flex flex-col h-full transition-all duration-300 hover:-translate-y-1"
+               [class]="plan.popular ? 'ring-2 ring-amber-400 shadow-xl shadow-amber-100' : ''">
+
+            <!-- Barra de color -->
+            <div class="h-2 flex-shrink-0"
+                 [style]="'background: linear-gradient(135deg,' + plan.gradientFrom + ',' + plan.gradientTo + ')'"></div>
+
+            <div class="p-6 flex flex-col flex-grow">
+
+              <!-- Badge institucional (no popular) -->
+              @if (plan.badge && !plan.popular) {
+                <p class="font-cinzel text-xs font-bold uppercase tracking-widest mb-3 text-purple-600">
+                  {{ plan.badge }}
+                </p>
+              }
+
+              <!-- Ícono + nombre -->
+              <div class="flex items-center gap-3 mb-4">
+                <span class="text-4xl">{{ plan.icon }}</span>
+                <h3 class="font-cinzel-decorative font-black text-xl text-gray-800">{{ plan.name }}</h3>
+              </div>
+
+              <!-- Precio -->
+              <div class="flex items-baseline gap-1 mb-2">
+                <span class="font-cinzel-decorative text-5xl font-black" [class]="plan.priceColor">{{ plan.price }}</span>
+                <span class="font-cinzel text-gray-400 text-sm">{{ plan.period }}</span>
+              </div>
+
+              <!-- Descripción -->
+              <p class="font-playfair text-gray-500 text-sm mb-6 leading-relaxed">{{ plan.desc }}</p>
+
+              <!-- Botón CTA -->
+              @if (plan.btnGold) {
+                <a routerLink="/auth/register" class="btn-epic btn-gold w-full text-center block !text-xs mb-4">
+                  {{ plan.btnLabel }}
+                </a>
+              } @else {
+                <a routerLink="/auth/register"
+                   class="btn-epic w-full text-center block !text-xs mb-4"
+                   [style]="'background: linear-gradient(135deg,' + plan.gradientFrom + ',' + plan.gradientTo + '); color: white;'">
+                  {{ plan.btnLabel }}
+                </a>
+              }
+
+              <!-- Features — flex-grow para que todos los cards empujen el contenido igual -->
+              <div class="border-t border-gray-100 pt-4 flex-grow">
+                <div class="space-y-2">
+                  @for (feat of plan.features; track feat) {
+                    <div class="flex items-start gap-2 font-playfair text-sm text-gray-600">
+                      <span class="text-green-500 flex-shrink-0 mt-0.5 font-bold">✓</span>
+                      {{ feat }}
+                    </div>
+                  }
+                  @for (feat of plan.disabled; track feat) {
+                    <div class="flex items-start gap-2 font-playfair text-sm text-gray-400">
+                      <span class="text-gray-300 flex-shrink-0 mt-0.5">✗</span>
+                      <span class="line-through">{{ feat }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Garantía -->
+    <div class="text-center mb-20">
+      <p class="font-playfair text-gray-500 text-sm">
+        🛡️ 14 días de prueba gratuita en planes de pago · Sin tarjeta de crédito · Cancela cuando quieras
+      </p>
+    </div>
+
+    <!-- Comparativa rápida -->
+    <div class="glass-panel p-8 mb-16">
+      <h2 class="font-cinzel font-bold text-center text-gray-700 uppercase tracking-widest text-sm mb-6">
+        📋 Comparativa Detallada
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b-2 border-amber-100">
+              <th class="font-cinzel text-xs text-gray-500 uppercase tracking-wide text-left py-3 px-4 min-w-48">Característica</th>
+              <th class="font-cinzel text-xs text-gray-500 uppercase tracking-wide text-center py-3 px-4">Explorador</th>
+              <th class="font-cinzel text-xs text-amber-600 uppercase tracking-wide text-center py-3 px-4">Aventurero</th>
+              <th class="font-cinzel text-xs text-purple-600 uppercase tracking-wide text-center py-3 px-4">Legendario</th>
+            </tr>
+          </thead>
+          <tbody class="font-playfair text-sm">
+            @for (row of [
+              ['Aulas',              '1',           'Ilimitadas',  'Ilimitadas'  ],
+              ['Estudiantes',        '30',          'Ilimitados',  'Ilimitados'  ],
+              ['Misiones',           '3',           'Ilimitadas',  'Ilimitadas'  ],
+              ['Personajes',         '✓',           '✓',           '✓'           ],
+              ['Tienda Recompensas', '✗',           '✓',           '✓'           ],
+              ['Portal Padres',      '✗',           '✓',           '✓'           ],
+              ['Reportes Avanzados', '✗',           '✓',           '✓'           ],
+              ['Panel Director',     '✗',           '✗',           '✓'           ],
+              ['API Integración',    '✗',           '✗',           '✓'           ],
+              ['Soporte',            'Email',       'Prioritario', 'Dedicado 24/7'],
+            ]; track row[0]) {
+              <tr class="border-b border-gray-100 hover:bg-amber-50/20 transition-colors">
+                <td class="py-3 px-4 font-semibold text-gray-700">{{ row[0] }}</td>
+                <td class="py-3 px-4 text-center text-gray-500">{{ row[1] }}</td>
+                <td class="py-3 px-4 text-center text-amber-700 font-semibold">{{ row[2] }}</td>
+                <td class="py-3 px-4 text-center text-purple-700 font-semibold">{{ row[3] }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Testimonios rápidos -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+      @for (t of testimonials; track t.name) {
+        <div class="legendary-card p-6">
+          <div class="text-amber-400 text-lg mb-3 tracking-wider">★★★★★</div>
+          <p class="font-playfair text-gray-600 text-sm leading-relaxed italic mb-4">"{{ t.text }}"</p>
+          <div class="flex items-center gap-3 border-t border-gray-100 pt-3">
+            <div class="w-10 h-10 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-xl">{{ t.avatar }}</div>
+            <div>
+              <div class="font-cinzel font-bold text-gray-800 text-xs">{{ t.name }}</div>
+              <div class="font-playfair text-gray-500 text-xs">{{ t.role }}</div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- CTA Final -->
+    <div class="text-center">
+      <a routerLink="/auth/register" class="btn-epic btn-gold text-base px-10 py-4">
+        ✨ EMPEZAR CON EL PLAN GRATIS
+      </a>
+    </div>
+  </div>
+</section>

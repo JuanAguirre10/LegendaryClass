@@ -1,0 +1,53 @@
+# ── Control de versiones ──────────────────────────────────────────────────
+**/.git
+**/.gitignore
+**/.gitattributes
+
+# ── Dependencias — se instalan dentro del contenedor ─────────────────────
+**/node_modules
+
+# ── Build local ──────────────────────────────────────────────────────────
+**/dist
+**/build
+**/.next
+frontend/dist
+
+# ── Angular cache ─────────────────────────────────────────────────────────
+**/.angular
+**/*.tsbuildinfo
+
+# ── Variables de entorno — se inyectan en tiempo de ejecución ─────────────
+**/.env
+**/.env.*
+
+# ── Cobertura de tests ────────────────────────────────────────────────────
+**/coverage
+**/.nyc_output
+
+# ── Logs ──────────────────────────────────────────────────────────────────
+**/*.log
+**/logs
+
+# ── Documentación y archivos de investigación ─────────────────────────────
+lab03/
+**/*.md
+**/*.MD
+
+# ── Docker ────────────────────────────────────────────────────────────────
+**/Dockerfile*
+**/.dockerignore
+**/docker-compose*.yml
+
+# ── Sistema operativo ─────────────────────────────────────────────────────
+**/.DS_Store
+**/Thumbs.db
+**/desktop.ini
+
+# ── IDEs ──────────────────────────────────────────────────────────────────
+**/.vscode
+**/.idea
+**/*.suo
+**/*.swp
+
+# ── Prisma Studio ─────────────────────────────────────────────────────────
+**/.prisma

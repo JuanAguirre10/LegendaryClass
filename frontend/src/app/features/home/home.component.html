@@ -1,0 +1,695 @@
+<div class="z-content">
+
+  <!-- ═══════════════════════════════════════════════════
+       NAVBAR FIJA
+  ═══════════════════════════════════════════════════ -->
+  <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+       [ngClass]="scrolled()
+         ? 'bg-slate-900/95 backdrop-blur-md border-b border-amber-500/30 shadow-2xl'
+         : 'bg-white/20 backdrop-blur-sm'">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <button (click)="scrollTo('inicio')" class="flex items-center gap-2 group">
+          <span class="text-2xl animate-float inline-block">⚔️</span>
+          <span class="font-cinzel-decorative font-black text-lg tracking-wide transition-colors duration-300"
+                [ngClass]="scrolled() ? 'text-amber-400' : 'text-amber-700'">
+            LegendaryClass
+          </span>
+        </button>
+
+        <!-- Desktop nav links -->
+        <div class="hidden md:flex items-center gap-6">
+          @for (link of navLinks; track link.id) {
+            <button (click)="scrollTo(link.id)"
+                    class="font-cinzel text-xs uppercase tracking-widest transition-all duration-200 relative pb-0.5"
+                    [ngClass]="activeSection() === link.id
+                      ? 'text-amber-400 font-bold'
+                      : (scrolled() ? 'text-gray-300 hover:text-amber-400' : 'text-amber-800 hover:text-amber-600')">
+              {{ link.label }}
+              @if (activeSection() === link.id) {
+                <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-400 rounded-full"></span>
+              }
+            </button>
+          }
+        </div>
+
+        <!-- Desktop CTAs -->
+        <div class="hidden md:flex items-center gap-3">
+          <a routerLink="/auth/login"
+             class="font-cinzel text-xs uppercase tracking-widest px-5 py-2 rounded-xl border-2 transition-all duration-200 flex items-center gap-1.5"
+             [ngClass]="scrolled()
+               ? 'border-amber-500/50 text-amber-400 hover:bg-amber-500/10'
+               : 'border-amber-600 text-amber-700 hover:bg-amber-50/80'">
+            🔑 Ya tengo cuenta
+          </a>
+          <a routerLink="/auth/register" class="btn-epic btn-gold !text-xs !px-5 !py-2">
+            ✨ Crear cuenta gratis
+          </a>
+        </div>
+
+        <!-- Mobile toggle -->
+        <button (click)="mobileMenuOpen.set(!mobileMenuOpen())"
+                class="md:hidden p-2 text-xl transition-colors"
+                [ngClass]="scrolled() ? 'text-white' : 'text-amber-800'">
+          {{ mobileMenuOpen() ? '✕' : '☰' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    @if (mobileMenuOpen()) {
+      <div class="md:hidden bg-slate-900/98 backdrop-blur-md border-t border-amber-500/20 px-4 py-6 animate-fade-in-up">
+        <div class="space-y-1 mb-6">
+          @for (link of navLinks; track link.id) {
+            <button (click)="scrollTo(link.id)"
+                    class="block w-full text-left font-cinzel text-xs uppercase tracking-widest text-gray-300 hover:text-amber-400 py-3 border-b border-slate-800 transition-colors">
+              {{ link.label }}
+            </button>
+          }
+        </div>
+        <div class="space-y-3">
+          <a routerLink="/auth/login"
+             class="block w-full text-center font-cinzel text-xs uppercase tracking-widest py-3 rounded-xl border-2 border-amber-500/50 text-amber-400 hover:bg-amber-500/10 transition-all">
+            🔑 Ya tengo cuenta — Ingresar
+          </a>
+          <a routerLink="/auth/register" class="btn-epic btn-gold w-full text-center !text-xs block">
+            ✨ Crear cuenta nueva — Gratis
+          </a>
+        </div>
+      </div>
+    }
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════════ -->
+  <section id="inicio" class="relative min-h-screen flex items-center justify-center pt-16 pb-8 overflow-hidden scroll-mt-16">
+
+    <!-- Elementos decorativos flotantes -->
+    <div class="absolute inset-0 pointer-events-none select-none">
+      <span class="absolute top-1/4 left-8 text-6xl opacity-10 animate-float">⚔️</span>
+      <span class="absolute top-1/3 right-12 text-5xl opacity-10 animate-float-fast">🏆</span>
+      <span class="absolute bottom-1/3 left-1/5 text-4xl opacity-10 animate-float-shield">🔮</span>
+      <span class="absolute top-2/3 right-1/5 text-5xl opacity-10 animate-float">🛡️</span>
+      <span class="absolute bottom-1/4 right-8 text-4xl opacity-10 animate-float-fast">🗡️</span>
+      <span class="absolute top-20 left-1/3 text-3xl opacity-10 animate-float-shield">🏹</span>
+      <span class="absolute bottom-20 left-1/2 text-4xl opacity-10 animate-float">✨</span>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-4 text-center">
+
+      <!-- Ícono principal -->
+      <div class="text-7xl md:text-8xl mb-6 animate-float inline-block">⚔️</div>
+
+      <!-- Título épico -->
+      <h1 class="epic-title text-5xl md:text-7xl lg:text-8xl mb-4 leading-tight">
+        LegendaryClass
+      </h1>
+
+      <!-- Subtítulo -->
+      <p class="font-cinzel text-amber-700 text-sm md:text-base tracking-widest uppercase mb-4">
+        Donde el Aprendizaje se Convierte en Leyenda
+      </p>
+
+      <!-- Descripción -->
+      <p class="font-playfair text-gray-600 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        Transforma tu aula en una épica aventura de RPG. Los estudiantes ganan XP,
+        eligen personajes heroicos, completan misiones académicas y canjean recompensas reales.
+      </p>
+
+      <!-- CTAs principales -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+        <a routerLink="/auth/register" class="btn-epic btn-gold text-base px-10 py-4 w-full sm:w-auto">
+          ✨ CREAR CUENTA — ES GRATIS
+        </a>
+        <a routerLink="/auth/login"
+           class="btn-epic text-base px-10 py-4 w-full sm:w-auto font-cinzel"
+           style="background: rgba(255,255,255,0.85); color: #92400e; border: 2px solid #d97706; backdrop-filter: blur(8px);">
+          🔑 YA TENGO CUENTA
+        </a>
+      </div>
+      <!-- Aclaración -->
+      <p class="font-playfair text-gray-500 text-sm mb-8">
+        ¿Primera vez aquí? → <span class="text-amber-700 font-semibold">Crear cuenta</span> &nbsp;·&nbsp;
+        ¿Ya te registraste? → <span class="text-amber-700 font-semibold">Ingresar</span>
+      </p>
+
+      <!-- Badges de roles -->
+      <div class="flex flex-wrap justify-center gap-3">
+        <span class="glass-panel px-4 py-2 font-cinzel text-xs uppercase tracking-wide text-gray-600">⚔️ Estudiantes</span>
+        <span class="glass-panel px-4 py-2 font-cinzel text-xs uppercase tracking-wide text-gray-600">🧙‍♂️ Maestros</span>
+        <span class="glass-panel px-4 py-2 font-cinzel text-xs uppercase tracking-wide text-gray-600">👑 Directores</span>
+        <span class="glass-panel px-4 py-2 font-cinzel text-xs uppercase tracking-wide text-gray-600">🛡️ Padres</span>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <button (click)="scrollTo('stats')" class="flex flex-col items-center gap-1 text-amber-600 opacity-60 hover:opacity-100 transition-opacity">
+        <span class="font-cinzel text-xs uppercase tracking-widest">Explorar</span>
+        <span class="text-xl">↓</span>
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       STATS
+  ═══════════════════════════════════════════════════ -->
+  <section id="stats" class="py-16 scroll-mt-16">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="glass-panel p-8 md:p-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+          @for (stat of stats; track stat.label; let i = $index) {
+            <div class="text-center" [ngClass]="'stagger-' + (i + 1)">
+              <div class="text-4xl mb-3">{{ stat.icon }}</div>
+              <div class="font-cinzel-decorative text-3xl md:text-4xl font-black epic-title-static mb-1">
+                {{ stat.value }}
+              </div>
+              <div class="font-playfair text-gray-500 text-sm">{{ stat.label }}</div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       CARACTERÍSTICAS
+  ═══════════════════════════════════════════════════ -->
+  <section id="caracteristicas" class="py-24 scroll-mt-16">
+    <div class="max-w-6xl mx-auto px-4">
+
+      <div class="text-center mb-16 animate-fade-in-up">
+        <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Habilidades del Sistema</p>
+        <h2 class="font-cinzel-decorative text-4xl md:text-5xl font-black epic-title-static mb-4">
+          Poderes Legendarios
+        </h2>
+        <p class="font-playfair text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
+          Todo lo que necesitas para transformar tu aula en una aventura épica que los estudiantes
+          no querrán perderse jamás.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (feat of features; track feat.title; let i = $index) {
+          <div class="legendary-card p-6 group hover:-translate-y-1 transition-all duration-300">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl mb-4 transition-transform duration-300 group-hover:scale-110 border"
+                 [ngClass]="[feat.bg, feat.border]">
+              {{ feat.icon }}
+            </div>
+            <h3 class="font-cinzel font-bold text-base mb-2 uppercase tracking-wide" [ngClass]="feat.color">
+              {{ feat.title }}
+            </h3>
+            <p class="font-playfair text-gray-600 text-sm leading-relaxed">
+              {{ feat.desc }}
+            </p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       CÓMO FUNCIONA
+  ═══════════════════════════════════════════════════ -->
+  <section id="como-funciona" class="py-24 scroll-mt-16">
+    <div class="max-w-5xl mx-auto px-4">
+
+      <div class="text-center mb-12 animate-fade-in-up">
+        <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Guía del Aventurero</p>
+        <h2 class="font-cinzel-decorative text-4xl md:text-5xl font-black epic-title-static mb-4">
+          ¿Cómo Funciona?
+        </h2>
+        <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+          LegendaryClass está diseñado para toda la comunidad educativa.
+          Elige tu rol y descubre tu camino épico.
+        </p>
+      </div>
+
+      <!-- Tabs de roles -->
+      <div class="flex flex-wrap justify-center gap-3 mb-8">
+        @for (tab of roleTabs; track tab) {
+          <button (click)="setRole(tab)"
+                  class="font-cinzel text-xs uppercase tracking-widest px-5 py-3 rounded-xl border-2 transition-all duration-300"
+                  [ngClass]="activeRole() === tab
+                    ? [roleData[tab].tabColor, 'shadow-lg scale-105']
+                    : 'border-gray-200 text-gray-500 hover:border-amber-300 bg-white/60 hover:bg-white/80'">
+            {{ roleData[tab].icon }} {{ roleData[tab].label }}
+          </button>
+        }
+      </div>
+
+      <!-- Pasos del rol activo -->
+      <div class="glass-panel p-6 md:p-10 animate-fade-in-up">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          @for (step of roleData[activeRole()].steps; track step.title; let i = $index) {
+            <div class="text-center">
+              <!-- Número de paso -->
+              <div class="w-10 h-10 rounded-full bg-amber-50 border-2 border-amber-300 flex items-center justify-center font-cinzel font-black text-amber-700 text-sm mx-auto mb-4">
+                {{ i + 1 }}
+              </div>
+              <!-- Ícono -->
+              <div class="text-4xl mb-3">{{ step.icon }}</div>
+              <!-- Título -->
+              <h4 class="font-cinzel font-bold text-gray-800 text-sm mb-2 uppercase tracking-wide">
+                {{ step.title }}
+              </h4>
+              <!-- Descripción -->
+              <p class="font-playfair text-gray-500 text-xs leading-relaxed">
+                {{ step.desc }}
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="text-center mt-8">
+        <a routerLink="/auth/register" class="btn-epic btn-gold">
+          ✨ COMENZAR MI AVENTURA
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       PERSONAJES
+  ═══════════════════════════════════════════════════ -->
+  <section id="personajes" class="py-24 scroll-mt-16">
+    <div class="max-w-6xl mx-auto px-4">
+
+      <div class="text-center mb-16 animate-fade-in-up">
+        <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Elige tu Destino</p>
+        <h2 class="font-cinzel-decorative text-4xl md:text-5xl font-black epic-title-static mb-4">
+          Clases de Héroe
+        </h2>
+        <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+          Cada estudiante elige una clase única al unirse. Cada clase tiene bonificaciones especiales
+          que recompensan diferentes tipos de esfuerzo y talento académico.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        @for (char of characters; track char.name; let i = $index) {
+          <div class="legendary-card p-6 text-center group hover:-translate-y-2 transition-all duration-300 border-2 overflow-hidden"
+               [ngClass]="[char.bg, char.border]">
+            <div class="text-5xl mb-4 inline-block group-hover:scale-110 transition-transform duration-300 animate-float">
+              {{ char.icon }}
+            </div>
+            <h3 class="font-cinzel font-black text-base mb-2" [ngClass]="char.color">
+              {{ char.name }}
+            </h3>
+            <div class="font-cinzel text-xs font-bold mb-3 px-2 py-1 rounded-full bg-white/80"
+                 [ngClass]="char.color">
+              {{ char.bonus }}
+            </div>
+            <p class="font-playfair text-gray-500 text-xs leading-relaxed">
+              {{ char.desc }}
+            </p>
+          </div>
+        }
+      </div>
+
+      <div class="text-center mt-10">
+        <a routerLink="/auth/register" class="btn-epic btn-gold">
+          ⚔️ ELIGE TU PERSONAJE
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       PRECIOS
+  ═══════════════════════════════════════════════════ -->
+  <section id="precios" class="py-24 scroll-mt-16">
+    <div class="max-w-6xl mx-auto px-4">
+
+      <div class="text-center mb-16 animate-fade-in-up">
+        <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Planes y Rangos</p>
+        <h2 class="font-cinzel-decorative text-4xl md:text-5xl font-black epic-title-static mb-4">
+          Escoge tu Rango
+        </h2>
+        <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+          Comienza gratis y escala según tus necesidades. Sin contratos ocultos,
+          sin sorpresas. Cancela cuando quieras.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        @for (plan of plans; track plan.name) {
+          <div class="legendary-card overflow-hidden transition-all duration-300 hover:-translate-y-2"
+               [ngClass]="plan.popular ? 'ring-2 ring-amber-400 shadow-2xl shadow-amber-200/50 md:-mt-4' : ''">
+
+            <!-- Barra de color superior -->
+            <div class="h-2"
+                 [style]="'background: linear-gradient(135deg, ' + plan.gradientFrom + ', ' + plan.gradientTo + ')'"></div>
+
+            <div class="p-6">
+              <!-- Badge -->
+              @if (plan.badge) {
+                <p class="font-cinzel text-xs font-bold uppercase tracking-widest mb-3"
+                   [ngClass]="plan.popular ? 'text-amber-600' : 'text-purple-600'">
+                  {{ plan.badge }}
+                </p>
+              }
+
+              <!-- Ícono y nombre -->
+              <div class="flex items-center gap-3 mb-4">
+                <span class="text-4xl">{{ plan.icon }}</span>
+                <h3 class="font-cinzel-decorative font-black text-xl text-gray-800">{{ plan.name }}</h3>
+              </div>
+
+              <!-- Precio -->
+              <div class="mb-3 flex items-baseline gap-1">
+                <span class="font-cinzel-decorative text-4xl font-black" [ngClass]="plan.priceColor">
+                  {{ plan.price }}
+                </span>
+                <span class="font-cinzel text-gray-400 text-sm">{{ plan.period }}</span>
+              </div>
+
+              <!-- Descripción -->
+              <p class="font-playfair text-gray-500 text-sm mb-6 leading-relaxed">{{ plan.desc }}</p>
+
+              <!-- Botón CTA -->
+              @if (plan.btnGold) {
+                <a routerLink="/auth/register" class="btn-epic btn-gold w-full text-center block mb-6 !text-xs">
+                  {{ plan.btnLabel }}
+                </a>
+              } @else {
+                <a routerLink="/auth/register"
+                   class="btn-epic w-full text-center block mb-6 !text-xs"
+                   [style]="'background: linear-gradient(135deg, ' + plan.gradientFrom + ', ' + plan.gradientTo + '); color: white;'">
+                  {{ plan.btnLabel }}
+                </a>
+              }
+
+              <!-- Features -->
+              <div class="border-t border-gray-100 pt-4 space-y-2">
+                @for (feat of plan.features; track feat) {
+                  <div class="flex items-start gap-2 font-playfair text-sm text-gray-600">
+                    <span class="text-green-500 flex-shrink-0 mt-0.5">✓</span>
+                    {{ feat }}
+                  </div>
+                }
+                @for (feat of plan.disabled; track feat) {
+                  <div class="flex items-start gap-2 font-playfair text-sm text-gray-400">
+                    <span class="text-gray-300 flex-shrink-0 mt-0.5">✗</span>
+                    <span class="line-through">{{ feat }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Garantía -->
+      <div class="text-center mt-10">
+        <p class="font-playfair text-gray-500 text-sm">
+          🛡️ 14 días de prueba gratuita · Sin tarjeta de crédito · Cancela cuando quieras
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TESTIMONIOS
+  ═══════════════════════════════════════════════════ -->
+  <section class="py-24">
+    <div class="max-w-6xl mx-auto px-4">
+
+      <div class="text-center mb-16 animate-fade-in-up">
+        <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Voces del Reino</p>
+        <h2 class="font-cinzel-decorative text-4xl md:text-5xl font-black epic-title-static mb-4">
+          Lo Que Dicen los Héroes
+        </h2>
+        <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+          Maestros, estudiantes y directores que ya viven la experiencia LegendaryClass
+          en sus aulas cada día.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @for (t of testimonials; track t.name; let i = $index) {
+          <div class="legendary-card p-6 flex flex-col hover:-translate-y-1 transition-all duration-300"
+               [ngClass]="'stagger-' + (i + 1)">
+            <!-- Estrellas -->
+            <div class="text-amber-400 text-lg mb-4 tracking-wider">★★★★★</div>
+            <!-- Cita -->
+            <p class="font-playfair text-gray-600 text-sm leading-relaxed flex-grow mb-6 italic">
+              "{{ t.text }}"
+            </p>
+            <!-- Autor -->
+            <div class="flex items-center gap-3 border-t border-gray-100 pt-4">
+              <div class="w-12 h-12 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-2xl flex-shrink-0">
+                {{ t.avatar }}
+              </div>
+              <div>
+                <div class="font-cinzel font-bold text-gray-800 text-sm">{{ t.name }}</div>
+                <div class="font-playfair text-gray-500 text-xs">{{ t.role }}</div>
+                <div class="font-playfair text-amber-600 text-xs">{{ t.school }}</div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       FAQ
+  ═══════════════════════════════════════════════════ -->
+  <section id="faq" class="py-24 scroll-mt-16">
+    <div class="max-w-3xl mx-auto px-4">
+
+      <div class="text-center mb-16 animate-fade-in-up">
+        <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Pergamino de Sabiduría</p>
+        <h2 class="font-cinzel-decorative text-4xl md:text-5xl font-black epic-title-static mb-4">
+          Preguntas Frecuentes
+        </h2>
+        <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto">
+          Todo lo que necesitas saber antes de comenzar tu aventura legendaria.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        @for (faq of faqs; track faq.q; let i = $index) {
+          <div class="legendary-card overflow-hidden">
+            <button (click)="toggleFaq(i)"
+                    class="w-full px-6 py-5 flex items-center justify-between text-left transition-colors duration-200 hover:bg-amber-50/50">
+              <span class="font-cinzel font-bold text-gray-800 text-sm pr-4 leading-relaxed">{{ faq.q }}</span>
+              <span class="text-amber-500 font-bold text-2xl flex-shrink-0 transition-transform duration-300 leading-none"
+                    [ngClass]="openFaq() === i ? 'rotate-45' : 'rotate-0'">
+                +
+              </span>
+            </button>
+            <div class="overflow-hidden transition-all duration-300 ease-in-out"
+                 [ngClass]="openFaq() === i ? 'max-h-64' : 'max-h-0'">
+              <div class="px-6 pb-5">
+                <div class="border-t border-amber-100 pt-4">
+                  <p class="font-playfair text-gray-600 text-sm leading-relaxed">{{ faq.a }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       CTA FINAL
+  ═══════════════════════════════════════════════════ -->
+  <section class="py-24">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="rounded-3xl overflow-hidden relative"
+           style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1a1228 100%);">
+
+        <!-- Partículas decorativas -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden select-none">
+          <span class="absolute top-6 left-10 text-4xl opacity-15 animate-float">⚔️</span>
+          <span class="absolute top-10 right-14 text-3xl opacity-15 animate-float-fast">🏆</span>
+          <span class="absolute bottom-8 left-1/4 text-5xl opacity-10 animate-float-shield">✨</span>
+          <span class="absolute bottom-10 right-1/4 text-4xl opacity-15 animate-float">🔮</span>
+          <span class="absolute top-1/2 left-6 text-3xl opacity-10 animate-float-fast">🌟</span>
+          <span class="absolute top-1/2 right-8 text-3xl opacity-10 animate-float-shield">👑</span>
+          <span class="absolute bottom-4 right-8 text-2xl opacity-10 animate-float">🗡️</span>
+        </div>
+
+        <!-- Borde de brillo dorado -->
+        <div class="absolute inset-px rounded-3xl pointer-events-none"
+             style="background: linear-gradient(135deg, rgba(251,191,36,0.08), transparent 40%, rgba(251,191,36,0.05) 100%);"></div>
+
+        <div class="relative px-8 py-16 md:py-20 text-center">
+          <div class="text-6xl md:text-7xl mb-6 animate-float inline-block">⚔️</div>
+
+          <h2 class="font-cinzel-decorative text-4xl md:text-5xl font-black mb-4"
+              style="background: linear-gradient(135deg, #fbbf24, #f59e0b, #fde68a, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200% 200%; animation: gradientShift 4s ease infinite;">
+            ¿Listo para tu Aventura?
+          </h2>
+
+          <p class="font-playfair text-gray-300 text-lg mb-10 max-w-lg mx-auto leading-relaxed">
+            Únete a más de 5,000 estudiantes y 500 maestros que ya viven la experiencia
+            LegendaryClass. Tu primera aula es completamente gratis, para siempre.
+          </p>
+
+          <div class="flex flex-col sm:flex-row justify-center gap-4 mb-10">
+            <a routerLink="/auth/register" class="btn-epic btn-gold text-base px-10 py-4">
+              ✨ COMENZAR GRATIS AHORA
+            </a>
+            <a routerLink="/auth/login"
+               class="font-cinzel text-sm uppercase tracking-widest px-10 py-4 rounded-xl border-2 border-amber-500/40 text-amber-400 hover:bg-amber-500/10 transition-all duration-200">
+              Ya tengo cuenta →
+            </a>
+          </div>
+
+          <!-- Trust signals -->
+          <div class="flex flex-wrap justify-center gap-6 text-xs font-cinzel text-gray-500 uppercase tracking-widest">
+            <span>✓ Gratis para siempre</span>
+            <span>✓ Sin tarjeta de crédito</span>
+            <span>✓ Listo en 2 minutos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════════ -->
+  <footer class="relative" style="background: linear-gradient(180deg, #0f172a 0%, #020617 100%);">
+
+    <!-- Borde superior gradiente -->
+    <div class="h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent"></div>
+
+    <!-- Partículas de fondo -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden select-none">
+      <span class="absolute top-10 left-16 text-6xl opacity-[0.03] animate-float">⚔️</span>
+      <span class="absolute top-16 right-24 text-5xl opacity-[0.03] animate-float-fast">🏆</span>
+      <span class="absolute bottom-16 left-1/3 text-4xl opacity-[0.03] animate-float-shield">🔮</span>
+      <span class="absolute bottom-10 right-1/3 text-5xl opacity-[0.03] animate-float">👑</span>
+      <span class="absolute top-1/2 right-12 text-4xl opacity-[0.03] animate-float-fast">✨</span>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 py-16 relative">
+
+      <!-- Grid principal -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+
+        <!-- Columna marca -->
+        <div class="md:col-span-1">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-2xl animate-float inline-block">⚔️</span>
+            <span class="font-cinzel-decorative font-black text-lg text-amber-400">LegendaryClass</span>
+          </div>
+          <p class="font-playfair text-gray-400 text-sm leading-relaxed mb-6">
+            Transformando la educación a través de la gamificación épica.
+            Donde cada estudiante es un héroe en su propia aventura.
+          </p>
+          <!-- Redes sociales -->
+          <div class="flex gap-3">
+            @for (social of ['𝕏', 'in', 'f', '▶']; track social) {
+              <a href="#"
+                 class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-gray-400 hover:text-amber-400 hover:border-amber-500/50 transition-all duration-200 font-bold text-xs">
+                {{ social }}
+              </a>
+            }
+          </div>
+        </div>
+
+        <!-- Plataforma -->
+        <div>
+          <h4 class="font-cinzel font-bold text-amber-400 text-xs uppercase tracking-widest mb-5">Plataforma</h4>
+          <ul class="space-y-3">
+            @for (link of platformLinks; track link.label) {
+              <li>
+                <button (click)="scrollTo(link.section)"
+                        class="font-playfair text-gray-400 text-sm hover:text-amber-400 transition-colors duration-200 text-left">
+                  {{ link.label }}
+                </button>
+              </li>
+            }
+            <li>
+              <a routerLink="/auth/register" class="font-playfair text-gray-400 text-sm hover:text-amber-400 transition-colors duration-200">
+                Comenzar Gratis
+              </a>
+            </li>
+            <li>
+              <a routerLink="/auth/login" class="font-playfair text-gray-400 text-sm hover:text-amber-400 transition-colors duration-200">
+                Iniciar Sesión
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div>
+          <h4 class="font-cinzel font-bold text-amber-400 text-xs uppercase tracking-widest mb-5">Legal</h4>
+          <ul class="space-y-3">
+            @for (link of legalLinks; track link) {
+              <li>
+                <a href="#" class="font-playfair text-gray-400 text-sm hover:text-amber-400 transition-colors duration-200">
+                  {{ link }}
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Soporte y contacto -->
+        <div>
+          <h4 class="font-cinzel font-bold text-amber-400 text-xs uppercase tracking-widest mb-5">Soporte</h4>
+          <ul class="space-y-3 mb-6">
+            @for (link of supportLinks; track link) {
+              <li>
+                <a href="#" class="font-playfair text-gray-400 text-sm hover:text-amber-400 transition-colors duration-200">
+                  {{ link }}
+                </a>
+              </li>
+            }
+          </ul>
+          <div class="pt-4 border-t border-slate-800">
+            <p class="font-cinzel text-xs text-gray-600 uppercase tracking-wide mb-2">Contacto directo</p>
+            <a href="mailto:hola@legendaryclass.com"
+               class="font-playfair text-amber-500 text-sm hover:text-amber-400 transition-colors block">
+              hola&#64;legendaryclass.com
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra inferior -->
+      <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <p class="font-playfair text-gray-600 text-xs">
+          © 2026 LegendaryClass. Todos los derechos reservados. Hecho con ⚔️ en Perú.
+        </p>
+        <div class="flex items-center gap-2">
+          <span class="font-cinzel text-xs text-gray-600 uppercase tracking-widest">Versión</span>
+          <span class="badge-legendary !text-xs !px-2 !py-0.5">v1.0 Legendary</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ BOTÓN VOLVER ARRIBA ═══ -->
+  @if (showBackTop()) {
+    <button (click)="scrollTo('inicio')"
+            class="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full shadow-xl flex items-center justify-center text-white text-lg font-bold transition-all duration-300 hover:scale-110 animate-fade-in-up"
+            style="background: linear-gradient(135deg, #fbbf24, #d97706);"
+            title="Volver arriba">
+      ↑
+    </button>
+  }
+
+</div>

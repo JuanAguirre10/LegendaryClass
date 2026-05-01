@@ -1,0 +1,162 @@
+<!-- Navegación épica — tema azul maestro -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/teacher/dashboard" class="legendary-logo text-xl">📚 LegendaryClass</a>
+
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/teacher/dashboard"   routerLinkActive="active" class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/teacher/classrooms"  routerLinkActive="active" class="nav-link-epic">🏛️ Aulas</a>
+      <a routerLink="/teacher/behaviors"   routerLinkActive="active" class="nav-link-epic">⭐ Comportamientos</a>
+      <a routerLink="/teacher/rewards"     routerLinkActive="active" class="nav-link-epic">🎁 Recompensas</a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <span class="font-cinzel text-sm text-gray-600 font-semibold">{{ user?.name }}</span>
+      <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Header épico — tema azul -->
+<header class="section-header-blue py-8 px-6">
+  <div class="max-w-7xl mx-auto text-center">
+    <h1 class="font-cinzel font-black text-white mb-2" style="font-size: clamp(1.5rem,3vw,2.5rem); text-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+      📚 Portal del Maestro Legendario
+    </h1>
+    <p class="font-cinzel text-blue-200 text-sm tracking-widest uppercase">
+      ¡Hola, {{ user?.name }}! Guía a tus aventureros hacia la gloria
+    </p>
+  </div>
+</header>
+
+@if (loading()) {
+  <div class="min-h-[60vh] flex items-center justify-center">
+    <div class="glass-panel p-12 text-center animate-fade-in-up">
+      <div class="text-8xl mb-6 animate-float">📚</div>
+      <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">Cargando tu Portal...</h2>
+      <p class="font-playfair text-gray-500">Preparando el panel del maestro</p>
+    </div>
+  </div>
+} @else if (data()) {
+
+<main class="z-content py-8">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+      @for (stat of [
+        { icon: '🏫', label: 'Aulas Activas',          value: data().classrooms.length,        color: 'text-blue-600' },
+        { icon: '⭐', label: 'Comportamientos',         value: data().recentBehaviors.length,    color: 'text-amber-600' },
+        { icon: '🎁', label: 'Canjes Pendientes',       value: data().pendingRewards.length,     color: 'text-purple-600' }
+      ]; track stat.label) {
+        <div class="legendary-card p-6 text-center animate-fade-in-up">
+          <div class="text-5xl mb-3">{{ stat.icon }}</div>
+          <div class="font-cinzel font-black text-3xl mb-1" [class]="stat.color">{{ stat.value }}</div>
+          <div class="font-cinzel text-sm text-gray-500 uppercase tracking-wide">{{ stat.label }}</div>
+        </div>
+      }
+    </div>
+
+    <!-- Panel de gestión principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+      <!-- Mis Dominios Mágicos -->
+      <div class="adventure-card p-8">
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-4 flex items-center gap-3"
+          style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
+          <span class="text-3xl">🏰</span>
+          Mis Dominios Mágicos
+        </h3>
+        <p class="font-playfair text-gray-600 mb-6">Administra tus aulas y supervisa a tus aventureros estudiantes.</p>
+        <div class="space-y-3">
+          <a routerLink="/teacher/classrooms" class="btn-epic btn-blue w-full text-center block text-sm py-3">
+            🏛️ Ver Todas las Aulas
+          </a>
+          <a routerLink="/teacher/classrooms/new" class="btn-epic btn-green w-full text-center block text-sm py-3">
+            ➕ Crear Nueva Aula
+          </a>
+          <p class="font-playfair text-sm text-gray-500 text-center mt-3">
+            {{ data().classrooms.length }} aulas activas
+          </p>
+        </div>
+      </div>
+
+      <!-- Sistema de Recompensas -->
+      <div class="adventure-card p-8">
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-4 flex items-center gap-3"
+          style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
+          <span class="text-3xl">⭐</span>
+          Sistema de Recompensas
+        </h3>
+        <p class="font-playfair text-gray-600 mb-6">Otorga puntos y reconocimientos a tus estudiantes aventureros.</p>
+        <div class="space-y-3">
+          <a routerLink="/teacher/behaviors" class="btn-epic btn-purple w-full text-center block text-sm py-3">
+            📝 Gestionar Comportamientos
+          </a>
+          <a routerLink="/teacher/rewards" class="btn-epic btn-gold w-full text-center block text-sm py-3">
+            🎁 Gestionar Recompensas
+          </a>
+          <p class="font-playfair text-sm text-gray-500 text-center mt-3">
+            {{ data().recentBehaviors.length }} comportamientos otorgados
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="adventure-card p-8 mb-8">
+      <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+        style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
+        <span class="text-3xl">⚡</span>
+        Acciones Rápidas del Maestro
+      </h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a routerLink="/teacher/behaviors"  class="btn-epic btn-blue  text-center py-4 text-xs">📊 Ver Reportes</a>
+        <a routerLink="/teacher/classrooms" class="btn-epic btn-green  text-center py-4 text-xs">🏰 Mis Aulas</a>
+        <a routerLink="/teacher/rewards"    class="btn-epic btn-purple text-center py-4 text-xs">👤 Recompensas</a>
+        <a routerLink="/teacher/behaviors/new" class="btn-epic btn-gold text-center py-4 text-xs">⭐ Nuevo Comportamiento</a>
+      </div>
+    </div>
+
+    <!-- Actividades recientes -->
+    <div class="adventure-card p-8">
+      <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+        style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
+        <span class="text-3xl">📈</span>
+        Actividades Recientes de mis Aventureros
+      </h3>
+      <div class="space-y-3 max-h-96 overflow-y-auto">
+        @if (data().recentBehaviors.length === 0) {
+          <div class="text-center py-12">
+            <div class="text-6xl mb-4 opacity-70">📈</div>
+            <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡Comienza tu aventura!</h4>
+            <p class="font-playfair text-gray-500 mb-6">No hay actividades recientes. Crea tu primera aula y comienza a otorgar puntos.</p>
+            <a routerLink="/teacher/classrooms/new" class="btn-epic btn-green text-sm py-2 px-6">🏰 Crear Mi Primera Aula</a>
+          </div>
+        }
+        @for (b of data().recentBehaviors.slice(0, 10); track b.id) {
+          <div class="flex items-center gap-4 p-3 rounded-xl transition-all duration-200 hover:bg-gray-50"
+            style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+            <div class="text-2xl">{{ b.pointsAwarded > 0 ? '⭐' : '⚠️' }}</div>
+            <div class="flex-1">
+              <div class="font-cinzel font-bold text-gray-800 text-sm">{{ b.student?.name }}</div>
+              <div class="font-playfair text-xs text-gray-600">{{ b.behavior?.name }}</div>
+            </div>
+            <div class="text-right">
+              <div class="font-cinzel font-black text-sm"
+                [class.text-green-600]="b.pointsAwarded > 0"
+                [class.text-red-600]="b.pointsAwarded < 0">
+                {{ b.pointsAwarded > 0 ? '+' : '' }}{{ b.pointsAwarded }}
+              </div>
+              <div class="font-playfair text-xs text-gray-400">puntos</div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</main>
+
+}

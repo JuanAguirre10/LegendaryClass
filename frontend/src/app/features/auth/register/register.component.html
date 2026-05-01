@@ -1,0 +1,111 @@
+<div class="min-h-screen z-content" style="position: relative;">
+
+  <!-- Título principal — igual al PHP register -->
+  <div class="text-center pt-8 pb-4">
+    <h1 style="font-family: 'Cinzel Decorative', serif; font-weight: 900; font-size: clamp(2.5rem, 6vw, 5rem); background: linear-gradient(45deg, #b45309, #d97706, #f59e0b, #fbbf24); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; letter-spacing: 0.1em; margin-bottom: 1rem; filter: drop-shadow(0 0 10px rgba(217,119,6,0.3));">
+      LEGENDARYCLASS
+    </h1>
+    <p style="font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1rem, 2.5vw, 1.5rem); color: #374151; text-align: center; letter-spacing: 0.05em; margin-bottom: 2rem;">
+      ⚔️ Únete a la Leyenda ⚔️
+    </p>
+  </div>
+
+  <div style="display: flex; justify-content: center; align-items: flex-start; padding: 0 1rem 4rem; margin-top: 0;">
+  <div style="backdrop-filter: blur(15px); background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.95) 100%); border: 2px solid rgba(255,255,255,0.9); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,1); width: 100%; max-width: 400px; padding: 2rem;">
+
+      <h2 class="font-cinzel font-bold text-xl text-gray-800 text-center mb-2 uppercase tracking-wide">
+        ✨ Crear Cuenta
+      </h2>
+      <p class="text-center text-gray-500 text-sm font-playfair mb-6">
+        Únete al Portal de Aventureros
+      </p>
+
+      @if (error()) {
+        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 mb-4 text-sm font-playfair">
+          {{ error() }}
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+
+        <div>
+          <label class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
+            Nombre Completo
+          </label>
+          <input type="text" formControlName="name" placeholder="Tu nombre completo"
+            class="input-epic" />
+        </div>
+
+        <div>
+          <label class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
+            Correo Electrónico
+          </label>
+          <input type="email" formControlName="email" placeholder="tu&#64;email.com"
+            class="input-epic" />
+        </div>
+
+        <div>
+          <label class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
+            Contraseña
+          </label>
+          <input type="password" formControlName="password" placeholder="Mínimo 8 caracteres"
+            class="input-epic" />
+        </div>
+
+        <!-- Selección de rol — igual al PHP -->
+        <div>
+          <label class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">
+            Tipo de Aventurero
+          </label>
+          <div class="grid grid-cols-3 gap-2">
+            @for (role of roles; track role.value) {
+              <button type="button" (click)="form.patchValue({ role: role.value })"
+                class="flex flex-col items-center py-3 rounded-xl border-2 transition-all duration-200 cursor-pointer"
+                [class.border-amber-400]="form.get('role')?.value === role.value"
+                [class.bg-amber-50]="form.get('role')?.value === role.value"
+                [class.shadow-md]="form.get('role')?.value === role.value"
+                [class.border-gray-200]="form.get('role')?.value !== role.value"
+                [class.bg-white]="form.get('role')?.value !== role.value">
+                <span class="text-2xl">{{ role.icon }}</span>
+                <span class="font-cinzel text-xs font-bold mt-1 uppercase tracking-wide"
+                  [class.text-amber-700]="form.get('role')?.value === role.value"
+                  [class.text-gray-600]="form.get('role')?.value !== role.value">
+                  {{ role.label }}
+                </span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="loading() || form.invalid"
+          class="btn-epic btn-green w-full py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed mt-2">
+          @if (loading()) {
+            <span class="flex items-center justify-center gap-2">
+              <span class="animate-spin-slow">✨</span> Creando cuenta...
+            </span>
+          } @else {
+            ✨ COMENZAR AVENTURA LEGENDARIA
+          }
+        </button>
+
+      </form>
+
+      <div class="mt-4 pt-4 border-t border-gray-100 text-center">
+        <p class="font-playfair text-sm text-slate-600">
+          ¿Ya tienes cuenta?
+          <a routerLink="/auth/login"
+            class="font-cinzel font-semibold text-gray-700 hover:text-gray-900 ml-1 transition-colors"
+            style="text-decoration: underline; text-decoration-color: rgba(59,130,246,0.6);">
+            ⚔️ Iniciar sesión
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer fijo -->
+  <div style="position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); color: #6b7280; font-size: 0.75rem; text-align: center; font-family: 'Cinzel', serif; background: rgba(255,255,255,0.8); padding: 0.5rem 1rem; border-radius: 20px; backdrop-filter: blur(10px); white-space: nowrap;">
+    🏰 LegendaryClass v2.0 🏰
+  </div>
+
+</div>

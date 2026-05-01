@@ -1,0 +1,154 @@
+<!-- Navegación épica — tema ámbar padre -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/parent/dashboard" class="legendary-logo text-xl">👨‍👩‍👧 LegendaryClass</a>
+    <div class="flex items-center gap-3">
+      <span class="font-cinzel text-sm text-gray-600 font-semibold">{{ user?.name }}</span>
+      <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Header épico — tema ámbar -->
+<header class="section-header-amber py-10 px-6">
+  <div class="max-w-7xl mx-auto text-center">
+    <h1 class="font-cinzel font-black text-white mb-2" style="font-size: clamp(1.8rem,4vw,3rem); text-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+      👨‍👩‍👧 Portal Familiar
+    </h1>
+    <p class="font-cinzel text-amber-200 text-sm tracking-widest uppercase">
+      Sigue el progreso de tu aventurero
+    </p>
+  </div>
+</header>
+
+@if (loading()) {
+  <div class="min-h-[60vh] flex items-center justify-center">
+    <div class="glass-panel p-12 text-center animate-fade-in-up">
+      <div class="text-8xl mb-6 animate-float">👨‍👩‍👧</div>
+      <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">Cargando el progreso...</h2>
+      <p class="font-playfair text-gray-500">Reuniendo información de tus aventureros</p>
+    </div>
+  </div>
+} @else if (data()) {
+
+<main class="z-content py-8">
+  <div class="max-w-5xl mx-auto px-6">
+
+    @if (data().children.length === 0) {
+      <!-- Sin hijos vinculados -->
+      <div class="legendary-card p-12 text-center animate-fade-in-up">
+        <div class="text-8xl mb-6 opacity-70">👶</div>
+        <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">¡Aún no tienes aventureros vinculados!</h2>
+        <p class="font-playfair text-gray-500 mb-8">Vincula la cuenta de tu hijo/a para seguir su progreso en LegendaryClass</p>
+
+        <button (click)="showLink = !showLink" class="btn-epic btn-gold text-sm py-3 px-8 mb-6">
+          🔗 Vincular Estudiante
+        </button>
+
+        @if (showLink) {
+          <div class="max-w-sm mx-auto mt-4">
+            @if (linkError()) {
+              <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 mb-4 text-sm font-playfair">
+                {{ linkError() }}
+              </div>
+            }
+            <div class="flex gap-3">
+              <input [(ngModel)]="linkEmail" type="email" placeholder="Email del estudiante"
+                class="input-epic flex-1 text-sm" />
+              <button (click)="linkChild()" class="btn-epic btn-green text-sm py-2 px-4">
+                Vincular
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- Hijos vinculados -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @for (child of data().children; track child.id) {
+          <div class="legendary-card p-6 animate-fade-in-up">
+
+            <!-- Header del niño -->
+            <div class="flex items-center gap-4 mb-5">
+              <div class="relative w-16 h-16 rounded-full border-3 border-amber-400 overflow-hidden flex-shrink-0"
+                style="border: 3px solid #fbbf24; box-shadow: 0 0 15px rgba(251,191,36,0.4); background: linear-gradient(135deg,#667eea,#764ba2);">
+                <img [src]="'assets/characters/' + (child.characterType ?? 'mago').toLowerCase() + '_tier_1.png'"
+                  [alt]="child.name"
+                  class="w-full h-full object-contain p-1"
+                  (error)="hideElement($event)" />
+              </div>
+              <div>
+                <h3 class="font-cinzel font-black text-gray-800 text-lg">{{ child.name }}</h3>
+                <p class="font-cinzel text-amber-600 text-sm">
+                  {{ child.characterType ? charData[child.characterType]?.name : 'Sin clase' }}
+                  · Nivel {{ child.level ?? 1 }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-3 mb-5">
+              <div class="text-center rounded-xl p-3"
+                style="background: linear-gradient(135deg,rgba(251,191,36,0.15),rgba(245,158,11,0.1)); border: 1px solid rgba(251,191,36,0.3);">
+                <div class="font-cinzel font-black text-amber-600 text-xl">{{ child.points ?? 0 }}</div>
+                <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">Puntos</div>
+              </div>
+              <div class="text-center rounded-xl p-3"
+                style="background: linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.1)); border: 1px solid rgba(16,185,129,0.3);">
+                <div class="font-cinzel font-black text-green-600 text-xl">{{ child.questsCompleted ?? 0 }}</div>
+                <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">Misiones</div>
+              </div>
+              <div class="text-center rounded-xl p-3"
+                style="background: linear-gradient(135deg,rgba(59,130,246,0.15),rgba(37,99,235,0.1)); border: 1px solid rgba(59,130,246,0.3);">
+                <div class="font-cinzel font-black text-blue-600 text-xl">{{ child.loginStreak ?? 0 }}</div>
+                <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">Racha</div>
+              </div>
+            </div>
+
+            <!-- Barra XP -->
+            @if (child.xpInfo) {
+              <div>
+                <div class="flex justify-between font-cinzel text-xs text-gray-500 mb-1">
+                  <span>{{ child.xpInfo.xp }} XP</span>
+                  <span>{{ child.xpInfo.nextLevelXp }} XP — Nivel {{ child.xpInfo.level + 1 }}</span>
+                </div>
+                <div class="xp-bar rounded-full h-2.5">
+                  <div class="xp-bar-fill rounded-full h-2.5 transition-all duration-700"
+                    [style.width.%]="child.xpInfo.progress"></div>
+                </div>
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+
+      <!-- Botón para vincular más -->
+      <div class="text-center mt-8">
+        <button (click)="showLink = !showLink" class="btn-epic btn-gold text-sm py-2 px-6">
+          🔗 Vincular otro estudiante
+        </button>
+        @if (showLink) {
+          <div class="max-w-sm mx-auto mt-4">
+            @if (linkError()) {
+              <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 mb-4 text-sm font-playfair">
+                {{ linkError() }}
+              </div>
+            }
+            <div class="flex gap-3">
+              <input [(ngModel)]="linkEmail" type="email" placeholder="Email del estudiante"
+                class="input-epic flex-1 text-sm" />
+              <button (click)="linkChild()" class="btn-epic btn-green text-sm py-2 px-4">
+                Vincular
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+    }
+
+  </div>
+</main>
+
+}

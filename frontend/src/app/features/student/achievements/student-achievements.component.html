@@ -1,0 +1,156 @@
+<!-- Nav -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl">⚔️ LegendaryClass</a>
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/student/dashboard"    class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/student/classrooms"   class="nav-link-epic">📚 Dominios</a>
+      <a routerLink="/student/quests"       class="nav-link-epic">🗡️ Misiones</a>
+      <a routerLink="/student/rewards"      class="nav-link-epic">🛒 Tienda</a>
+      <a routerLink="/student/achievements" routerLinkActive="active" class="nav-link-epic">🏆 Logros</a>
+      <a routerLink="/student/profile"      class="nav-link-epic">👤 Perfil</a>
+    </div>
+    <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+  </div>
+</nav>
+
+<div class="z-content px-4 py-6 max-w-5xl mx-auto">
+
+  <!-- Header — purple gradient -->
+  <div class="rounded-3xl p-6 mb-6 animate-fade-in-up"
+    style="background: linear-gradient(135deg, rgba(88,28,135,0.95) 0%, rgba(124,58,237,0.9) 60%, rgba(88,28,135,0.95) 100%);
+           border: 3px solid rgba(255,255,255,0.2);
+           box-shadow: 0 15px 40px rgba(88,28,135,0.35);">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h1 class="font-cinzel-decorative font-black text-white"
+          style="font-size:clamp(1.8rem,4vw,2.5rem); text-shadow:0 0 20px rgba(255,255,255,0.4);">
+          🏆 Logros
+        </h1>
+        <p class="font-cinzel text-purple-200 mt-1">Tu colección de hazañas épicas</p>
+      </div>
+      <!-- Stats pills -->
+      <div class="flex gap-3 flex-wrap">
+        <div class="rounded-xl px-5 py-3 text-center"
+          style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3);">
+          <div class="font-cinzel font-black text-2xl text-white">{{ completed().length }}</div>
+          <div class="font-cinzel text-purple-200 text-xs">Obtenidos</div>
+        </div>
+        <div class="rounded-xl px-5 py-3 text-center"
+          style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3);">
+          <div class="font-cinzel font-black text-2xl text-white">{{ totalXp() }}</div>
+          <div class="font-cinzel text-purple-200 text-xs">XP Ganado</div>
+        </div>
+        <div class="rounded-xl px-5 py-3 text-center"
+          style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.3);">
+          <div class="font-cinzel font-black text-2xl text-white">{{ legendary() }}</div>
+          <div class="font-cinzel text-purple-200 text-xs">Legendarios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-16">
+      <div class="text-8xl mb-4 animate-float">🏆</div>
+      <p class="font-cinzel text-gray-500">Cargando logros...</p>
+    </div>
+  } @else if (achievements().length === 0) {
+    <!-- Empty state — dashed purple border -->
+    <div class="text-center py-12 rounded-2xl animate-fade-in-up"
+      style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
+             border:2px dashed rgba(124,58,237,0.3);">
+      <div class="text-6xl mb-4">🏆</div>
+      <h3 class="font-cinzel font-bold text-gray-600 text-xl mb-2">Aún sin logros</h3>
+      <p class="font-playfair text-gray-500 mb-4">Completa misiones y muestra un buen comportamiento para desbloquear logros épicos.</p>
+      <a routerLink="/student/quests"
+        class="inline-block font-cinzel font-bold text-white px-6 py-2 rounded-xl"
+        style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">
+        Ver Misiones
+      </a>
+    </div>
+  } @else {
+    <!-- Grouped by rarity -->
+    @for (rarity of rarityOrder; track rarity) {
+      @if (hasRarity(rarity)) {
+        <div class="mb-8 animate-fade-in-up">
+          <!-- Section title -->
+          <div class="font-cinzel font-bold text-purple-900 text-base flex items-center gap-2 mb-3">
+            {{ rarityLabel(rarity) }}
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (a of byRarity(rarity); track a.id) {
+              <div class="rounded-2xl p-5 relative overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                [style.background]="rarityCardBg(rarity)"
+                [style.border]="'2px solid ' + rarityCardBorder(rarity)"
+                style="box-shadow:0 8px 25px rgba(0,0,0,0.08);">
+                <div class="flex items-start gap-4">
+                  <!-- 60px icon circle -->
+                  <div class="flex items-center justify-center flex-shrink-0"
+                    style="width:60px; height:60px; border-radius:50%; font-size:1.8rem;"
+                    [style.background]="rarityIconBg(rarity)"
+                    [style.border]="'2px solid ' + rarityIconBorder(rarity)">
+                    {{ a.icon ?? '🏆' }}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2 mb-1 flex-wrap">
+                      <h3 class="font-cinzel font-bold text-gray-800">{{ a.name }}</h3>
+                      @if (a.xpReward) {
+                        <span class="font-cinzel font-bold text-xs px-3 py-1 rounded-full flex-shrink-0"
+                          style="background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#92400e;">
+                          +{{ a.xpReward }} XP
+                        </span>
+                      }
+                    </div>
+                    <p class="font-playfair text-gray-600 text-sm mb-2">{{ a.description }}</p>
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                      <span class="font-cinzel font-bold text-xs px-3 py-1 rounded-full uppercase"
+                        [style.background]="rarityBadgeBg(rarity)"
+                        [style.color]="rarityBadgeColor(rarity)"
+                        [style.border]="'1px solid ' + rarityIconBorder(rarity)">
+                        {{ rarity }}
+                      </span>
+                      @if (a.unlockedAt) {
+                        <span class="font-playfair text-xs text-gray-400">
+                          🗓 {{ a.unlockedAt | date:'dd/MM/yyyy' }}
+                        </span>
+                      }
+                    </div>
+                    <!-- Progress bar if multi-step -->
+                    @if (a.maxProgress > 1) {
+                      <div class="mt-2">
+                        <div class="flex justify-between font-cinzel text-xs text-gray-500 mb-1">
+                          <span>Progreso</span>
+                          <span>{{ a.progress ?? 0 }}/{{ a.maxProgress }}</span>
+                        </div>
+                        <div class="rounded-full overflow-hidden" style="background:rgba(124,58,237,0.1); height:6px;">
+                          <div class="h-full rounded-full transition-all duration-500"
+                            style="background:linear-gradient(90deg,#7c3aed,#a78bfa);"
+                            [style.width.%]="progressPct(a)"></div>
+                        </div>
+                      </div>
+                    }
+                    <!-- Locked indicator -->
+                    @if (!a.isCompleted && a.maxProgress <= 1) {
+                      <div class="mt-2 font-cinzel text-xs text-gray-400">🔒 Bloqueado</div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  }
+
+  <!-- Back -->
+  <div class="mt-6 text-center">
+    <a routerLink="/student/dashboard"
+      class="inline-flex items-center gap-2 font-cinzel font-bold text-gray-600 px-6 py-3 rounded-xl transition hover:bg-white/60"
+      style="border:2px solid rgba(107,114,128,0.3);">
+      ← Volver al Dashboard
+    </a>
+  </div>
+
+</div>

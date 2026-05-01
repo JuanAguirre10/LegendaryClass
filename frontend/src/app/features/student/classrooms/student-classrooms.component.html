@@ -1,0 +1,155 @@
+<!-- Nav -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl">⚔️ LegendaryClass</a>
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/student/dashboard"    class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/student/classrooms"   routerLinkActive="active" class="nav-link-epic">📚 Dominios</a>
+      <a routerLink="/student/quests"       class="nav-link-epic">🗡️ Misiones</a>
+      <a routerLink="/student/rewards"      class="nav-link-epic">🛒 Tienda</a>
+      <a routerLink="/student/achievements" class="nav-link-epic">🏆 Logros</a>
+      <a routerLink="/student/profile"      class="nav-link-epic">👤 Perfil</a>
+    </div>
+    <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+  </div>
+</nav>
+
+<!-- Toasts -->
+<div class="toast-container">
+  @for (t of toasts(); track t.id) {
+    <div class="toast-message" [class.success]="t.type==='success'" [class.error]="t.type==='error'" [class.info]="t.type==='info'">
+      {{ t.message }}
+    </div>
+  }
+</div>
+
+<div class="z-content py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+    <!-- Header -->
+    <div class="rounded-2xl p-6 mb-8 animate-fade-in-up"
+      style="background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(147,51,234,0.1));
+             border:2px solid rgba(59,130,246,0.2);
+             border-radius:20px;
+             backdrop-filter:blur(15px);
+             box-shadow:0 10px 30px rgba(0,0,0,0.1);">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+        <div class="mb-6 lg:mb-0">
+          <h1 class="font-cinzel-decorative font-black text-3xl lg:text-4xl mb-2"
+            style="background:linear-gradient(45deg,#b45309,#d97706,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+            🏰 MIS AULAS ÉPICAS
+          </h1>
+          <p class="font-playfair text-gray-600 text-lg">
+            Explora tus reinos de conocimiento y completa aventuras legendarias
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+          <!-- Join button — dedicated page like PHP -->
+          <a routerLink="/student/join-classroom"
+            class="font-cinzel font-bold text-white px-6 py-3 rounded-xl text-lg transition-all duration-200 hover:-translate-y-1"
+            style="background:linear-gradient(135deg,#f59e0b,#d97706); border:2px solid rgba(255,255,255,0.3); box-shadow:0 8px 20px rgba(245,158,11,0.3); text-decoration:none;">
+            🗝️ UNIRSE A AULA
+          </a>
+        </div>
+      </div>
+    </div>
+
+
+    @if (loading()) {
+      <div class="text-center py-16 animate-fade-in-up">
+        <div class="text-8xl mb-4 animate-float">🏫</div>
+        <p class="font-cinzel text-gray-500">Cargando tus aulas...</p>
+      </div>
+    } @else if (classrooms().length === 0) {
+      <!-- Empty state -->
+      <div class="text-center py-12 rounded-2xl animate-fade-in-up"
+        style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
+               border:2px solid rgba(245,158,11,0.3);
+               backdrop-filter:blur(15px);
+               box-shadow:0 10px 30px rgba(0,0,0,0.1);">
+        <div class="text-8xl mb-4 opacity-80">🏰</div>
+        <h2 class="font-cinzel-decorative font-bold text-gray-800 text-2xl mb-3">¡Tu Aventura Épica Te Espera!</h2>
+        <p class="font-playfair text-gray-600 text-lg mb-6 max-w-md mx-auto">
+          Aún no te has unido a ninguna aula mágica. Únete a tu primera aula y comienza tu emocionante viaje.
+        </p>
+        <a routerLink="/student/join-classroom"
+          class="inline-block font-cinzel font-bold text-white px-8 py-4 rounded-xl text-xl transition-all duration-200 hover:-translate-y-1"
+          style="background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 8px 20px rgba(245,158,11,0.3); text-decoration:none;">
+          🗝️ UNIRSE A MI PRIMERA AULA
+        </a>
+      </div>
+    } @else {
+      <!-- Classroom grid — min 350px like PHP -->
+      <div class="grid gap-6 fade-in-delay"
+        style="grid-template-columns: repeat(auto-fit, minmax(350px,1fr));">
+        @for (c of classrooms(); track c.id) {
+          <div class="rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
+            style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
+                   border:2px solid rgba(59,130,246,0.2);
+                   box-shadow:0 10px 25px rgba(0,0,0,0.1);">
+
+            <!-- Blue gradient header -->
+            <div class="p-6 relative" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:white;">
+              <span class="block mb-3" style="font-size:3rem;">🏫</span>
+              <h3 class="font-cinzel font-bold text-xl mb-1">{{ c.name }}</h3>
+              <p class="text-blue-100 text-sm opacity-90 leading-relaxed">{{ c.description ?? c.subject }}</p>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6">
+              <!-- Teacher info -->
+              <div class="flex items-center mb-5 p-4 rounded-xl"
+                style="background:rgba(59,130,246,0.05); border:1px solid rgba(59,130,246,0.1);">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl mr-4 flex-shrink-0"
+                  style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">
+                  👨‍🏫
+                </div>
+                <div>
+                  <h4 class="font-cinzel font-semibold text-gray-800">{{ c.teacher?.name ?? 'Profesor' }}</h4>
+                  <p class="font-playfair text-gray-500 text-sm">Maestro del Reino</p>
+                </div>
+              </div>
+
+              <!-- Points display (green gradient) -->
+              <div class="text-center mb-5 p-4 rounded-xl"
+                style="background:linear-gradient(135deg,#10b981,#059669); color:white;">
+                <div class="font-cinzel font-black text-3xl">{{ pointsInClassroom(c) }}</div>
+                <div class="font-cinzel text-sm opacity-90">Mis Puntos en Esta Aula</div>
+              </div>
+
+              <!-- Stats grid 2-col -->
+              <div class="grid grid-cols-2 gap-4 mb-5">
+                <div class="text-center p-4 rounded-xl"
+                  style="background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(16,185,129,0.05)); border:2px solid rgba(34,197,94,0.2);">
+                  <div class="font-cinzel font-black text-xl text-green-600">{{ questsCount(c) }}</div>
+                  <div class="font-cinzel text-xs text-gray-500 leading-tight mt-1">Misiones<br>Activas</div>
+                </div>
+                <div class="text-center p-4 rounded-xl"
+                  style="background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(124,58,237,0.05)); border:2px solid rgba(139,92,246,0.2);">
+                  <div class="font-cinzel font-black text-xl text-purple-600">{{ studentsCount(c) }}</div>
+                  <div class="font-cinzel text-xs text-gray-500 leading-tight mt-1">Estudiantes<br>Inscritos</div>
+                </div>
+              </div>
+
+              <!-- Actions row -->
+              <div class="flex gap-3">
+                <a [routerLink]="[c.id]"
+                  class="flex-1 text-center font-cinzel font-semibold text-white py-3 px-4 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                  style="background:linear-gradient(135deg,#3b82f6,#1d4ed8); border:2px solid rgba(255,255,255,0.2); text-decoration:none;">
+                  🚪 ENTRAR AL AULA
+                </a>
+                <button (click)="leaveClassroom(c.id, c.name)"
+                  [disabled]="leaveId() === c.id"
+                  class="font-cinzel font-semibold text-white px-4 py-3 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                  style="background:linear-gradient(135deg,#ef4444,#dc2626); border:2px solid rgba(255,255,255,0.2);">
+                  {{ leaveId() === c.id ? '⏳' : '🚪' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>

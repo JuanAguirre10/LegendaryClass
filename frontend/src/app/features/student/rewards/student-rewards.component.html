@@ -1,0 +1,197 @@
+<!-- Nav -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl">⚔️ LegendaryClass</a>
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/student/dashboard"    class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/student/classrooms"   class="nav-link-epic">📚 Dominios</a>
+      <a routerLink="/student/quests"       class="nav-link-epic">🗡️ Misiones</a>
+      <a routerLink="/student/rewards"      routerLinkActive="active" class="nav-link-epic">🛒 Tienda</a>
+      <a routerLink="/student/achievements" class="nav-link-epic">🏆 Logros</a>
+      <a routerLink="/student/profile"      class="nav-link-epic">👤 Perfil</a>
+    </div>
+    <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+  </div>
+</nav>
+
+<!-- Toasts -->
+<div class="toast-container">
+  @for (t of toasts(); track t.id) {
+    <div class="toast-message" [class.success]="t.type==='success'" [class.error]="t.type==='error'" [class.info]="t.type==='info'">
+      {{ t.message }}
+    </div>
+  }
+</div>
+
+<div class="z-content py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+    <!-- Store header — purple shimmer -->
+    <div class="rounded-3xl p-8 mb-8 animate-fade-in-up relative overflow-hidden"
+      style="background: linear-gradient(135deg, rgba(147,51,234,0.95) 0%, rgba(79,70,229,0.9) 50%, rgba(147,51,234,0.95) 100%);
+             border: 3px solid rgba(255,255,255,0.3);
+             box-shadow: 0 15px 40px rgba(147,51,234,0.3);">
+      <!-- Shimmer sweep -->
+      <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute inset-0"
+          style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                 animation: shimmerHeader 3s infinite;"></div>
+      </div>
+      <div class="relative z-10">
+        <h1 class="font-cinzel-decorative font-black text-white text-center mb-3"
+          style="font-size: clamp(2rem,5vw,3.5rem); text-shadow: 0 0 20px rgba(255,255,255,0.5); letter-spacing: 0.1em;">
+          🛒 TIENDA LEGENDARIA
+        </h1>
+        <p class="font-cinzel text-center text-white/90 text-lg mb-6">
+          Canjea tus puntos por recompensas épicas y poderes legendarios
+        </p>
+        <!-- Points display -->
+        <div class="max-w-xs mx-auto rounded-2xl p-5 text-center"
+          style="background: linear-gradient(135deg,#fbbf24,#f59e0b); color:#92400e;
+                 border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 0 30px rgba(251,191,36,0.4);">
+          <div class="font-cinzel font-black" style="font-size:3rem; text-shadow:0 2px 4px rgba(0,0,0,0.3);">
+            {{ profile()?.points ?? 0 }}
+          </div>
+          <div class="font-cinzel font-bold text-lg">💎 Puntos Disponibles</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="rounded-2xl p-5 mb-6 animate-fade-in-up"
+      style="background:rgba(255,255,255,0.9); border:2px solid rgba(147,51,234,0.1);">
+      <h3 class="font-cinzel font-bold text-gray-800 mb-3">🔍 Filtrar Recompensas:</h3>
+      <div class="flex flex-wrap gap-2">
+        @for (f of filters; track f.key) {
+          <button (click)="setFilter(f.key)"
+            class="font-cinzel font-semibold text-sm px-4 py-2 rounded-lg transition-all duration-200"
+            [style]="activeFilter()===f.key
+              ? 'background:linear-gradient(135deg,#7c3aed,#5b21b6);color:white;border:none;'
+              : 'background:rgba(147,51,234,0.1);color:#7c3aed;border:2px solid rgba(147,51,234,0.2);'">
+            {{ f.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="text-center py-20 animate-fade-in-up">
+        <div class="text-8xl mb-4 animate-float">🛒</div>
+        <p class="font-cinzel text-gray-500">Cargando la tienda...</p>
+      </div>
+    } @else if (filteredRewards().length === 0) {
+      <div class="text-center py-16 rounded-3xl animate-fade-in-up"
+        style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
+               border:3px solid rgba(147,51,234,0.2); backdrop-filter:blur(15px);">
+        <div class="text-8xl mb-4 opacity-70">🏪</div>
+        <h2 class="font-cinzel-decorative font-bold text-gray-700 text-2xl mb-3">¡Tienda en Construcción!</h2>
+        <p class="font-playfair text-gray-500 text-lg max-w-md mx-auto">
+          Los comerciantes legendarios están preparando increíbles recompensas para ti.
+        </p>
+      </div>
+    } @else {
+      <!-- Rewards grid — min 350px like PHP -->
+      <div class="grid gap-6 animate-fade-in-up"
+        style="grid-template-columns: repeat(auto-fit, minmax(350px,1fr));">
+        @for (r of filteredRewards(); track r.id) {
+          <div class="relative rounded-2xl overflow-hidden transition-all duration-400 hover:-translate-y-2 hover:scale-[1.02]"
+            style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
+                   border-right:3px solid rgba(147,51,234,0.2);
+                   border-top:3px solid rgba(147,51,234,0.2);
+                   border-bottom:3px solid rgba(147,51,234,0.2);
+                   box-shadow:0 10px 30px rgba(0,0,0,0.1);"
+            [style.border-left]="'6px solid ' + rarityBorderColor(r.rarity ?? 'common')">
+
+            <!-- Rarity badge absolute top-right -->
+            <div class="absolute top-4 right-4 font-cinzel font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wide"
+              [style.background]="rarityBadgeBg(r.rarity ?? 'common')"
+              [style.color]="rarityBadgeColor(r.rarity ?? 'common')">
+              {{ r.rarity ?? 'common' }}
+            </div>
+
+            <!-- Header -->
+            <div class="p-6 text-center">
+              <span class="block mb-3" style="font-size:4rem; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.2));">
+                {{ r.icon ?? '🎁' }}
+              </span>
+              <h3 class="font-cinzel font-bold text-gray-800 text-xl mb-2">{{ r.name }}</h3>
+              <p class="font-playfair text-gray-500 text-sm leading-relaxed">{{ r.description }}</p>
+            </div>
+
+            <!-- Features -->
+            <div class="px-6 pb-2">
+              @if (r.xpBonus > 0) {
+                <div class="flex items-center gap-2 mb-2 font-playfair text-sm text-gray-600">
+                  <span>✨</span><span>+{{ r.xpBonus }} XP Bonus</span>
+                </div>
+              }
+              @if (r.durationHours > 0) {
+                <div class="flex items-center gap-2 mb-2 font-playfair text-sm text-gray-600">
+                  <span>⏰</span><span>Duración: {{ r.durationHours }} horas</span>
+                </div>
+              }
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 mt-2" style="background:rgba(147,51,234,0.05); border-top:1px solid rgba(147,51,234,0.1);">
+              <div class="flex items-center justify-center gap-1 mb-3 font-cinzel">
+                <span class="font-black text-purple-700" style="font-size:2rem;">{{ r.costPoints ?? r.cost ?? 0 }}</span>
+                <span style="font-size:1.5rem;">💎</span>
+              </div>
+              <button (click)="buy(r)"
+                [disabled]="!canAfford(r) || buyingId() === r.id"
+                class="w-full font-cinzel font-bold text-lg py-3 rounded-xl relative overflow-hidden transition-all duration-300"
+                [style]="!canAfford(r)
+                  ? 'background:linear-gradient(135deg,#9ca3af,#6b7280);color:white;cursor:not-allowed;'
+                  : 'background:linear-gradient(135deg,#7c3aed,#5b21b6);color:white;border:2px solid rgba(255,255,255,0.3);'"
+                [class.opacity-70]="buyingId() === r.id">
+                {{ buyingId() === r.id ? '⏳ Canjeando...' : !canAfford(r) ? '💸 Puntos Insuficientes' : '🛒 Canjear Recompensa' }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- My Rewards section -->
+    @if (myRewards().length > 0) {
+      <div class="mt-12 animate-fade-in-up">
+        <div class="text-center mb-6">
+          <h2 class="font-cinzel font-bold text-2xl text-gray-800 mb-1">🎒 Mis Recompensas</h2>
+          <p class="font-playfair text-gray-500 text-sm">Recompensas que has canjeado recientemente</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (mr of myRewards(); track mr.id) {
+            <div class="rounded-2xl p-4"
+              style="background:white; border:2px solid rgba(147,51,234,0.2); box-shadow:0 4px 15px rgba(0,0,0,0.06);">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span style="font-size:1.5rem;">{{ mr.reward?.icon ?? '🎁' }}</span>
+                  <div>
+                    <h4 class="font-cinzel font-bold text-gray-800 text-sm">{{ mr.reward?.name ?? 'Recompensa' }}</h4>
+                    <p class="font-playfair text-xs text-purple-600 font-semibold">{{ mr.pointsSpent }} 💎</p>
+                  </div>
+                </div>
+                <span class="font-cinzel text-xs px-2 py-1 rounded-full"
+                  [class.bg-green-100]="mr.status==='approved'" [class.text-green-700]="mr.status==='approved'"
+                  [class.bg-yellow-100]="mr.status==='pending'" [class.text-yellow-700]="mr.status==='pending'"
+                  [class.bg-red-100]="mr.status==='rejected'"  [class.text-red-700]="mr.status==='rejected'"
+                  [class.bg-blue-100]="mr.status==='delivered'" [class.text-blue-700]="mr.status==='delivered'">
+                  {{ mr.status === 'approved' ? '✅ Aprobado' : mr.status === 'pending' ? '⏳ Pendiente' : mr.status === 'delivered' ? '📦 Entregado' : '❌ Rechazado' }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else if (!loading()) {
+      <div class="mt-12 text-center py-8 rounded-2xl"
+        style="background:white; border:2px solid rgba(229,231,235,1);">
+        <div style="font-size:2.5rem;" class="mb-3">🎒</div>
+        <h3 class="font-cinzel font-bold text-gray-700 text-lg mb-1">Aún no tienes recompensas</h3>
+        <p class="font-playfair text-gray-500 text-sm">¡Canjea tu primera recompensa arriba!</p>
+      </div>
+    }
+
+  </div>
+</div>

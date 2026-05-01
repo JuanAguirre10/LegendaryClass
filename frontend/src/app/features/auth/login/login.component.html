@@ -1,0 +1,138 @@
+<div class="min-h-screen" style="position: relative;">
+
+  <!-- Título principal en la parte superior — igual al PHP -->
+  <div class="text-center pt-8 pb-4">
+    <h1 style="font-family: 'Cinzel Decorative', serif; font-weight: 900; font-size: clamp(3rem, 7vw, 6rem); background: linear-gradient(45deg, #b45309, #d97706, #f59e0b, #fbbf24); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-align: center; letter-spacing: 0.1em; margin-bottom: 1rem; filter: drop-shadow(0 0 10px rgba(217,119,6,0.3));">
+      LEGENDARYCLASS
+    </h1>
+    <p style="font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1.2rem, 3vw, 2rem); color: #374151; text-align: center; letter-spacing: 0.05em; margin-bottom: 3rem;">
+      ⚔️ Portal de Aventureros Legendarios ⚔️
+    </p>
+  </div>
+
+  <!-- Contenedor centrado -->
+  <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 2rem; margin-top: -4rem;">
+    <div style="backdrop-filter: blur(15px); background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.95) 100%); border: 2px solid rgba(255,255,255,0.9); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,1); width: 100%; max-width: 400px; padding: 2rem;">
+
+      <!-- Header del panel -->
+      <div style="text-align: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(203,213,225,0.3);">
+        <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-2">🏰 Portal de Acceso</h3>
+        <p class="font-cinzel text-sm text-slate-600">Ingresa para comenzar tu aventura</p>
+      </div>
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="mb-4 p-3 rounded-xl flex items-center"
+          style="background: rgba(239,68,68,0.08); border: 2px solid rgba(239,68,68,0.2);">
+          <span class="text-lg mr-2">⚠️</span>
+          <div>
+            <p class="font-cinzel font-semibold text-red-700 text-sm">Acceso Denegado</p>
+            <p class="font-playfair text-red-600 text-xs mt-1">{{ error() }}</p>
+          </div>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+
+        <!-- Email -->
+        <div>
+          <label class="block font-cinzel font-semibold text-sm text-gray-800 mb-2">⚡ Email</label>
+          <div class="relative">
+            <input type="email" formControlName="email"
+              placeholder="tu.email&#64;aventura.com"
+              class="input-epic pr-10" />
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+              </svg>
+            </div>
+          </div>
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <p class="text-red-500 text-xs mt-1 font-playfair italic">Email inválido</p>
+          }
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label class="block font-cinzel font-semibold text-sm text-gray-800 mb-2">🗝️ Contraseña</label>
+          <div class="relative">
+            <input type="password" formControlName="password"
+              placeholder="Tu contraseña..."
+              class="input-epic pr-10" />
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recordarme -->
+        <div class="flex items-center justify-center">
+          <input type="checkbox" id="remember_me"
+            class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+          <label for="remember_me" class="ml-2 font-cinzel text-sm text-gray-800">🔮 Recordarme</label>
+        </div>
+
+        <!-- Botón -->
+        <button type="submit"
+          [disabled]="loading() || form.invalid"
+          class="btn-epic btn-blue w-full py-3 text-sm text-white disabled:opacity-50 disabled:cursor-not-allowed">
+          @if (loading()) {
+            <span class="flex items-center justify-center gap-2">
+              <span class="animate-spin-slow">⚔️</span> Iniciando aventura...
+            </span>
+          } @else {
+            ⚔️ INICIAR AVENTURA
+          }
+        </button>
+
+        <!-- Enlaces -->
+        <div class="text-center space-y-3 pt-4">
+          <div>
+            <a routerLink="/auth/register"
+              class="font-cinzel text-sm text-gray-700 hover:text-gray-900 transition-colors"
+              style="text-decoration: underline; text-decoration-color: rgba(59,130,246,0.6);">
+              🌟 ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+          <div class="font-playfair text-sm text-slate-600">
+            ¿Nuevo aquí?
+            <a routerLink="/auth/register"
+              class="font-cinzel font-semibold text-gray-700 hover:text-gray-900 ml-1 transition-colors"
+              style="text-decoration: underline; text-decoration-color: rgba(59,130,246,0.6);">
+              ✨ Crear cuenta
+            </a>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Overlay de bienvenida tras login exitoso -->
+  @if (welcome()) {
+    <div style="position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);">
+      <div class="text-center animate-fade-in-up" style="backdrop-filter: blur(20px); background: linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.93) 100%); border: 2px solid rgba(255,255,255,0.9); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); padding: 3rem 4rem;">
+        <div style="font-size: 5rem; margin-bottom: 1rem;" class="animate-float">{{ welcome()!.icon }}</div>
+        <h2 style="font-family: 'Cinzel Decorative', serif; font-weight: 900; font-size: clamp(1.5rem, 4vw, 2.5rem); background: linear-gradient(45deg, #b45309, #d97706, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem;">
+          {{ welcome()!.title }}
+        </h2>
+        <p style="font-family: 'Cinzel', serif; font-weight: 600; font-size: 1.1rem; color: #374151;">
+          {{ welcome()!.subtitle }}
+        </p>
+        <p style="font-family: 'Playfair Display', serif; font-size: 0.85rem; color: #9ca3af; margin-top: 1rem;">
+          Preparando tu aventura...
+        </p>
+      </div>
+    </div>
+  }
+
+  <!-- Footer fijo -->
+  <div style="position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); color: #6b7280; font-size: 0.75rem; text-align: center; font-family: 'Cinzel', serif; background: rgba(255,255,255,0.8); padding: 0.5rem 1rem; border-radius: 20px; backdrop-filter: blur(10px); white-space: nowrap;">
+    🏰 LegendaryClass v2.0 🏰
+  </div>
+
+</div>

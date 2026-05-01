@@ -1,0 +1,68 @@
+# ── Node ─────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp
+.pnp.js
+*.pid
+*.seed
+
+# ── Build outputs ─────────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+backend/dist/
+frontend/dist/
+
+# ── Environment — NUNCA subir al repositorio ──────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+backend/.env
+frontend/.env
+
+# ── Angular ───────────────────────────────────────────────────────────────
+.angular/
+frontend/.angular/
+*.tsbuildinfo
+
+# ── Prisma — las migraciones SÍ se versionan, solo se ignora lo generado ─
+backend/node_modules/
+
+# ── Cobertura de tests ────────────────────────────────────────────────────
+coverage/
+*.lcov
+.nyc_output/
+
+# ── Logs ──────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Sistema operativo ─────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── IDEs y editores ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+*~
+
+# ── Prisma Studio ─────────────────────────────────────────────────────────
+.prisma/

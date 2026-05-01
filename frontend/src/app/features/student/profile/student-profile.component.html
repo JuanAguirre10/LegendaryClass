@@ -1,0 +1,133 @@
+<!-- Navegación épica -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl">⚔️ LegendaryClass</a>
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/student/dashboard"   class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/student/classrooms"  class="nav-link-epic">📚 Dominios</a>
+      <a routerLink="/student/quests"      class="nav-link-epic">🗡️ Misiones</a>
+      <a routerLink="/student/rewards"     class="nav-link-epic">🛒 Tienda</a>
+      <a routerLink="/student/achievements" class="nav-link-epic">🏆 Logros</a>
+      <a routerLink="/student/profile"     routerLinkActive="active" class="nav-link-epic">👤 Perfil</a>
+    </div>
+    <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+  </div>
+</nav>
+
+<div class="z-content py-10 max-w-4xl mx-auto px-6">
+  @if (!profile()) {
+    <div class="glass-panel p-12 text-center animate-fade-in-up">
+      <div class="text-8xl mb-6 animate-float">👤</div>
+      <p class="font-cinzel text-gray-500">Cargando perfil...</p>
+    </div>
+  } @else {
+
+    <!-- Hero card del perfil (estilo PHP) -->
+    <div class="rounded-3xl p-8 mb-8 relative overflow-hidden animate-fade-in-up"
+      style="background: linear-gradient(135deg, rgba(15,23,42,0.97) 0%, rgba(88,28,135,0.95) 40%, rgba(124,58,237,0.92) 70%, rgba(88,28,135,0.95) 100%);
+             border: 3px solid rgba(251,191,36,0.5);
+             box-shadow: 0 20px 50px rgba(0,0,0,0.3), 0 0 30px rgba(124,58,237,0.3);">
+
+      <!-- Shimmer overlay -->
+      <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0" style="background: linear-gradient(45deg, rgba(251,191,36,0.05) 0%, transparent 50%); animation: shimmerHeader 4s infinite;"></div>
+      </div>
+
+      <div class="relative z-10 flex items-center gap-6">
+        <!-- Avatar del personaje (tier correcto según nivel) -->
+        <div class="relative flex-shrink-0">
+          <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-amber-400 relative"
+            style="background: linear-gradient(135deg, #0f172a, #1e1b4b); box-shadow: 0 0 30px rgba(251,191,36,0.5);">
+            <img [src]="getCharacterImage()"
+              [alt]="charInfo?.name"
+              class="w-full h-full object-contain p-2"
+              (error)="onImgError($event, charInfo?.icon ?? '🧙‍♂️')" />
+          </div>
+          <!-- Escudo flotante -->
+          <img [src]="getShieldImage()"
+            class="absolute -top-2 -right-2 w-12 h-12 animate-float-shield"
+            style="filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));"
+            (error)="hideElement($event)" />
+          <!-- Tier badge -->
+          <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 font-cinzel font-black text-xs px-2 py-0.5 rounded-full whitespace-nowrap"
+            style="background: linear-gradient(135deg,#fbbf24,#d97706); color: #1f2937; box-shadow: 0 2px 8px rgba(251,191,36,0.4);">
+            {{ getTierName() }}
+          </div>
+        </div>
+
+        <!-- Info del perfil -->
+        <div class="flex-1">
+          <h1 class="font-cinzel font-black text-3xl text-amber-400 mb-1"
+            style="text-shadow: 0 0 20px rgba(251,191,36,0.5);">
+            {{ profile().name | uppercase }}
+          </h1>
+          <p class="font-cinzel text-white/80 text-sm mb-3">
+            {{ charInfo?.name ?? 'Aventurero' }} · Nivel {{ profile().level ?? 1 }}
+          </p>
+          <p class="font-playfair text-white/50 text-sm">{{ profile().email }}</p>
+        </div>
+
+        <!-- Points badge -->
+        <div class="text-center rounded-2xl px-6 py-4"
+          style="background: linear-gradient(135deg,#1f2937,#374151); border: 2px solid #fbbf24; box-shadow: 0 0 15px rgba(251,191,36,0.3);">
+          <div class="font-cinzel font-black text-amber-400 text-3xl"
+            style="text-shadow: 0 0 8px rgba(251,191,36,0.5);">
+            {{ profile().points ?? 0 }}
+          </div>
+          <div class="font-cinzel text-white/60 text-xs uppercase tracking-wide">Puntos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats del personaje -->
+    <div class="legendary-card p-7 mb-6 animate-fade-in-up">
+      <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-6 flex items-center gap-3"
+        style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
+        <span class="text-2xl">📊</span>
+        Estadísticas de Aventurero
+      </h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        @for (stat of stats(); track stat.name) {
+          <div class="rounded-2xl p-4 text-center transition-all duration-300 hover:scale-[1.03]"
+            style="background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85)); border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <div class="text-2xl mb-1">{{ stat.icon }}</div>
+            <div class="font-cinzel font-black text-2xl mb-1" [style.color]="stat.color">{{ stat.value ?? 10 }}</div>
+            <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">{{ stat.name }}</div>
+            <!-- Mini barra -->
+            <div class="mt-2 h-1.5 rounded-full overflow-hidden" style="background: rgba(0,0,0,0.1);">
+              <div class="h-full rounded-full transition-all duration-700" [style.width.%]="((stat.value ?? 10) / 50) * 100" [style.background]="stat.color"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- XP Info -->
+    <div class="legendary-card p-7 animate-fade-in-up">
+      <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-5 flex items-center gap-3">
+        <span class="text-2xl">⭐</span>
+        Progreso de Nivel
+      </h3>
+      <div class="flex items-center gap-6">
+        <div class="text-center">
+          <div class="font-cinzel font-black text-4xl text-amber-600">{{ profile().level ?? 1 }}</div>
+          <div class="font-cinzel text-xs text-gray-500 uppercase">Nivel Actual</div>
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between font-cinzel text-xs text-gray-500 mb-2">
+            <span>{{ getXpInfo().xp }} XP</span>
+            <span>{{ getXpInfo().nextLevelXp }} XP</span>
+          </div>
+          <div class="xp-bar rounded-full h-4">
+            <div class="xp-bar-fill rounded-full h-4 transition-all duration-700"
+              [style.width.%]="getXpInfo().xpProgress"></div>
+          </div>
+          <p class="font-playfair text-xs text-gray-500 mt-2 text-center">
+            {{ getXpInfo().xpProgress }}% hacia el nivel {{ (profile().level ?? 1) + 1 }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+  }
+</div>

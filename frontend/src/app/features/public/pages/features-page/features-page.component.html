@@ -1,0 +1,39 @@
+<section class="py-20 min-h-screen">
+  <div class="max-w-6xl mx-auto px-4">
+
+    <!-- Header -->
+    <div class="text-center mb-16 animate-fade-in-up">
+      <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Habilidades del Sistema</p>
+      <h1 class="font-cinzel-decorative text-4xl md:text-6xl font-black epic-title-static mb-4">Poderes Legendarios</h1>
+      <p class="font-playfair text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
+        Todo lo que necesitas para transformar tu aula en una aventura épica que los
+        estudiantes no querrán perderse jamás.
+      </p>
+    </div>
+
+    <!-- Grid de características -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+      @for (feat of features; track feat.title) {
+        <div class="legendary-card p-6 group hover:-translate-y-1 transition-all duration-300">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl mb-4
+                      transition-transform duration-300 group-hover:scale-110 border"
+               [class]="feat.bg + ' ' + feat.border">
+            {{ feat.icon }}
+          </div>
+          <h3 class="font-cinzel font-bold text-base mb-2 uppercase tracking-wide" [class]="feat.color">
+            {{ feat.title }}
+          </h3>
+          <p class="font-playfair text-gray-600 text-sm leading-relaxed">{{ feat.desc }}</p>
+        </div>
+      }
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center">
+      <a routerLink="/auth/register" class="btn-epic btn-gold text-base px-10 py-4">
+        ✨ PROBAR GRATIS AHORA
+      </a>
+      <p class="font-playfair text-gray-400 text-sm mt-4">Sin tarjeta de crédito · Listo en 2 minutos</p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,144 @@
+<!-- Partículas flotantes de fondo (igual al PHP) -->
+<div class="floating-particles">
+  @for (p of bgParticles; track p.id) {
+    <div class="bg-particle"
+      [style.left.%]="p.x"
+      [style.top.%]="p.y"
+      [style.width.px]="p.size"
+      [style.height.px]="p.size"
+      [style.animation-duration]="p.duration + 's'"
+      [style.animation-delay]="p.delay + 's'"></div>
+  }
+</div>
+
+<!-- Fondo animado con gradient igual al PHP -->
+<div class="min-h-screen z-content"
+  style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+         background-size: 400% 400%;
+         animation: gradientShift 15s ease infinite;">
+
+  <!-- Overlay semi-transparente -->
+  <div class="min-h-screen flex flex-col items-center justify-center p-6"
+    style="background: rgba(0,0,0,0.35);">
+
+    <!-- Título épico -->
+    <div class="text-center mb-10">
+      <h1 class="font-cinzel-decorative font-black text-white mb-3"
+        style="font-size: clamp(2rem,5vw,3.5rem);
+               text-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 40px rgba(251,191,36,0.3);">
+        ⚔️ Elige tu Clase
+      </h1>
+      <p class="font-cinzel text-amber-200 text-sm tracking-widest uppercase">
+        Esta decisión definirá tus bonificaciones de XP en el aula
+      </p>
+    </div>
+
+    @if (error()) {
+      <div class="bg-red-500/80 text-white rounded-xl p-3 mb-6 text-sm font-playfair max-w-lg text-center">
+        {{ error() }}
+      </div>
+    }
+
+    <!-- Grid de personajes -->
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 w-full max-w-6xl mb-10">
+      @for (char of characters; track char.type) {
+        <div (click)="select(char.type)"
+          class="character-card flex flex-col items-center text-center cursor-pointer"
+          [class.selected]="selected() === char.type"
+          [class.selecting]="selecting() === char.type">
+
+          <!-- Badge seleccionado -->
+          @if (selected() === char.type) {
+            <div class="absolute top-3 right-3 points-indicator text-xs px-2 py-1">
+              ✓ Elegido
+            </div>
+          }
+
+          <!-- Imagen del personaje — ocupa la parte superior del card -->
+          <div class="w-full relative flex justify-center items-end overflow-hidden"
+            style="height: 220px; padding-top: 1rem;">
+            <img [src]="charImage(char.type)"
+              [alt]="char.name"
+              class="h-full w-auto object-contain"
+              style="max-height: 200px; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.4));"
+              (error)="onImgError($event, char.icon)"
+            />
+            <!-- Escudo flotante -->
+            <img [src]="charShield(char.type)"
+              [alt]="char.type"
+              class="absolute top-2 right-4 w-12 h-12 animate-float-shield"
+              style="filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));"
+              (error)="hideElement($event)"
+            />
+          </div>
+
+          <!-- Contenido inferior del card -->
+          <div class="px-4 pb-4 pt-3 w-full flex flex-col items-center flex-1">
+            <!-- Nombre -->
+            <h3 class="font-cinzel font-black text-lg mb-2 w-full"
+              [style.color]="char.color">
+              {{ char.name }}
+            </h3>
+
+            <!-- Bonus badge -->
+            <div class="mb-3 w-full flex justify-center">
+              <span class="font-cinzel text-xs font-bold px-3 py-1 rounded-full"
+                [style.background]="char.color + '20'"
+                [style.color]="char.color"
+                [style.border]="'1px solid ' + char.color + '40'">
+                +20% XP · {{ char.bonusType }}
+              </span>
+            </div>
+
+            <!-- Descripción -->
+            <p class="font-playfair text-gray-500 text-xs leading-relaxed w-full text-center flex-1">
+              {{ char.description }}
+            </p>
+
+            <!-- Botón elegir -->
+            <button (click)="select(char.type); $event.stopPropagation()"
+              class="mt-4 w-full btn-epic text-xs py-2"
+              [class.btn-gold]="selected() === char.type"
+              [class.btn-green]="selected() !== char.type">
+              {{ selected() === char.type ? '✓ Elegido' : 'Elegir ' + char.name }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="flex flex-col items-center gap-3">
+      <button (click)="confirm()"
+        [disabled]="!selected() || loading()"
+        class="btn-epic btn-gold px-16 py-4 text-base disabled:opacity-40 disabled:cursor-not-allowed shadow-2xl">
+        @if (loading()) {
+          <span class="flex items-center gap-3">
+            <span class="animate-spin-slow">⭐</span>
+            Iniciando tu aventura...
+          </span>
+        } @else if (selected()) {
+          ⚔️ CONFIRMAR — {{ selectedCharacterName }}
+        } @else {
+          Selecciona tu clase
+        }
+      </button>
+
+      @if (selected()) {
+        <p class="font-cinzel text-amber-200/70 text-xs tracking-wide uppercase">
+          Esta elección es permanente
+        </p>
+      }
+
+      <!-- Botón saltar -->
+      <button (click)="skipForNow()"
+        class="font-cinzel text-white/50 text-xs hover:text-white/80 transition-colors mt-1 underline underline-offset-2">
+        Elegir después
+      </button>
+      <p class="font-playfair text-white/30 text-xs text-center max-w-xs">
+        Si sales sin elegir, podrás seleccionar tu clase en tu próximo ingreso
+      </p>
+    </div>
+
+  </div>
+</div>

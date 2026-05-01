@@ -1,0 +1,57 @@
+<section class="py-20 min-h-screen">
+  <div class="max-w-3xl mx-auto px-4">
+
+    <!-- Header -->
+    <div class="text-center mb-16 animate-fade-in-up">
+      <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Pergamino de Sabiduría</p>
+      <h1 class="font-cinzel-decorative text-4xl md:text-6xl font-black epic-title-static mb-4">Preguntas Frecuentes</h1>
+      <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+        Todo lo que necesitas saber antes de comenzar tu aventura legendaria.
+      </p>
+    </div>
+
+    <!-- Acordeón -->
+    <div class="space-y-3 mb-16">
+      @for (faq of faqs; track faq.q; let i = $index) {
+        <div class="legendary-card overflow-hidden">
+          <button (click)="toggle(i)"
+                  class="w-full px-6 py-5 flex items-start justify-between text-left transition-colors duration-200 hover:bg-amber-50/40 gap-4">
+            <div class="flex-grow">
+              <span class="font-cinzel text-xs text-amber-500 uppercase tracking-widest block mb-1">{{ faq.cat }}</span>
+              <span class="font-cinzel font-bold text-gray-800 text-sm leading-relaxed">{{ faq.q }}</span>
+            </div>
+            <span class="text-amber-500 font-bold text-2xl flex-shrink-0 transition-transform duration-300 mt-1"
+                  [ngClass]="openFaq() === i ? 'rotate-45' : 'rotate-0'">
+              +
+            </span>
+          </button>
+          <div class="overflow-hidden transition-all duration-300 ease-in-out"
+               [ngClass]="openFaq() === i ? 'max-h-64' : 'max-h-0'">
+            <div class="px-6 pb-5">
+              <div class="border-t border-amber-100 pt-4">
+                <p class="font-playfair text-gray-600 text-sm leading-relaxed">{{ faq.a }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- CTA contacto -->
+    <div class="glass-panel p-8 text-center">
+      <div class="text-4xl mb-4">💬</div>
+      <h2 class="font-cinzel font-bold text-gray-800 uppercase tracking-wide text-base mb-2">¿No encontraste tu respuesta?</h2>
+      <p class="font-playfair text-gray-500 text-sm mb-6">Nuestro equipo responde en menos de 24 horas.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="mailto:hola@legendaryclass.com" class="btn-epic btn-gold !text-xs px-8 py-3">
+          ✉️ ESCRIBIRNOS
+        </a>
+        <a routerLink="/auth/register"
+           class="btn-epic !text-xs px-8 py-3"
+           style="background: linear-gradient(135deg, #6b7280, #4b5563); color: white;">
+          🗺️ COMENZAR GRATIS
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

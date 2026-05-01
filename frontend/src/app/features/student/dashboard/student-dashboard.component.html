@@ -1,0 +1,410 @@
+<!-- ══════════════════ EVOLUTION OVERLAY ══════════════════ -->
+@if (showEvolution()) {
+  <div class="evolution-overlay" (click)="closeEvolution()">
+    <div class="evolution-particles">
+      @for (p of evolutionParticles; track p.id) {
+        <div class="evolution-particle"
+          [style.left.%]="p.x"
+          [style.top.%]="p.y"
+          [style.animation-delay]="p.delay + 's'"></div>
+      }
+    </div>
+    <div class="relative z-10">
+      <div class="evolution-character-img character-evolved">
+        {{ charInfo?.icon ?? '⚔️' }}
+      </div>
+      <div class="evolution-text">¡Has Evolucionado!</div>
+      <div class="font-cinzel text-white/80 text-lg mt-3">
+        {{ getTierName() }} · Nivel {{ data()?.xpInfo?.level }}
+      </div>
+      <div class="evolution-bonus">✨ +{{ evolutionBonus }} XP Bonus ✨</div>
+      <p class="font-playfair text-white/50 text-sm mt-8">Toca para continuar</p>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════ TOAST CONTAINER ══════════════════ -->
+<div class="toast-container">
+  @for (t of toasts(); track t.id) {
+    <div class="toast-message" [class]="'toast-message ' + t.type" [class.fade-out]="t.fadingOut">
+      <span>{{ t.icon }}</span>
+      <span>{{ t.message }}</span>
+    </div>
+  }
+</div>
+
+<!-- Navegación épica -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <!-- Logo -->
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl">⚔️ LegendaryClass</a>
+
+    <!-- Links de nav -->
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/student/dashboard" routerLinkActive="active" class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/student/classrooms" routerLinkActive="active" class="nav-link-epic">📚 Dominios</a>
+      <a routerLink="/student/quests" routerLinkActive="active" class="nav-link-epic">🗡️ Misiones</a>
+      <a routerLink="/student/rewards" routerLinkActive="active" class="nav-link-epic">🛒 Tienda</a>
+      <a routerLink="/student/achievements" routerLinkActive="active" class="nav-link-epic">🏆 Logros</a>
+      <a routerLink="/student/profile" routerLinkActive="active" class="nav-link-epic">👤 Perfil</a>
+    </div>
+
+    <!-- User info + puntos -->
+    <div class="flex items-center gap-3">
+      <!-- Mini avatar del personaje -->
+      @if (user?.characterType) {
+        <div class="relative hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl"
+          style="background: rgba(255,255,255,0.1); border: 1px solid rgba(251,191,36,0.3);">
+          <img [src]="getShieldImage()"
+            class="w-7 h-7 object-contain animate-float-shield"
+            (error)="hideElement($event)" />
+          <div>
+            <div class="font-cinzel text-amber-400 text-xs font-bold leading-tight">{{ charInfo?.name ?? user!.characterType }}</div>
+            <div class="font-cinzel text-white/50 text-[10px] leading-tight">Nv. {{ data()?.xpInfo?.level ?? 1 }}</div>
+          </div>
+        </div>
+      }
+      <span class="points-indicator">💎 {{ user?.points ?? 0 }}</span>
+      <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
+    </div>
+  </div>
+</nav>
+
+@if (loading()) {
+  <!-- Loading state -->
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="glass-panel p-12 text-center animate-fade-in-up">
+      <div class="text-8xl mb-6 animate-float">⚔️</div>
+      <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">Cargando tu Aventura...</h2>
+      <p class="font-playfair text-gray-500">Preparando tu mundo legendario</p>
+    </div>
+  </div>
+} @else if (data()) {
+
+<!-- Header épico -->
+<header class="epic-header">
+  <div class="max-w-7xl mx-auto py-8 px-6 text-center">
+    <h1 class="epic-title" style="font-size: clamp(1.8rem,4vw,3rem);">
+      🏰 {{ charInfo?.name ?? 'Aventurero' }} {{ (user?.name ?? '') | uppercase }}
+    </h1>
+    <p class="font-cinzel text-white/80 text-lg mt-3">
+      Nivel {{ data().xpInfo.level }} •
+      {{ data().xpInfo.level >= 75 ? 'Legendario' : data().xpInfo.level >= 50 ? 'Épico' : data().xpInfo.level >= 25 ? 'Veterano' : 'Novato' }}
+    </p>
+  </div>
+</header>
+
+<!-- Contenido principal -->
+<main class="z-content py-8">
+  <div class="max-w-7xl mx-auto px-6">
+
+    <!-- Sección de evolución del personaje -->
+    <div class="legendary-card mb-8 overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6" style="height: 650px;">
+
+        <!-- Panel izquierdo — Stats del personaje -->
+        <div class="character-stats-panel rounded-2xl p-5 overflow-y-auto" style="height: 100%;">
+          <h3 class="font-cinzel font-bold text-center text-amber-400 mb-4 text-sm tracking-widest uppercase"
+            style="text-shadow: 0 0 8px rgba(251,191,36,0.5);">
+            📊 Estadísticas
+          </h3>
+
+          <!-- Perfil -->
+          <div class="flex items-center gap-3 mb-4">
+            <div class="relative w-16 h-16 rounded-full border-3 border-amber-400 overflow-hidden flex-shrink-0"
+              style="border: 3px solid #fbbf24; box-shadow: 0 0 15px rgba(251,191,36,0.4); background: linear-gradient(135deg,#667eea,#764ba2);">
+              <img [src]="getShieldImage()"
+                [alt]="charInfo?.name"
+                class="w-full h-full object-contain p-1"
+                (error)="hideElement($event)" />
+            </div>
+            <div>
+              <div class="font-cinzel font-bold text-amber-400 text-sm"
+                style="text-shadow: 0 0 8px rgba(251,191,36,0.5);">
+                {{ (user?.name ?? '') | uppercase }}
+              </div>
+              <div class="text-white/80 text-xs">{{ charInfo?.name ?? 'Aventurero' }}</div>
+            </div>
+          </div>
+
+          <!-- Puntos disponibles -->
+          <div class="rounded-lg p-3 mb-4"
+            style="background: linear-gradient(135deg,#1f2937,#374151); border: 2px solid #fbbf24; box-shadow: 0 0 15px rgba(251,191,36,0.3);">
+            <div class="flex items-center justify-center gap-3">
+              <span class="text-lg">💎</span>
+              <span class="font-cinzel font-bold text-amber-400 text-xl"
+                style="text-shadow: 0 0 8px rgba(251,191,36,0.5);">
+                {{ user?.points ?? 0 }}
+              </span>
+              <span class="text-white/60 text-xs">Puntos Disponibles</span>
+            </div>
+          </div>
+
+
+          <!-- Stats list -->
+          <div class="space-y-2">
+            @for (stat of stats; track stat.key) {
+              <div class="rounded-lg p-2 transition-all duration-300 hover:scale-[1.01]"
+                style="background: rgba(55,65,81,0.4); border: 1px solid rgba(107,114,128,0.25);">
+                <div class="flex items-center gap-1 mb-1">
+                  <span class="text-sm">{{ stat.icon }}</span>
+                  <span class="text-white/80 text-xs font-medium flex-1">{{ stat.name }}</span>
+                  <span class="font-cinzel font-bold text-amber-400 text-xs mr-1">{{ getStatValue(stat.key) }}</span>
+                  <button (click)="upgradeStat(stat.key)"
+                    [disabled]="upgradingStat() !== null || !canUpgrade()"
+                    [style.opacity]="(!canUpgrade() || upgradingStat() !== null) ? '0.35' : '1'"
+                    style="background: linear-gradient(135deg, #059669, #047857); color: white; border-radius: 4px; width: 38px; height: 30px; font-size: 0.55rem; font-weight: bold; border: 1px solid rgba(16,185,129,0.3); flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; line-height: 1.1;">
+                    @if (upgradingStat() === stat.key) {
+                      <span style="font-size:0.75rem;">⏳</span>
+                    } @else {
+                      <span>+5</span>
+                      <span>50💎</span>
+                    }
+                  </button>
+                </div>
+                <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(31,41,55,0.8);">
+                  <div class="h-full rounded-full" [style.width.%]="getStatPercent(stat.key)" [style.background]="stat.color"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Panel derecho — Display del personaje (col-span-2) -->
+        <div class="lg:col-span-2" style="height: 100%;">
+          <div class="relative rounded-2xl overflow-hidden"
+            style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border: 3px solid #475569; box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.1); height: 100%;">
+
+            <!-- Partículas decorativas (10, como en PHP) -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+              @for (p of bgParticles; track p.id) {
+                <div class="absolute rounded-full bg-amber-400 opacity-50"
+                  [style.left.%]="p.x"
+                  [style.top.%]="p.y"
+                  [style.width.px]="p.size"
+                  [style.height.px]="p.size"
+                  [style.animation]="'bgParticleFloat ' + p.duration + 's ease-in-out infinite'"
+                  [style.animation-delay]="p.delay + 's'"></div>
+              }
+            </div>
+
+            <!-- Imagen del personaje — llena todo el panel como en PHP -->
+            <div class="absolute inset-0 z-10 flex items-center justify-center p-5" (mouseenter)="onCharacterHover($event)">
+              <img [src]="getCharacterImage()"
+                [alt]="charInfo?.name"
+                class="character-evolved"
+                style="width: 100%; height: 100%; object-fit: contain; max-width: none; max-height: none; filter: drop-shadow(0 8px 30px rgba(251,191,36,0.4));"
+                (error)="onImgError($event, charInfo?.icon ?? '🧙‍♂️')" />
+            </div>
+
+            <!-- Badge de tier superpuesto (z-20) -->
+            <div class="absolute top-3 right-3 z-20">
+              <span class="font-cinzel font-black text-xs px-3 py-1 rounded-full"
+                [class]="getTierBadgeClass()">
+                {{ getTierName() }}
+              </span>
+            </div>
+
+            <!-- Nivel (z-20) -->
+            <div class="absolute top-3 left-3 z-20 text-center">
+              <div class="font-cinzel text-white/60 text-xs uppercase tracking-wider">Nivel</div>
+              <div class="font-cinzel font-black text-amber-400 text-3xl"
+                style="text-shadow: 0 0 20px rgba(251,191,36,0.8);">
+                {{ data().xpInfo.level }}
+              </div>
+            </div>
+
+            <!-- Info en la parte inferior (z-20) -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-center z-20"
+              style="background: linear-gradient(to top, rgba(15,23,42,0.9), transparent);">
+              <div class="font-cinzel font-black text-white text-lg tracking-widest uppercase mb-2">
+                {{ charInfo?.name ?? 'Aventurero' }}
+              </div>
+              <!-- Barra XP -->
+              <div class="max-w-sm mx-auto">
+                <div class="flex justify-between text-xs text-white/60 mb-1 font-cinzel">
+                  <span>{{ data().xpInfo.xp }} XP</span>
+                  <span>{{ data().xpInfo.nextLevelXp }} XP</span>
+                </div>
+                <div class="xp-bar rounded-full h-3">
+                  <div class="xp-bar-fill rounded-full h-3 transition-all duration-700"
+                    [style.width.%]="data().xpInfo.progress"></div>
+                </div>
+                <p class="text-white/50 text-xs mt-1 font-playfair">{{ data().xpInfo.progress }}% al siguiente nivel</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mis Dominios + Misiones Activas -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+      <!-- Mis Dominios Legendarios -->
+      <div class="adventure-card p-6 animate-fade-in-up stagger-1">
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+          style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
+          <span class="text-3xl">🏰</span>
+          Mis Dominios Legendarios
+        </h3>
+        <div class="space-y-4">
+          @if (data().classrooms.length === 0) {
+            <div class="text-center py-10">
+              <div class="text-6xl mb-4 opacity-70">🏰</div>
+              <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡Aún no tienes dominios!</h4>
+              <p class="font-playfair text-gray-500 mb-6">Únete a un aula para comenzar tu aventura educativa</p>
+              <a routerLink="/student/classrooms" class="btn-epic btn-green text-xs py-2 px-6">🚪 Unirse a un Dominio</a>
+            </div>
+          }
+          @for (classroom of data().classrooms.slice(0, 4); track classroom.id) {
+            <div class="flex items-center justify-between p-4 rounded-xl border-2 border-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+              style="background: linear-gradient(to right, #f0fdf4, #eff6ff);">
+              <div>
+                <div class="font-cinzel font-bold text-gray-800">{{ classroom.name }}</div>
+                <div class="font-playfair text-sm text-gray-600">Maestro: {{ classroom.teacher?.name }}</div>
+                <div class="text-xs text-green-600 mt-1 font-cinzel">{{ classroom.studentsCount ?? 0 }} aventureros</div>
+              </div>
+              <a [routerLink]="['/student/classrooms', classroom.id]"
+                class="btn-epic btn-green text-xs py-2 px-4">
+                Entrar
+              </a>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Misiones Activas -->
+      <div class="adventure-card p-6 animate-fade-in-up stagger-2">
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+          style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
+          <span class="text-3xl">🗡️</span>
+          Misiones Activas
+        </h3>
+        <div class="space-y-4">
+          @if (data().quests.length === 0) {
+            <div class="text-center py-10">
+              <div class="text-6xl mb-4 opacity-70">🗡️</div>
+              <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡No hay misiones activas!</h4>
+              <p class="font-playfair text-gray-500">Las misiones aparecerán cuando tus maestros las asignen</p>
+            </div>
+          }
+          @for (quest of data().quests.slice(0, 4); track quest.id) {
+            <div class="quest-item p-4">
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex-1">
+                  <div class="font-cinzel font-bold text-gray-800 mb-1">{{ quest.title }}</div>
+                  <div class="font-playfair text-sm text-gray-600 mb-2">{{ quest.description }}</div>
+                  <div class="flex items-center gap-2 text-xs">
+                    <span class="bg-amber-200 text-amber-800 px-2 py-1 rounded-full font-cinzel font-bold">
+                      +{{ quest.xpReward ?? 50 }} XP
+                    </span>
+                    <span class="text-gray-500 font-playfair">{{ quest.type ?? 'general' }}</span>
+                  </div>
+                </div>
+                <a routerLink="/student/quests" class="btn-epic btn-green text-xs py-2 px-3">✅ Ver</a>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Logros + Tienda -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+      <!-- Logros Recientes -->
+      <div class="adventure-card p-6 animate-fade-in-up stagger-3">
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+          style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
+          <span class="text-3xl">🏆</span>
+          Logros Recientes
+        </h3>
+        <div class="space-y-3">
+          @if ((data().achievements?.length ?? 0) === 0) {
+            <div class="text-center py-10">
+              <div class="text-6xl mb-4 opacity-70">🏆</div>
+              <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡Próximamente tendrás logros!</h4>
+              <p class="font-playfair text-gray-500">Completa misiones y tareas para desbloquear logros épicos</p>
+            </div>
+          }
+          @for (achievement of (data().achievements ?? []).slice(0, 4); track achievement.id) {
+            <div class="achievement-item p-4">
+              <div class="flex items-center gap-4">
+                <div class="text-3xl">{{ achievement.icon ?? '🏆' }}</div>
+                <div class="flex-1">
+                  <div class="font-cinzel font-bold text-gray-800">{{ achievement.name }}</div>
+                  <div class="font-playfair text-sm text-gray-600">{{ achievement.description }}</div>
+                  <div class="text-xs text-purple-600 mt-1 font-cinzel">
+                    +{{ achievement.xpReward ?? 25 }} XP
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        @if ((data().achievements?.length ?? 0) > 0) {
+          <div class="text-center mt-6">
+            <a routerLink="/student/achievements" class="btn-epic btn-purple text-xs py-2 px-6">
+              Ver Todos los Logros
+            </a>
+          </div>
+        }
+      </div>
+
+      <!-- Tienda Legendaria -->
+      <div class="adventure-card p-6 animate-fade-in-up stagger-4">
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+          style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
+          <span class="text-3xl">🛒</span>
+          Tienda Legendaria
+        </h3>
+        <div class="space-y-3">
+          @if ((data().rewards?.length ?? 0) === 0) {
+            <div class="text-center py-10">
+              <div class="text-6xl mb-4 opacity-70">🛒</div>
+              <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡Tienda en construcción!</h4>
+              <p class="font-playfair text-gray-500">Pronto habrá recompensas increíbles disponibles</p>
+            </div>
+          }
+          @for (reward of (data().rewards ?? []).slice(0, 4); track reward.id) {
+            <div class="reward-item p-4">
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 flex-1">
+                  <div class="text-3xl">{{ reward.icon ?? '🎁' }}</div>
+                  <div>
+                    <div class="font-cinzel font-bold text-gray-800">{{ reward.name }}</div>
+                    <div class="font-playfair text-sm text-gray-600">{{ reward.description }}</div>
+                    <div class="text-xs text-blue-600 mt-1 font-cinzel">💰 {{ reward.costPoints ?? reward.cost ?? 50 }} puntos</div>
+                  </div>
+                </div>
+                <button class="btn-epic text-xs py-2 px-3"
+                  [class.btn-blue]="(user?.points ?? 0) >= (reward.costPoints ?? reward.cost ?? 50)"
+                  [class.btn-red]="(user?.points ?? 0) < (reward.costPoints ?? reward.cost ?? 50)"
+                  [disabled]="(user?.points ?? 0) < (reward.costPoints ?? reward.cost ?? 50)">
+                  {{ (user?.points ?? 0) >= (reward.costPoints ?? reward.cost ?? 50) ? '🛒 Canjear' : '🔒 Bloqueado' }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+        @if ((data().rewards?.length ?? 0) > 0) {
+          <div class="text-center mt-6">
+            <p class="font-playfair text-sm text-gray-600 mb-3">
+              Tienes {{ user?.points ?? 0 }} puntos disponibles
+            </p>
+            <a routerLink="/student/rewards" class="btn-epic btn-blue text-xs py-2 px-6">
+              Ver Mis Recompensas
+            </a>
+          </div>
+        }
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+}

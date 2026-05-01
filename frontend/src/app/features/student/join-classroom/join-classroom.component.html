@@ -1,0 +1,160 @@
+<!-- Nav -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl">⚔️ LegendaryClass</a>
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/student/dashboard"    class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/student/classrooms"   class="nav-link-epic">📚 Dominios</a>
+      <a routerLink="/student/quests"       class="nav-link-epic">🗡️ Misiones</a>
+      <a routerLink="/student/rewards"      class="nav-link-epic">🛒 Tienda</a>
+      <a routerLink="/student/achievements" class="nav-link-epic">🏆 Logros</a>
+      <a routerLink="/student/profile"      class="nav-link-epic">👤 Perfil</a>
+    </div>
+    <a routerLink="/student/classrooms" class="btn-epic btn-blue text-xs py-2 px-4">← Mis Dominios</a>
+  </div>
+</nav>
+
+<div class="z-content py-12">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+
+    <!-- Header with floating key -->
+    <div class="text-center mb-12 animate-fade-in-up">
+      <div class="animate-float text-8xl mb-6">🗝️</div>
+      <h1 class="font-cinzel-decorative font-black text-gray-800 mb-4"
+        style="font-size:clamp(2rem,5vw,3.5rem); text-shadow:0 2px 4px rgba(255,255,255,0.8);">
+        UNIRSE A AULA MÁGICA
+      </h1>
+      <p class="font-playfair text-gray-600 text-xl">
+        Ingresa el código secreto para acceder al reino del conocimiento
+      </p>
+    </div>
+
+    <!-- Main form card with magic glow -->
+    <div class="max-w-2xl mx-auto rounded-3xl p-10 animate-fade-in-up"
+      style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
+             border:3px solid rgba(245,158,11,0.3);
+             box-shadow:0 20px 40px rgba(0,0,0,0.1), 0 0 30px rgba(245,158,11,0.15);
+             animation: glowPulse 2s ease-in-out infinite alternate;">
+
+      <!-- Error message -->
+      @if (error()) {
+        <div class="rounded-xl p-4 mb-6 flex items-start gap-3 animate-fade-in-up"
+          style="background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(220,38,38,0.1)); border:2px solid rgba(239,68,68,0.3); color:#dc2626;">
+          <span class="text-2xl flex-shrink-0">❌</span>
+          <div>
+            <h4 class="font-cinzel font-bold mb-1">Error al unirse al aula:</h4>
+            <p class="font-playfair text-sm">{{ error() }}</p>
+          </div>
+        </div>
+      }
+
+      <!-- Success message -->
+      @if (success()) {
+        <div class="rounded-xl p-4 mb-6 flex items-start gap-3 animate-fade-in-up"
+          style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(5,150,105,0.1)); border:2px solid rgba(16,185,129,0.3); color:#059669;">
+          <span class="text-2xl flex-shrink-0">✅</span>
+          <div>
+            <h4 class="font-cinzel font-bold mb-1">¡Éxito!</h4>
+            <p class="font-playfair text-sm">{{ success() }}</p>
+          </div>
+        </div>
+      }
+
+      <!-- Code input section -->
+      <div class="mb-8">
+        <label class="block font-cinzel font-bold text-gray-700 text-xl mb-4 text-center">
+          🔮 CÓDIGO MÁGICO DE ACCESO
+        </label>
+        <input
+          [(ngModel)]="classCode"
+          (ngModelChange)="onCodeInput()"
+          (keyup.enter)="joinClass()"
+          type="text"
+          placeholder="ABC123"
+          maxlength="10"
+          autocomplete="off"
+          class="w-full text-center rounded-2xl transition-all duration-300"
+          style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.8));
+                 border:3px solid rgba(245,158,11,0.3);
+                 font-family:'Courier New',monospace;
+                 font-size:2rem;
+                 font-weight:bold;
+                 letter-spacing:0.5rem;
+                 padding:1.5rem;
+                 text-transform:uppercase;
+                 outline:none;"
+          [style.border-color]="error() ? 'rgba(239,68,68,0.5)' : success() ? 'rgba(16,185,129,0.5)' : (classCode.length >= 3 ? 'rgba(245,158,11,0.6)' : 'rgba(245,158,11,0.3)')"
+          [style.box-shadow]="classCode.length >= 3 ? '0 0 20px rgba(245,158,11,0.3)' : 'none'" />
+        <p class="font-playfair text-gray-500 text-sm text-center mt-3">
+          Solicita el código a tu maestro para acceder al aula
+        </p>
+      </div>
+
+      <!-- Student info box -->
+      @if (user) {
+        <div class="rounded-2xl p-6 mb-8"
+          style="background:rgba(99,102,241,0.08); border:2px solid rgba(99,102,241,0.2);">
+          <h3 class="font-cinzel font-bold text-indigo-800 text-lg mb-4 text-center">
+            👤 Tu Información de Aventurero
+          </h3>
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div class="text-3xl mb-2">{{ charIcon }}</div>
+              <div class="font-cinzel font-semibold text-indigo-700 text-sm">{{ charName }}</div>
+              <div class="font-playfair text-indigo-500 text-xs">Personaje</div>
+            </div>
+            <div>
+              <div class="font-cinzel font-black text-2xl text-indigo-600 mb-2">{{ user.level }}</div>
+              <div class="font-cinzel font-semibold text-indigo-700 text-sm">Nivel</div>
+              <div class="font-playfair text-indigo-500 text-xs">Actual</div>
+            </div>
+            <div>
+              <div class="font-cinzel font-black text-2xl text-indigo-600 mb-2">{{ user.points }}</div>
+              <div class="font-cinzel font-semibold text-indigo-700 text-sm">Puntos</div>
+              <div class="font-playfair text-indigo-500 text-xs">Disponibles</div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Action buttons -->
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a routerLink="/student/classrooms"
+          class="flex-1 text-center font-cinzel font-bold text-white py-4 px-6 rounded-xl transition-all duration-300 hover:-translate-y-0.5"
+          style="background:linear-gradient(135deg,#6b7280,#4b5563); border:2px solid rgba(255,255,255,0.3); text-decoration:none;">
+          ↩️ Volver al Dashboard
+        </a>
+        <button (click)="joinClass()"
+          [disabled]="classCode.length < 3 || loading()"
+          class="flex-1 font-cinzel font-bold text-white py-4 px-6 rounded-xl transition-all duration-300 hover:-translate-y-1"
+          style="background:linear-gradient(135deg,#f59e0b,#d97706); border:2px solid rgba(255,255,255,0.3); box-shadow:0 10px 25px rgba(245,158,11,0.3);"
+          [class.opacity-60]="classCode.length < 3 || loading()"
+          [class.cursor-not-allowed]="classCode.length < 3 || loading()">
+          {{ loading() ? '🔄 CONECTANDO...' : '🚪 UNIRSE AL REINO' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="mt-12 text-center animate-fade-in-up">
+      <h3 class="font-cinzel font-bold text-gray-700 text-xl mb-6">
+        📜 Instrucciones para Aventureros
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        <div class="rounded-2xl p-6 text-left"
+          style="background:rgba(254,243,199,0.9); border:2px solid rgba(217,119,6,0.2);">
+          <div class="text-2xl mb-2">🎯</div>
+          <h4 class="font-cinzel font-bold text-amber-800 mb-2">Paso 1: Obtén el Código</h4>
+          <p class="font-playfair text-amber-700 text-sm">Solicita a tu maestro el código secreto del aula a la que deseas unirte.</p>
+        </div>
+        <div class="rounded-2xl p-6 text-left"
+          style="background:rgba(219,234,254,0.9); border:2px solid rgba(59,130,246,0.2);">
+          <div class="text-2xl mb-2">⚡</div>
+          <h4 class="font-cinzel font-bold text-blue-800 mb-2">Paso 2: Acceso Instantáneo</h4>
+          <p class="font-playfair text-blue-700 text-sm">Una vez ingresado correctamente, tendrás acceso inmediato al aula y sus misiones.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

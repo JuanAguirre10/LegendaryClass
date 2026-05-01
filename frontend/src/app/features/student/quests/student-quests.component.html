@@ -1,0 +1,169 @@
+<!-- Nav -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl">⚔️ LegendaryClass</a>
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/student/dashboard"    class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/student/classrooms"   class="nav-link-epic">📚 Dominios</a>
+      <a routerLink="/student/quests"       routerLinkActive="active" class="nav-link-epic">🗡️ Misiones</a>
+      <a routerLink="/student/rewards"      class="nav-link-epic">🛒 Tienda</a>
+      <a routerLink="/student/achievements" class="nav-link-epic">🏆 Logros</a>
+      <a routerLink="/student/profile"      class="nav-link-epic">👤 Perfil</a>
+    </div>
+    <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+  </div>
+</nav>
+
+<!-- Toasts -->
+<div class="toast-container">
+  @for (t of toasts(); track t.id) {
+    <div class="toast-message" [class.success]="t.type==='success'" [class.error]="t.type==='error'" [class.info]="t.type==='info'">
+      {{ t.message }}
+    </div>
+  }
+</div>
+
+<div class="z-content px-4 py-6 max-w-5xl mx-auto">
+
+  <!-- Header — orange gradient -->
+  <div class="rounded-3xl p-6 mb-6 animate-fade-in-up"
+    style="background: linear-gradient(135deg, rgba(217,119,6,0.95) 0%, rgba(245,158,11,0.9) 100%);
+           border: 3px solid rgba(255,255,255,0.3);
+           box-shadow: 0 15px 40px rgba(217,119,6,0.3);">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h1 class="font-cinzel-decorative font-black text-white"
+          style="font-size:clamp(1.8rem,4vw,2.5rem); text-shadow:0 0 20px rgba(255,255,255,0.4);">
+          📜 Misiones
+        </h1>
+        <p class="font-cinzel text-yellow-100 mt-1">Completa tus misiones y gana XP épico</p>
+      </div>
+      <!-- Stats pills -->
+      <div class="flex gap-3 flex-wrap">
+        <div class="rounded-xl px-5 py-3 text-center"
+          style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4);">
+          <div class="font-cinzel font-black text-2xl text-white">{{ activeQuests().length }}</div>
+          <div class="font-cinzel text-yellow-100 text-xs">Activas</div>
+        </div>
+        <div class="rounded-xl px-5 py-3 text-center"
+          style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4);">
+          <div class="font-cinzel font-black text-2xl text-white">{{ completedQuests().length }}</div>
+          <div class="font-cinzel text-yellow-100 text-xs">Completadas</div>
+        </div>
+        <div class="rounded-xl px-5 py-3 text-center"
+          style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4);">
+          <div class="font-cinzel font-black text-2xl text-white">{{ totalXp() }}</div>
+          <div class="font-cinzel text-yellow-100 text-xs">XP Total</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-16">
+      <div class="text-8xl mb-4 animate-float">📜</div>
+      <p class="font-cinzel text-gray-500">Cargando misiones...</p>
+    </div>
+  } @else if (quests().length === 0) {
+    <!-- Empty state — dashed orange border -->
+    <div class="text-center py-12 rounded-2xl animate-fade-in-up"
+      style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
+             border:2px dashed rgba(245,158,11,0.3);">
+      <div class="text-6xl mb-4">📜</div>
+      <h3 class="font-cinzel font-bold text-gray-600 text-xl mb-2">Sin misiones por ahora</h3>
+      <p class="font-playfair text-gray-500 mb-4">Tu maestro aún no ha asignado misiones. ¡Vuelve pronto!</p>
+      <a routerLink="/student/dashboard"
+        class="inline-block font-cinzel font-bold text-white px-6 py-2 rounded-xl"
+        style="background:linear-gradient(135deg,#d97706,#b45309);">
+        Volver al inicio
+      </a>
+    </div>
+  } @else {
+
+    <!-- Active quests -->
+    @if (activeQuests().length > 0) {
+      <h2 class="font-cinzel font-bold text-gray-700 text-lg mb-3 flex items-center gap-2 animate-fade-in-up">
+        ⚔️ Misiones Activas
+      </h2>
+      <div class="space-y-4 mb-8">
+        @for (quest of activeQuests(); track quest.id) {
+          <div class="rounded-2xl p-5 animate-fade-in-up transition-all duration-300 hover:-translate-y-1"
+            style="background:linear-gradient(135deg,rgba(255,255,255,0.97),rgba(255,255,255,0.92));
+                   border:2px solid rgba(245,158,11,0.2);
+                   box-shadow:0 8px 25px rgba(0,0,0,0.08);"
+            [style.box-shadow]="'0 8px 25px rgba(0,0,0,0.08), 0 15px 35px rgba(245,158,11,0)'">
+            <div class="flex items-start justify-between gap-4 flex-wrap">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-3 mb-2 flex-wrap">
+                  <span style="font-size:1.5rem;">{{ questIcon(quest.type) }}</span>
+                  <h3 class="font-cinzel font-bold text-gray-800 text-lg">{{ quest.title }}</h3>
+                  <span class="font-cinzel font-bold text-xs px-3 py-1 rounded-full uppercase"
+                    style="background:rgba(245,158,11,0.15); color:#b45309; border:1px solid rgba(245,158,11,0.3);">
+                    {{ quest.type ?? 'misión' }}
+                  </span>
+                </div>
+                <p class="font-playfair text-gray-600 text-sm mb-3">{{ quest.description }}</p>
+                @if (quest.dueDate) {
+                  <div class="flex items-center gap-1 font-playfair text-xs text-gray-500">
+                    <span>⏰</span>
+                    <span>Vence: {{ quest.dueDate | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                }
+              </div>
+              <div class="flex flex-col items-end gap-2 flex-shrink-0">
+                <span class="font-cinzel font-bold px-3 py-1 rounded-full text-sm"
+                  style="background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#92400e;">
+                  +{{ quest.xpReward }} XP
+                </span>
+                <button (click)="completeQuest(quest.id)"
+                  class="font-cinzel font-bold text-sm text-white px-5 py-2 rounded-xl transition-all duration-200 hover:scale-105"
+                  style="background:linear-gradient(135deg,#d97706,#b45309); border:none;">
+                  Completar ✓
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Completed quests -->
+    @if (completedQuests().length > 0) {
+      <h2 class="font-cinzel font-bold text-gray-600 text-lg mb-3 flex items-center gap-2 animate-fade-in-up">
+        ✅ Completadas
+      </h2>
+      <div class="space-y-3">
+        @for (quest of completedQuests(); track quest.id) {
+          <div class="rounded-2xl p-4 opacity-80 animate-fade-in-up"
+            style="background:linear-gradient(135deg,rgba(240,253,244,0.97),rgba(255,255,255,0.92));
+                   border:2px solid rgba(34,197,94,0.4);
+                   box-shadow:0 4px 15px rgba(0,0,0,0.05);">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+              <div class="flex items-center gap-3">
+                <span style="font-size:1.25rem;">✅</span>
+                <div>
+                  <h3 class="font-cinzel font-bold text-gray-600 line-through">{{ quest.title }}</h3>
+                  <p class="font-playfair text-gray-400 text-sm">{{ quest.description }}</p>
+                </div>
+              </div>
+              <span class="font-cinzel font-bold text-sm opacity-60 px-3 py-1 rounded-full"
+                style="background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#92400e;">
+                +{{ quest.xpReward }} XP
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- Back -->
+  <div class="mt-8 text-center">
+    <a routerLink="/student/dashboard"
+      class="inline-flex items-center gap-2 font-cinzel font-bold text-gray-600 px-6 py-3 rounded-xl transition hover:bg-white/60"
+      style="border:2px solid rgba(107,114,128,0.3);">
+      ← Volver al Dashboard
+    </a>
+  </div>
+
+</div>
