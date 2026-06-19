@@ -1,8 +1,9 @@
 // frontend/src/app/features/shared/classroom-ranking/classroom-ranking.component.ts
-import { Component, Input, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, signal, computed, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '@env/environment';
 import { AuthService } from '../../../core/auth/auth.service';
 import { RealtimeService, RankingEntry } from '../../../core/realtime/realtime.service';
@@ -56,6 +57,7 @@ export class ClassroomRankingComponent implements OnInit, OnDestroy {
   ranking = signal<RankingEntry[]>([]);
   myId = '';
   private sub?: Subscription;
+  private destroyRef = inject(DestroyRef);
 
   podium = computed(() => this.ranking().slice(0, 3));
   rest = computed(() => this.ranking().slice(3, 10));
@@ -71,6 +73,7 @@ export class ClassroomRankingComponent implements OnInit, OnDestroy {
     // Carga inicial vía REST
     this.http
       .get<{ ranking: RankingEntry[] }>(`${environment.apiUrl}/ranking/classroom/${this.classroomId}`)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: (res) => this.ranking.set(res.ranking) });
     // Updates en vivo
     this.sub = this.realtime.onClassroomRanking(this.classroomId).subscribe((r) => this.ranking.set(r));
