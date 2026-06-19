@@ -206,12 +206,14 @@ export class ExportService {
       },
     });
     const students = (classroom?.students ?? []).map((s) => s.student);
-    const studentPoints = await this.prisma.studentPoint.findMany({
-      where: { classroomId }, select: { studentId: true, totalPoints: true },
-    });
-    const behaviorStats = await this.prisma.studentBehavior.groupBy({
-      by: ['studentId'], where: { classroomId }, _sum: { pointsAwarded: true }, _count: { id: true },
-    });
+    const [studentPoints, behaviorStats] = await Promise.all([
+      this.prisma.studentPoint.findMany({
+        where: { classroomId }, select: { studentId: true, totalPoints: true },
+      }),
+      this.prisma.studentBehavior.groupBy({
+        by: ['studentId'], where: { classroomId }, _sum: { pointsAwarded: true }, _count: { id: true },
+      }),
+    ]);
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(this.buildClassroomRankingRows(students, studentPoints)), 'Ranking');
