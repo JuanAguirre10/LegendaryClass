@@ -30,7 +30,7 @@ export class RealtimeService implements OnDestroy {
     if (!this.socket) {
       // environment.apiUrl = http://localhost:3000/api/v1 → origin = http://localhost:3000
       const origin = environment.apiUrl.replace(/\/api\/v1\/?$/, '');
-      this.socket = io(`${origin}/ranking`, {
+      this.socket = io(origin, {
         auth: { token },
         transports: ['websocket'],
       });
