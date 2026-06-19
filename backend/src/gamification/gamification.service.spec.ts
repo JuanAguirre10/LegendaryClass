@@ -10,7 +10,7 @@ describe('GamificationService — formulas', () => {
   let service: GamificationService;
 
   beforeEach(() => {
-    service = new GamificationService({} as PrismaService, {} as any);
+    service = new GamificationService({} as PrismaService, {} as any, {} as any);
   });
 
   describe('calculateLevel — level = floor(sqrt(xp / 100)) + 1', () => {

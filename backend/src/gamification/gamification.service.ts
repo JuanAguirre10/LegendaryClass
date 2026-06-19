@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RankingGateway } from '../ranking/ranking.gateway';
+import { NotificationsService } from '../notifications/notifications.service';
 import { CharacterBonusType, CharacterType } from '@prisma/client';
 
 // ─── Character definitions ─────────────────────────────────────────────────
@@ -83,6 +84,7 @@ export class GamificationService {
   constructor(
     private prisma: PrismaService,
     private rankingGateway: RankingGateway,
+    private notifications: NotificationsService,
   ) {}
 
   // ─── XP & Level formulas ────────────────────────────────────────────────
@@ -171,6 +173,11 @@ export class GamificationService {
     });
 
     await this.checkLevelAchievements(userId, newLevel);
+
+    try {
+      const c = this.notifications.buildNotificationContent('level_up', { level: newLevel });
+      await this.notifications.create(userId, { type: 'level_up', ...c });
+    } catch { /* best-effort */ }
   }
 
   // ─── Achievement checks ─────────────────────────────────────────────────
@@ -246,6 +253,11 @@ export class GamificationService {
         experiencePoints: { increment: xpReward },
       },
     });
+
+    try {
+      const c = this.notifications.buildNotificationContent('achievement', { name: definition.name });
+      await this.notifications.create(userId, { type: 'achievement', ...c });
+    } catch { /* best-effort */ }
   }
 
   // ─── Character stats calculation ────────────────────────────────────────

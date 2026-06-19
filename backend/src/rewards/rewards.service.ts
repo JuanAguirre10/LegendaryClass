@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { CreateRewardDto } from './dto/create-reward.dto';
 import { RewardStatus } from '@prisma/client';
 import { PaginationQueryDto, paginate } from '../common/dto/pagination-query.dto';
@@ -15,6 +16,7 @@ export class RewardsService {
   constructor(
     private prisma: PrismaService,
     private gamification: GamificationService,
+    private notifications: NotificationsService,
   ) {}
 
   async create(teacherId: string, dto: CreateRewardDto) {
@@ -143,6 +145,14 @@ export class RewardsService {
       data: { rewardsEarned: { increment: 1 } },
     });
 
+    try {
+      const classroom = await this.prisma.classroom.findUnique({ where: { id: classroomId }, select: { teacherId: true } });
+      if (classroom) {
+        const c = this.notifications.buildNotificationContent('reward_pending', { studentName: student.name, rewardName: reward.name });
+        await this.notifications.create(classroom.teacherId, { type: 'reward_pending', ...c });
+      }
+    } catch { /* best-effort */ }
+
     return studentReward;
   }
 
@@ -171,7 +181,7 @@ export class RewardsService {
       );
     }
 
-    return this.prisma.studentReward.update({
+    const updated = await this.prisma.studentReward.update({
       where: { id },
       data: {
         status,
@@ -180,6 +190,13 @@ export class RewardsService {
         approvedAt: status === RewardStatus.approved ? new Date() : undefined,
       },
     });
+
+    try {
+      const c = this.notifications.buildNotificationContent('reward_status', { rewardName: sr.reward.name, status });
+      await this.notifications.create(sr.studentId, { type: 'reward_status', ...c });
+    } catch { /* best-effort */ }
+
+    return updated;
   }
 
   async approveAllPending(rewardId: string, teacherId: string) {
