@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RankingGateway } from '../ranking/ranking.gateway';
 import { CharacterBonusType, CharacterType } from '@prisma/client';
 
 // ─── Character definitions ─────────────────────────────────────────────────
@@ -79,7 +80,10 @@ export const ACHIEVEMENT_DEFINITIONS = [
 
 @Injectable()
 export class GamificationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private rankingGateway: RankingGateway,
+  ) {}
 
   // ─── XP & Level formulas ────────────────────────────────────────────────
 
@@ -336,5 +340,7 @@ export class GamificationService {
 
     await this.checkPointAchievements(studentId, newTotal);
     await this.checkStreakAchievements(studentId, streakDays);
+
+    await this.rankingGateway.emitRankingUpdate(classroomId);
   }
 }

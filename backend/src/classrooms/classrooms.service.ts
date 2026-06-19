@@ -6,11 +6,15 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RankingGateway } from '../ranking/ranking.gateway';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 
 @Injectable()
 export class ClassroomsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private rankingGateway: RankingGateway,
+  ) {}
 
   // ─── Teacher operations ─────────────────────────────────────────────────
 
@@ -128,6 +132,7 @@ export class ClassroomsService {
       create: { studentId, classroomId: classroom.id, totalPoints: newTotal, level: Math.floor(newTotal / 100) + 1 },
       update: { totalPoints: newTotal, level: Math.floor(newTotal / 100) + 1 },
     });
+    await this.rankingGateway.emitRankingUpdate(classroom.id);
     return { message: 'Puntos ajustados', newTotal };
   }
 
