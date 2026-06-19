@@ -4,6 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/auth/auth.service';
+import { ExportService } from '../../../core/export/export.service';
 import { environment } from '@env/environment';
 
 @Component({
@@ -16,7 +17,7 @@ export class DirectorDashboardComponent implements OnInit {
   stats = signal<any>(null);
   loading = signal(true);
 
-  constructor(private http: HttpClient, public auth: AuthService, private router: Router) {}
+  constructor(private http: HttpClient, public auth: AuthService, private router: Router, private exportService: ExportService) {}
 
   ngOnInit() {
     this.http.get(`${environment.apiUrl}/director/stats`).subscribe({
@@ -26,6 +27,10 @@ export class DirectorDashboardComponent implements OnInit {
   }
 
   get user() { return this.auth.user(); }
+
+  exportExcel() {
+    this.exportService.downloadFile('/export/institution', 'institucion.xlsx');
+  }
 
   logout() {
     this.auth.logout();

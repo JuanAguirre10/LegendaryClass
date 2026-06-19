@@ -31,6 +31,10 @@
   </div>
 </header>
 
+<div class="max-w-7xl mx-auto px-6 pt-6 flex justify-end">
+  <button (click)="exportExcel()" class="btn-epic btn-purple text-sm py-2 px-5">📊 Exportar institución a Excel</button>
+</div>
+
 @if (loading()) {
   <div class="min-h-[60vh] flex items-center justify-center">
     <div class="glass-panel p-12 text-center animate-fade-in-up">

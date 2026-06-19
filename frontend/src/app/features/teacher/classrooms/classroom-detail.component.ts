@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { ClassroomRankingComponent } from '../../shared/classroom-ranking/classroom-ranking.component';
+import { ExportService } from '../../../core/export/export.service';
 
 @Component({
   selector: 'app-teacher-classroom-detail',
@@ -62,6 +63,7 @@ import { ClassroomRankingComponent } from '../../shared/classroom-ranking/classr
             </p>
           </div>
           <div class="flex flex-col sm:flex-row gap-3">
+            <button (click)="exportExcel()" class="btn-epic btn-blue text-xs py-2 px-5 whitespace-nowrap">📊 Exportar a Excel</button>
             <button (click)="showNewBehaviorForm = !showNewBehaviorForm"
               class="btn-epic btn-gold text-xs py-2 px-5 whitespace-nowrap">
               ➕ Nuevo Comportamiento
@@ -311,10 +313,16 @@ export class TeacherClassroomDetailComponent implements OnInit {
 
   newBehavior = { name: '', type: 'positive', points: 10, category: 'participation', description: '' };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private exportService: ExportService) {}
 
   ngOnInit() {
     this.loadClassroom();
+  }
+
+  exportExcel() {
+    const c = this.classroom();
+    if (!c) return;
+    this.exportService.downloadFile(`/export/classroom/${c.id}`, `aula-${c.slug}.xlsx`);
   }
 
   loadClassroom() {
