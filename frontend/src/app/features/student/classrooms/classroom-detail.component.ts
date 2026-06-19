@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { ClassroomRankingComponent } from '../../shared/classroom-ranking/classroom-ranking.component';
 
 @Component({
   selector: 'app-classroom-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ClassroomRankingComponent],
   templateUrl: './classroom-detail.component.html',
 })
 export class ClassroomDetailComponent implements OnInit {

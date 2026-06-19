@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { ClassroomRankingComponent } from '../../shared/classroom-ranking/classroom-ranking.component';
 
 @Component({
   selector: 'app-teacher-classroom-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, ClassroomRankingComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -17,6 +18,7 @@ import { environment } from '@env/environment';
         <a routerLink="/teacher/dashboard"  class="nav-link-epic">🏰 Inicio</a>
         <a routerLink="/teacher/classrooms" class="nav-link-epic active">🏛️ Aulas</a>
         <a routerLink="/teacher/behaviors"  class="nav-link-epic">⭐ Comportamientos</a>
+        <a routerLink="/teacher/quests"     class="nav-link-epic">🗡️ Misiones</a>
         <a routerLink="/teacher/rewards"    class="nav-link-epic">🎁 Recompensas</a>
       </div>
       <a routerLink="/teacher/classrooms" class="btn-epic btn-blue text-xs py-2 px-4">← Mis Aulas</a>
@@ -53,6 +55,10 @@ import { environment } from '@env/environment';
             </p>
             <p class="font-playfair text-blue-300/60 text-xs">
               Código de acceso: <span class="font-mono font-bold text-amber-400">{{ classroom().classCode }}</span>
+              <button (click)="regenerateCode()" [disabled]="regenerating()" title="Generar un nuevo código"
+                class="ml-2 font-cinzel text-[11px] px-2 py-0.5 rounded-full bg-white/10 text-amber-300 hover:bg-white/20 transition disabled:opacity-50">
+                {{ regenerating() ? '...' : '🔄 Regenerar' }}
+              </button>
             </p>
           </div>
           <div class="flex flex-col sm:flex-row gap-3">
@@ -208,6 +214,25 @@ import { environment } from '@env/environment';
                             </button>
                           </div>
                         }
+
+                        <!-- Ajuste manual de puntos -->
+                        <div class="mt-4 pt-3 border-t border-blue-200/50">
+                          <p class="font-cinzel text-xs font-bold text-blue-700 uppercase tracking-wide mb-2">
+                            Ajuste manual de puntos
+                          </p>
+                          <div class="flex items-center gap-3">
+                            <input [(ngModel)]="adjustValue" type="number" placeholder="Puntos (ej: 50 o -20)"
+                              class="input-epic text-xs py-2" style="max-width:160px;" />
+                            <input [(ngModel)]="adjustNotes" type="text" placeholder="Motivo (opcional)"
+                              class="input-epic text-xs flex-1 py-2" />
+                            <button (click)="adjustPoints(enrollment.student.id)"
+                              [disabled]="!adjustValue || adjusting()"
+                              class="btn-epic btn-gold text-xs py-2 px-5 whitespace-nowrap"
+                              [style.opacity]="!adjustValue ? '0.5' : '1'">
+                              {{ adjusting() ? '...' : '⚖️ Ajustar' }}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     }
                   </div>
@@ -253,6 +278,11 @@ import { environment } from '@env/environment';
 
       </div>
 
+      <!-- Live ranking -->
+      <div class="mt-6">
+        <app-classroom-ranking [classroomId]="classroom().id" />
+      </div>
+
     } @else {
       <div class="legendary-card p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 opacity-70">🏛️</div>
@@ -271,7 +301,11 @@ export class TeacherClassroomDetailComponent implements OnInit {
   selectedBehavior = signal<string>('');
   awarding = signal(false);
   savingBehavior = signal(false);
+  regenerating = signal(false);
+  adjusting = signal(false);
   awardNotes = '';
+  adjustValue: number | null = null;
+  adjustNotes = '';
   showNewBehaviorForm = false;
   toasts = signal<{ id: number; message: string; type: string; icon: string; fadingOut: boolean }[]>([]);
 
@@ -352,6 +386,54 @@ export class TeacherClassroomDetailComponent implements OnInit {
       error: (err) => {
         this.showToast(err.error?.message ?? 'Error al asignar', 'error', '❌');
         this.awarding.set(false);
+      },
+    });
+  }
+
+  regenerateCode() {
+    if (this.regenerating()) return;
+    this.regenerating.set(true);
+    this.http.post<any>(`${environment.apiUrl}/classrooms/${this.slug}/regenerate-code`, {}).subscribe({
+      next: (updated) => {
+        this.classroom.set({ ...this.classroom(), classCode: updated.classCode });
+        this.showToast(`Nuevo código: ${updated.classCode}`, 'success', '🔄');
+        this.regenerating.set(false);
+      },
+      error: (err) => {
+        this.showToast(err.error?.message ?? 'Error al regenerar el código', 'error', '❌');
+        this.regenerating.set(false);
+      },
+    });
+  }
+
+  adjustPoints(studentId: string) {
+    const points = Number(this.adjustValue);
+    if (!points || this.adjusting()) return;
+    this.adjusting.set(true);
+    this.http.post(`${environment.apiUrl}/classrooms/${this.slug}/adjust-points`, {
+      studentId,
+      points,
+      notes: this.adjustNotes || undefined,
+    }).subscribe({
+      next: () => {
+        // Update local studentPoints optimistically (clamped at 0, like the backend)
+        const c = this.classroom();
+        const existing = c.studentPoints?.find((p: any) => p.studentId === studentId);
+        const newPoints = existing
+          ? c.studentPoints.map((p: any) =>
+              p.studentId === studentId ? { ...p, totalPoints: Math.max(0, p.totalPoints + points) } : p,
+            )
+          : [...(c.studentPoints ?? []), { studentId, classroomId: c.id, totalPoints: Math.max(0, points) }];
+        this.classroom.set({ ...c, studentPoints: newPoints });
+
+        this.showToast(`Puntos ajustados: ${points > 0 ? '+' : ''}${points}`, points > 0 ? 'success' : 'info', '⚖️');
+        this.adjustValue = null;
+        this.adjustNotes = '';
+        this.adjusting.set(false);
+      },
+      error: (err) => {
+        this.showToast(err.error?.message ?? 'Error al ajustar puntos', 'error', '❌');
+        this.adjusting.set(false);
       },
     });
   }
