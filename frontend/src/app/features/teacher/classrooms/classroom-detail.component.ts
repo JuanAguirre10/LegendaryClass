@@ -6,11 +6,12 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { ClassroomRankingComponent } from '../../shared/classroom-ranking/classroom-ranking.component';
 import { ExportService } from '../../../core/export/export.service';
+import { AvatarUploadComponent } from '../../../shared/avatar-upload/avatar-upload.component';
 
 @Component({
   selector: 'app-teacher-classroom-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, ClassroomRankingComponent],
+  imports: [CommonModule, RouterLink, FormsModule, ClassroomRankingComponent, AvatarUploadComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -61,6 +62,10 @@ import { ExportService } from '../../../core/export/export.service';
                 {{ regenerating() ? '...' : '🔄 Regenerar' }}
               </button>
             </p>
+            <div class="mt-3">
+              <app-avatar-upload [uploadPath]="'/classrooms/' + classroom().slug + '/avatar'"
+                [currentAvatar]="classroom().avatar" (uploaded)="onClassroomAvatarUploaded($event)" />
+            </div>
           </div>
           <div class="flex flex-col sm:flex-row gap-3">
             <button (click)="exportExcel()" class="btn-epic btn-blue text-xs py-2 px-5 whitespace-nowrap">📊 Exportar a Excel</button>
@@ -464,6 +469,11 @@ export class TeacherClassroomDetailComponent implements OnInit {
         this.savingBehavior.set(false);
       },
     });
+  }
+
+  onClassroomAvatarUploaded(avatar: string) {
+    const c = this.classroom();
+    if (c) this.classroom.set({ ...c, avatar });
   }
 
   showToast(message: string, type: 'success' | 'error' | 'info' = 'success', icon = '⭐') {

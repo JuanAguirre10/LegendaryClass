@@ -6,11 +6,12 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/auth/auth.service';
 import { CHARACTER_DATA, charImagePath, charShieldPath, levelToTier } from '../../../core/models/user.model';
 import { environment } from '@env/environment';
+import { AvatarUploadComponent } from '../../../shared/avatar-upload/avatar-upload.component';
 
 @Component({
   selector: 'app-student-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive, AvatarUploadComponent],
   templateUrl: './student-profile.component.html',
 })
 export class StudentProfileComponent implements OnInit {
@@ -120,5 +121,9 @@ export class StudentProfileComponent implements OnInit {
 
   hideElement(event: Event) {
     (event.target as HTMLElement).style.display = 'none';
+  }
+
+  onAvatarUploaded(avatar: string) {
+    this.profile.update((p: any) => (p ? { ...p, avatar } : p));
   }
 }

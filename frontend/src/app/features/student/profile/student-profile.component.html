@@ -150,5 +150,12 @@
       </div>
     </div>
 
+    <!-- Foto de perfil -->
+    <div class="adventure-card p-6 mt-8 max-w-xl mx-auto animate-fade-in-up">
+      <h3 class="font-cinzel font-bold text-gray-800 text-lg mb-4">🖼️ Foto de perfil</h3>
+      <app-avatar-upload uploadPath="/users/profile/avatar" [currentAvatar]="profile().avatar"
+        (uploaded)="onAvatarUploaded($event)" />
+    </div>
+
   }
 </div>
