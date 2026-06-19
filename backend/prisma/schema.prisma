@@ -87,6 +87,13 @@ enum QuestStatus {
   expired
 }
 
+enum NotificationType {
+  level_up
+  achievement
+  reward_status
+  reward_pending
+}
+
 // ─── User ──────────────────────────────────────────────────────────────────
 
 model User {
@@ -153,6 +160,7 @@ model User {
   approvedRewards   StudentReward[]   @relation("ApprovedRewards")
   createdBehaviors  Behavior[]
   createdRewards    Reward[]
+  notifications     Notification[]
 
   // Parent relations
   children    ParentChild[] @relation("ParentChildren")
@@ -461,4 +469,23 @@ model ParentChild {
 
   @@unique([parentId, childId])
   @@map("parent_children")
+}
+
+// ─── Notification ──────────────────────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@map("notifications")
 }
