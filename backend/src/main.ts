@@ -1,14 +1,19 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { UPLOADS_ROOT } from './common/upload/avatar-upload';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Security headers
-  app.use(helmet());
+  app.use(helmet({ crossOriginResourcePolicy: false })); // permitir cargar /uploads desde el front
+
+  // Servir archivos subidos en /uploads (fuera del prefijo /api)
+  app.useStaticAssets(UPLOADS_ROOT, { prefix: '/uploads' });
 
   // Global prefix
   app.setGlobalPrefix('api');

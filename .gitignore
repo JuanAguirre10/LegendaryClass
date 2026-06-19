@@ -66,3 +66,6 @@ desktop.ini
 
 # ── Prisma Studio ─────────────────────────────────────────────────────────
 .prisma/
+
+# Uploaded files (local disk storage)
+backend/uploads/

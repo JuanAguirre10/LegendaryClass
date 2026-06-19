@@ -1,15 +1,17 @@
 import {
   Controller, Get, Post, Patch, Delete, Body, Param,
-  UseGuards, Query,
+  UseGuards, Query, UseInterceptors, UploadedFile, BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { ClassroomsService } from './classrooms.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
+import { multerAvatarOptions } from '../common/upload/avatar-upload';
 
 @ApiTags('Classrooms')
 @ApiBearerAuth()
@@ -107,5 +109,17 @@ export class ClassroomsController {
   @ApiOperation({ summary: 'Salir de un aula (student)' })
   leave(@Param('classroomId') classroomId: string, @CurrentUser() user: any) {
     return this.classroomsService.leaveClassroom(user.id, classroomId);
+  }
+
+  @Post(':slug/avatar')
+  @Roles(Role.teacher)
+  @UseInterceptors(FileInterceptor('file', multerAvatarOptions))
+  uploadAvatar(
+    @Param('slug') slug: string,
+    @CurrentUser() user: { id: string; role: string },
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('No se recibió ningún archivo');
+    return this.classroomsService.setAvatar(slug, user, `/uploads/avatars/${file.filename}`);
   }
 }

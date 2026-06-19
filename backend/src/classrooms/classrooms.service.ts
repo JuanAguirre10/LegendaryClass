@@ -8,6 +8,8 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { RankingGateway } from '../ranking/ranking.gateway';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
+import { localAvatarDiskPath } from '../common/upload/avatar-upload';
+import { promises as fsp } from 'fs';
 
 @Injectable()
 export class ClassroomsService {
@@ -178,6 +180,17 @@ export class ClassroomsService {
     if (!enrollment) throw new NotFoundException('No estás inscrito en esta aula');
     await this.prisma.classroomStudent.delete({ where: { id: enrollment.id } });
     return { message: 'Has salido del aula' };
+  }
+
+  async setAvatar(slug: string, user: { id: string; role: string }, avatarUrl: string): Promise<{ avatar: string }> {
+    const where =
+      user.role === 'director' || user.role === 'admin' ? { slug } : { slug, teacherId: user.id };
+    const classroom = await this.prisma.classroom.findFirst({ where, select: { id: true, avatar: true } });
+    if (!classroom) throw new ForbiddenException('No tienes acceso a esta aula');
+    await this.prisma.classroom.update({ where: { id: classroom.id }, data: { avatar: avatarUrl } });
+    const prev = localAvatarDiskPath(classroom.avatar ?? null);
+    if (prev) fsp.unlink(prev).catch(() => undefined);
+    return { avatar: avatarUrl };
   }
 
   // ─── Helpers ────────────────────────────────────────────────────────────
