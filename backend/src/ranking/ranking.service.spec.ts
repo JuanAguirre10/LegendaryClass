@@ -30,3 +30,29 @@ describe('RankingService.buildRanking', () => {
     expect(service.buildRanking([])).toEqual([]);
   });
 });
+
+describe('RankingService.assertCanView', () => {
+  it('permite a director sin tocar la BD', async () => {
+    const svc = new RankingService({} as any);
+    await expect(svc.assertCanView('c1', { id: 'd', role: 'director' })).resolves.toBeUndefined();
+  });
+
+  it('permite al profesor dueño del aula', async () => {
+    const prisma: any = { classroom: { findFirst: jest.fn().mockResolvedValue({ id: 'c1' }) } };
+    const svc = new RankingService(prisma);
+    await expect(svc.assertCanView('c1', { id: 't', role: 'teacher' })).resolves.toBeUndefined();
+  });
+
+  it('rechaza al profesor que NO es dueño del aula', async () => {
+    const prisma: any = { classroom: { findFirst: jest.fn().mockResolvedValue(null) } };
+    const svc = new RankingService(prisma);
+    await expect(svc.assertCanView('c1', { id: 't', role: 'teacher' })).rejects.toThrow();
+  });
+
+  it('permite al alumno matriculado y rechaza al no matriculado', async () => {
+    const enrolled: any = { classroomStudent: { findUnique: jest.fn().mockResolvedValue({ id: 'e1' }) } };
+    await expect(new RankingService(enrolled).assertCanView('c1', { id: 's', role: 'student' })).resolves.toBeUndefined();
+    const notEnrolled: any = { classroomStudent: { findUnique: jest.fn().mockResolvedValue(null) } };
+    await expect(new RankingService(notEnrolled).assertCanView('c1', { id: 's', role: 'student' })).rejects.toThrow();
+  });
+});

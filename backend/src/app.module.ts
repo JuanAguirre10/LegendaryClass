@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -13,10 +15,13 @@ import { DirectorModule } from './director/director.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { StudentModule } from './student/student.module';
 import { ParentModule } from './parent/parent.module';
+import { RankingModule } from './ranking/ranking.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    // Global rate limiting — 100 requests per minute per IP (protects against brute force)
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
     PrismaModule,
     AuthModule,
     UsersModule,
@@ -30,6 +35,11 @@ import { ParentModule } from './parent/parent.module';
     TeacherModule,
     StudentModule,
     ParentModule,
+    RankingModule,
+  ],
+  providers: [
+    // Apply the rate limiter globally to every route
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
 export class AppModule {}
