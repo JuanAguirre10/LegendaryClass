@@ -16,6 +16,7 @@ import { TeacherModule } from './teacher/teacher.module';
 import { StudentModule } from './student/student.module';
 import { ParentModule } from './parent/parent.module';
 import { RankingModule } from './ranking/ranking.module';
+import { ExportModule } from './export/export.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { RankingModule } from './ranking/ranking.module';
     StudentModule,
     ParentModule,
     RankingModule,
+    ExportModule,
   ],
   providers: [
     // Apply the rate limiter globally to every route

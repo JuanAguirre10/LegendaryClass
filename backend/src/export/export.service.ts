@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Role } from '@prisma/client';
+import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface StudentInfo {
@@ -184,5 +186,72 @@ export class ExportService {
       { 'Métrica': 'Estudiantes nuevos (último mes)', 'Valor': stats.monthly.newStudents },
       { 'Métrica': 'Profesores nuevos (último mes)', 'Valor': stats.monthly.newTeachers },
     ];
+  }
+
+  async assertTeacherCanExport(classroomId: string, user: { id: string; role: string }): Promise<string> {
+    const where =
+      user.role === 'director' || user.role === 'admin'
+        ? { id: classroomId }
+        : { id: classroomId, teacherId: user.id };
+    const classroom = await this.prisma.classroom.findFirst({ where, select: { slug: true } });
+    if (!classroom) throw new ForbiddenException('No tienes acceso a esta aula');
+    return classroom.slug;
+  }
+
+  async buildClassroomWorkbook(classroomId: string): Promise<Buffer> {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { id: classroomId },
+      include: {
+        students: { include: { student: { select: { id: true, name: true, level: true, experiencePoints: true, characterType: true } } } },
+      },
+    });
+    const students = (classroom?.students ?? []).map((s) => s.student);
+    const studentPoints = await this.prisma.studentPoint.findMany({
+      where: { classroomId }, select: { studentId: true, totalPoints: true },
+    });
+    const behaviorStats = await this.prisma.studentBehavior.groupBy({
+      by: ['studentId'], where: { classroomId }, _sum: { pointsAwarded: true }, _count: { id: true },
+    });
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(this.buildClassroomRankingRows(students, studentPoints)), 'Ranking');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(this.buildClassroomBehaviorRows(students, behaviorStats)), 'Comportamientos');
+    return XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }) as Buffer;
+  }
+
+  async buildInstitutionWorkbook(): Promise<Buffer> {
+    const [students, teachers, classrooms] = await Promise.all([
+      this.prisma.user.findMany({ where: { role: Role.student }, select: { name: true, email: true, level: true, experiencePoints: true, points: true, characterType: true, isActive: true }, orderBy: { name: 'asc' } }),
+      this.prisma.user.findMany({ where: { role: Role.teacher }, select: { name: true, email: true, isActive: true, _count: { select: { taughtClassrooms: true } } }, orderBy: { name: 'asc' } }),
+      this.prisma.classroom.findMany({ select: { name: true, subject: true, classCode: true, isActive: true, teacher: { select: { name: true } }, _count: { select: { students: true } } }, orderBy: { name: 'asc' } }),
+    ]);
+    const stats = await this.computeStats();
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(this.buildStudentRows(students)), 'Estudiantes');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(this.buildTeacherRows(teachers)), 'Profesores');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(this.buildClassroomRows(classrooms)), 'Aulas');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(this.buildSummaryRows(stats)), 'Resumen');
+    return XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }) as Buffer;
+  }
+
+  private async computeStats(): Promise<DashboardStats> {
+    const [totalTeachers, totalStudents, totalParents, totalClassrooms, activeClassrooms, totalBehaviorsAwarded, totalRewardsRedeemed] = await Promise.all([
+      this.prisma.user.count({ where: { role: Role.teacher } }),
+      this.prisma.user.count({ where: { role: Role.student } }),
+      this.prisma.user.count({ where: { role: Role.parent } }),
+      this.prisma.classroom.count(),
+      this.prisma.classroom.count({ where: { isActive: true } }),
+      this.prisma.studentBehavior.count(),
+      this.prisma.studentReward.count(),
+    ]);
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const [behaviorsAwarded, rewards, newStudents, newTeachers] = await Promise.all([
+      this.prisma.studentBehavior.count({ where: { createdAt: { gte: since } } }),
+      this.prisma.studentReward.count({ where: { createdAt: { gte: since } } }),
+      this.prisma.user.count({ where: { role: Role.student, createdAt: { gte: since } } }),
+      this.prisma.user.count({ where: { role: Role.teacher, createdAt: { gte: since } } }),
+    ]);
+    return { totalTeachers, totalStudents, totalParents, totalClassrooms, activeClassrooms, totalBehaviorsAwarded, totalRewardsRedeemed, monthly: { behaviorsAwarded, rewards, newStudents, newTeachers } };
   }
 }
