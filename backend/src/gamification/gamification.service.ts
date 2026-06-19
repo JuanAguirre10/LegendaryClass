@@ -341,6 +341,8 @@ export class GamificationService {
     await this.checkPointAchievements(studentId, newTotal);
     await this.checkStreakAchievements(studentId, streakDays);
 
-    await this.rankingGateway.emitRankingUpdate(classroomId);
+    await this.rankingGateway
+      .emitRankingUpdate(classroomId)
+      .catch((err) => console.error('ranking emit failed', err));
   }
 }
