@@ -49,9 +49,12 @@ describe('RankingService.assertCanView', () => {
     await expect(svc.assertCanView('c1', { id: 't', role: 'teacher' })).rejects.toThrow();
   });
 
-  it('permite al alumno matriculado y rechaza al no matriculado', async () => {
+  it('permite al alumno matriculado', async () => {
     const enrolled: any = { classroomStudent: { findUnique: jest.fn().mockResolvedValue({ id: 'e1' }) } };
     await expect(new RankingService(enrolled).assertCanView('c1', { id: 's', role: 'student' })).resolves.toBeUndefined();
+  });
+
+  it('rechaza al alumno no matriculado', async () => {
     const notEnrolled: any = { classroomStudent: { findUnique: jest.fn().mockResolvedValue(null) } };
     await expect(new RankingService(notEnrolled).assertCanView('c1', { id: 's', role: 'student' })).rejects.toThrow();
   });

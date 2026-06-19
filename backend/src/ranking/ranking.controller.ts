@@ -12,7 +12,7 @@ export class RankingController {
   constructor(private rankingService: RankingService) {}
 
   @Get('classroom/:classroomId')
-  async getClassroomRanking(@Param('classroomId') classroomId: string, @CurrentUser() user: any) {
+  async getClassroomRanking(@Param('classroomId') classroomId: string, @CurrentUser() user: { id: string; role: string }) {
     const ranking = await this.rankingService.getClassroomRanking(classroomId, user);
     return { classroomId, ranking };
   }
