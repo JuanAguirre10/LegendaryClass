@@ -62,7 +62,7 @@ export class AuthService {
       },
     });
 
-    const token = this.signToken(user.id, user.email);
+    const token = this.signToken(user.id, user.email, user.role);
     return { user, token };
   }
 
@@ -80,12 +80,12 @@ export class AuthService {
       data: { lastLogin: new Date() },
     });
 
-    const token = this.signToken(user.id, user.email);
+    const token = this.signToken(user.id, user.email, user.role);
     const { password: _, ...safeUser } = user;
     return { user: safeUser, token };
   }
 
-  private signToken(userId: string, email: string): string {
-    return this.jwtService.sign({ sub: userId, email });
+  private signToken(userId: string, email: string, role: Role): string {
+    return this.jwtService.sign({ sub: userId, email, role });
   }
 }
