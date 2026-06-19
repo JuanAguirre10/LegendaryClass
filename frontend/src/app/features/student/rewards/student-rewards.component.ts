@@ -51,8 +51,8 @@ export class StudentRewardsComponent implements OnInit {
       error: () => this.loading.set(false),
     });
 
-    this.http.get<any[]>(`${environment.apiUrl}/rewards/student/history`).subscribe({
-      next: (res) => this.myRewards.set(res ?? []),
+    this.http.get<{ data: any[] }>(`${environment.apiUrl}/rewards/student/history`).subscribe({
+      next: (res) => this.myRewards.set(res.data ?? []),
       error: () => {},
     });
   }
@@ -105,7 +105,7 @@ export class StudentRewardsComponent implements OnInit {
         const p = this.profile();
         if (p) this.profile.set({ ...p, points: (p.points ?? 0) - (r.costPoints ?? r.cost ?? 0) });
         this.buyingId.set(null);
-        this.http.get<any[]>(`${environment.apiUrl}/rewards/student/history`).subscribe({ next: (res) => this.myRewards.set(res ?? []) });
+        this.http.get<{ data: any[] }>(`${environment.apiUrl}/rewards/student/history`).subscribe({ next: (res) => this.myRewards.set(res.data ?? []) });
       },
       error: (err) => {
         this.showToast(err.error?.message ?? 'Error al canjear', 'error');

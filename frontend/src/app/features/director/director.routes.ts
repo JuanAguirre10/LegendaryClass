@@ -7,6 +7,11 @@ export const directorRoutes: Routes = [
       import('./dashboard/director-dashboard.component').then((m) => m.DirectorDashboardComponent),
   },
   {
+    path: 'classrooms',
+    loadComponent: () =>
+      import('./classrooms/director-classrooms.component').then((m) => m.DirectorClassroomsComponent),
+  },
+  {
     path: 'teachers',
     loadComponent: () =>
       import('./teachers/director-teachers.component').then((m) => m.DirectorTeachersComponent),
@@ -15,6 +20,11 @@ export const directorRoutes: Routes = [
     path: 'students',
     loadComponent: () =>
       import('./students/director-students.component').then((m) => m.DirectorStudentsComponent),
+  },
+  {
+    path: 'users',
+    loadComponent: () =>
+      import('./users/director-users.component').then((m) => m.DirectorUsersComponent),
   },
   {
     path: 'reports',

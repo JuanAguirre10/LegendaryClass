@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException, BadRequestException 
 import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
 import { CreateBehaviorDto } from './dto/create-behavior.dto';
+import { PaginationQueryDto, paginate } from '../common/dto/pagination-query.dto';
 
 @Injectable()
 export class BehaviorsService {
@@ -127,15 +128,23 @@ export class BehaviorsService {
     return { message: 'Comportamiento revertido y eliminado' };
   }
 
-  async getStudentBehaviors(classroomId: string, studentId?: string) {
-    return this.prisma.studentBehavior.findMany({
-      where: { classroomId, ...(studentId ? { studentId } : {}) },
-      include: {
-        behavior: true,
-        student: { select: { id: true, name: true, avatar: true } },
-        awardedBy: { select: { id: true, name: true } },
+  async getStudentBehaviors(
+    classroomId: string,
+    studentId?: string,
+    pagination: PaginationQueryDto = {},
+  ) {
+    return paginate(
+      this.prisma.studentBehavior,
+      {
+        where: { classroomId, ...(studentId ? { studentId } : {}) },
+        include: {
+          behavior: true,
+          student: { select: { id: true, name: true, avatar: true } },
+          awardedBy: { select: { id: true, name: true } },
+        },
+        orderBy: { date: 'desc' },
       },
-      orderBy: { date: 'desc' },
-    });
+      pagination,
+    );
   }
 }

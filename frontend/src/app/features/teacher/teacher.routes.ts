@@ -22,6 +22,11 @@ export const teacherRoutes: Routes = [
       import('./behaviors/teacher-behaviors.component').then((m) => m.TeacherBehaviorsComponent),
   },
   {
+    path: 'quests',
+    loadComponent: () =>
+      import('./quests/teacher-quests.component').then((m) => m.TeacherQuestsComponent),
+  },
+  {
     path: 'rewards',
     loadComponent: () =>
       import('./rewards/teacher-rewards.component').then((m) => m.TeacherRewardsComponent),

@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { DirectorService } from './director.service';
 
 @ApiTags('Director')
@@ -20,18 +21,18 @@ export class DirectorController {
   }
 
   @Get('teachers')
-  getTeachers() {
-    return this.directorService.getTeachers();
+  getTeachers(@Query() pagination: PaginationQueryDto) {
+    return this.directorService.getTeachers(pagination);
   }
 
   @Get('students')
-  getStudents() {
-    return this.directorService.getStudents();
+  getStudents(@Query() pagination: PaginationQueryDto) {
+    return this.directorService.getStudents(pagination);
   }
 
   @Get('classrooms')
-  getClassrooms() {
-    return this.directorService.getAllClassrooms();
+  getClassrooms(@Query() pagination: PaginationQueryDto) {
+    return this.directorService.getAllClassrooms(pagination);
   }
 
   @Post('users')

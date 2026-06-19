@@ -17,6 +17,7 @@ import { environment } from '@env/environment';
         <a routerLink="/teacher/dashboard"  class="nav-link-epic">🏰 Inicio</a>
         <a routerLink="/teacher/classrooms" class="nav-link-epic">🏛️ Aulas</a>
         <a routerLink="/teacher/behaviors"  class="nav-link-epic">⭐ Comportamientos</a>
+        <a routerLink="/teacher/quests"     class="nav-link-epic">🗡️ Misiones</a>
         <a routerLink="/teacher/rewards"    class="nav-link-epic active">🎁 Recompensas</a>
       </div>
       <a routerLink="/teacher/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Dashboard</a>
@@ -261,8 +262,8 @@ export class TeacherRewardsComponent implements OnInit {
 
   loadRedemptions() {
     this.redemptionsLoading.set(true);
-    this.http.get<any[]>(`${environment.apiUrl}/rewards/classroom/${this.selectedClassroom}/redemptions`).subscribe({
-      next: (res) => { this.redemptions.set(res); this.redemptionsLoading.set(false); },
+    this.http.get<{ data: any[] }>(`${environment.apiUrl}/rewards/classroom/${this.selectedClassroom}/redemptions`).subscribe({
+      next: (res) => { this.redemptions.set(res.data); this.redemptionsLoading.set(false); },
       error: () => this.redemptionsLoading.set(false),
     });
   }

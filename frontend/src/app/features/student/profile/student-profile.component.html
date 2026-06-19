@@ -129,5 +129,26 @@
       </div>
     </div>
 
+    <!-- Cambiar contraseña -->
+    <div class="adventure-card p-6 mt-8 max-w-xl mx-auto animate-fade-in-up">
+      <h3 class="font-cinzel font-bold text-gray-800 text-lg mb-4">🔒 Cambiar contraseña</h3>
+      @if (pwMessage()) {
+        <div class="mb-3 px-4 py-2 rounded-lg font-cinzel text-xs"
+          [class]="pwMessage()!.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'">
+          {{ pwMessage()!.text }}
+        </div>
+      }
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input [(ngModel)]="newPassword" type="password" placeholder="Nueva contraseña (mín. 8)"
+          class="input-epic text-sm flex-1" />
+        <input [(ngModel)]="confirmPassword" type="password" placeholder="Confirmar contraseña"
+          class="input-epic text-sm flex-1" />
+        <button (click)="changePassword()" [disabled]="savingPw()"
+          class="btn-epic btn-purple text-sm py-2 px-6 whitespace-nowrap disabled:opacity-50">
+          {{ savingPw() ? '...' : 'Actualizar' }}
+        </button>
+      </div>
+    </div>
+
   }
 </div>

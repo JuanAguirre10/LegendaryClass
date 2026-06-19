@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
 import { CreateRewardDto } from './dto/create-reward.dto';
 import { RewardStatus } from '@prisma/client';
+import { PaginationQueryDto, paginate } from '../common/dto/pagination-query.dto';
 
 @Injectable()
 export class RewardsService {
@@ -194,29 +195,44 @@ export class RewardsService {
     return { message: `${pending.length} canjes aprobados` };
   }
 
-  async getStudentRewards(studentId: string, classroomId?: string) {
-    return this.prisma.studentReward.findMany({
-      where: { studentId, ...(classroomId ? { classroomId } : {}) },
-      include: { reward: true },
-      orderBy: { redeemedAt: 'desc' },
-    });
+  async getStudentRewards(
+    studentId: string,
+    classroomId?: string,
+    pagination: PaginationQueryDto = {},
+  ) {
+    return paginate(
+      this.prisma.studentReward,
+      {
+        where: { studentId, ...(classroomId ? { classroomId } : {}) },
+        include: { reward: true },
+        orderBy: { redeemedAt: 'desc' },
+      },
+      pagination,
+    );
   }
 
-  async getClassroomRedemptions(classroomId: string, teacherId: string) {
+  async getClassroomRedemptions(
+    classroomId: string,
+    teacherId: string,
+    pagination: PaginationQueryDto = {},
+  ) {
     const classroom = await this.prisma.classroom.findFirst({
       where: { id: classroomId, teacherId },
     });
     if (!classroom) throw new ForbiddenException('No tienes permiso sobre esta aula');
 
-    return this.prisma.studentReward.findMany({
-      where: { classroomId },
-      include: {
-        student: { select: { id: true, name: true } },
-        reward: { select: { id: true, name: true, icon: true, costPoints: true } },
+    return paginate(
+      this.prisma.studentReward,
+      {
+        where: { classroomId },
+        include: {
+          student: { select: { id: true, name: true } },
+          reward: { select: { id: true, name: true, icon: true, costPoints: true } },
+        },
+        orderBy: { redeemedAt: 'desc' },
       },
-      orderBy: { redeemedAt: 'desc' },
-      take: 50,
-    });
+      pagination,
+    );
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────

@@ -17,6 +17,7 @@ import { environment } from '@env/environment';
         <a routerLink="/director/classrooms" class="nav-link-epic">🏛️ Aulas</a>
         <a routerLink="/director/teachers"   class="nav-link-epic">📚 Profesores</a>
         <a routerLink="/director/students"   class="nav-link-epic active">⚔️ Estudiantes</a>
+        <a routerLink="/director/users"      class="nav-link-epic">👥 Usuarios</a>
         <a routerLink="/director/reports"    class="nav-link-epic">📊 Reportes</a>
       </div>
       <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
@@ -83,8 +84,8 @@ export class DirectorStudentsComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.http.get<any[]>(`${environment.apiUrl}/director/students`).subscribe({
-      next: (res) => this.students.set(res),
+    this.http.get<{ data: any[] }>(`${environment.apiUrl}/director/students`).subscribe({
+      next: (res) => this.students.set(res.data),
     });
   }
 

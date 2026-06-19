@@ -7,6 +7,8 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { RewardsService } from './rewards.service';
 import { CreateRewardDto } from './dto/create-reward.dto';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { StudentRewardsQueryDto } from './dto/student-rewards-query.dto';
 
 @ApiTags('Rewards')
 @ApiBearerAuth()
@@ -26,8 +28,9 @@ export class RewardsController {
   getRedemptions(
     @Param('classroomId') classroomId: string,
     @CurrentUser() user: any,
+    @Query() pagination: PaginationQueryDto,
   ) {
-    return this.rewardsService.getClassroomRedemptions(classroomId, user.id);
+    return this.rewardsService.getClassroomRedemptions(classroomId, user.id, pagination);
   }
 
   @Get('classroom/:classroomId')
@@ -75,8 +78,9 @@ export class RewardsController {
   // Student history
   @Get('student/history')
   @Roles(Role.student)
-  myRewards(@CurrentUser() user: any, @Query('classroomId') classroomId?: string) {
-    return this.rewardsService.getStudentRewards(user.id, classroomId);
+  myRewards(@CurrentUser() user: any, @Query() query: StudentRewardsQueryDto) {
+    const { classroomId, ...pagination } = query;
+    return this.rewardsService.getStudentRewards(user.id, classroomId, pagination);
   }
 
   // Teacher approve

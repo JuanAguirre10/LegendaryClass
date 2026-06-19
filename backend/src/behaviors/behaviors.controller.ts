@@ -7,6 +7,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { BehaviorsService } from './behaviors.service';
 import { CreateBehaviorDto } from './dto/create-behavior.dto';
+import { StudentBehaviorsQueryDto } from './dto/student-behaviors-query.dto';
 
 @ApiTags('Behaviors')
 @ApiBearerAuth()
@@ -75,8 +76,9 @@ export class BehaviorsController {
   @Roles(Role.teacher)
   getStudentBehaviors(
     @Param('classroomId') classroomId: string,
-    @Query('studentId') studentId?: string,
+    @Query() query: StudentBehaviorsQueryDto,
   ) {
-    return this.behaviorsService.getStudentBehaviors(classroomId, studentId);
+    const { studentId, ...pagination } = query;
+    return this.behaviorsService.getStudentBehaviors(classroomId, studentId, pagination);
   }
 }

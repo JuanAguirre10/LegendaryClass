@@ -191,6 +191,7 @@ model Classroom {
   experienceLogs ExperienceLog[]
   quests         Quest[]
 
+  @@index([teacherId])
   @@map("classrooms")
 }
 
@@ -250,6 +251,8 @@ model ExperienceLog {
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   classroom Classroom? @relation(fields: [classroomId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
+  @@index([classroomId])
   @@map("experience_logs")
 }
 
@@ -276,6 +279,8 @@ model Behavior {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([classroomId])
+  @@index([createdById])
   @@map("behaviors")
 }
 
@@ -300,6 +305,10 @@ model StudentBehavior {
 
   createdAt DateTime @default(now())
 
+  @@index([studentId])
+  @@index([behaviorId])
+  @@index([classroomId])
+  @@index([awardedById])
   @@map("student_behaviors")
 }
 
@@ -335,6 +344,8 @@ model Reward {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([classroomId])
+  @@index([createdById])
   @@map("rewards")
 }
 
@@ -362,6 +373,9 @@ model StudentReward {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([studentId])
+  @@index([rewardId])
+  @@index([approvedById])
   @@map("student_rewards")
 }
 
@@ -413,6 +427,8 @@ model Quest {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([classroomId])
+  @@index([teacherId])
   @@map("quests")
 }
 

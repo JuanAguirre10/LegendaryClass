@@ -17,6 +17,7 @@ import { environment } from '@env/environment';
         <a routerLink="/teacher/dashboard"  class="nav-link-epic">🏰 Inicio</a>
         <a routerLink="/teacher/classrooms" class="nav-link-epic active">🏛️ Aulas</a>
         <a routerLink="/teacher/behaviors"  class="nav-link-epic">⭐ Comportamientos</a>
+        <a routerLink="/teacher/quests"     class="nav-link-epic">🗡️ Misiones</a>
         <a routerLink="/teacher/rewards"    class="nav-link-epic">🎁 Recompensas</a>
       </div>
       <a routerLink="/teacher/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Dashboard</a>

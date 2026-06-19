@@ -1,0 +1,164 @@
+================================================================
+ENCUESTA DE PREFERENCIA DE MERCADO
+Proyecto: LegendaryClass — Sistema SaaS de Gamificación Educativa
+Curso: Diseño de Proyectos de Innovación — TECSUP 2026-I
+================================================================
+
+INSTRUCCIONES:
+Responda con honestidad. La encuesta es anónima y toma
+aproximadamente 5 minutos. Sus respuestas serán utilizadas
+únicamente con fines académicos de análisis de mercado.
+
+----------------------------------------------------------------
+SECCIÓN 1 — PERFIL DEL ENCUESTADO
+----------------------------------------------------------------
+
+P1. ¿Cuál es su rol en la institución educativa?
+   ( ) Docente
+   ( ) Director / Subdirector
+   ( ) Coordinador académico
+   ( ) Administrativo
+   ( ) Otro: ______________
+
+P2. ¿En qué tipo de institución trabaja actualmente?
+   ( ) Pública (estatal, financiada por el Estado)
+   ( ) Privada (arancelada)
+   ( ) Privada subvencionada (convenio con el Estado)
+
+P3. ¿Cuántos alumnos tiene aproximadamente su institución?
+   ( ) Menos de 200 alumnos
+   ( ) Entre 200 y 500 alumnos
+   ( ) Entre 500 y 1,000 alumnos
+   ( ) Más de 1,000 alumnos
+
+P4. ¿Se encuentra trabajando actualmente en una institución educativa?
+   ( ) Sí, trabajo actualmente como docente
+   ( ) No, estoy en búsqueda de empleo
+   ( ) Otra situación: ______________
+
+----------------------------------------------------------------
+SECCIÓN 2 — DIAGNÓSTICO DEL PROBLEMA
+----------------------------------------------------------------
+
+P5. ¿Utiliza actualmente alguna plataforma digital para la
+    gestión o motivación en clase? (ej. Kahoot, ClassDojo, etc.)
+   ( ) Sí
+   ( ) No
+
+P6. Si respondió SÍ en P5, ¿cuánto paga mensualmente por ella?
+   ( ) No pago, es gratuita
+   ( ) Entre S/. 1 y S/. 30 al mes
+   ( ) Entre S/. 31 y S/. 60 al mes
+   ( ) Entre S/. 61 y S/. 100 al mes
+   ( ) Más de S/. 100 al mes
+
+P7. ¿Con qué frecuencia percibe baja motivación o falta de
+    participación en sus estudiantes durante las clases?
+   ( ) 1 — Nunca
+   ( ) 2 — Raramente (1 vez por semana)
+   ( ) 3 — A veces (2-3 veces por semana)
+   ( ) 4 — Frecuentemente (casi a diario)
+   ( ) 5 — Siempre (todos los días)
+
+P8. ¿Ha intentado implementar estrategias de juego o retos
+    para motivar a sus alumnos?
+   ( ) Sí, con buenos resultados
+   ( ) Sí, pero sin resultados claros
+   ( ) No, no supe cómo hacerlo
+   ( ) No, no me parecía necesario
+
+----------------------------------------------------------------
+SECCIÓN 3 — INTERÉS EN EL PRODUCTO
+----------------------------------------------------------------
+
+P9. LegendaryClass es una plataforma donde los estudiantes
+    eligen un personaje RPG, ganan XP por sus logros en clase
+    y canjean recompensas. ¿Estaría interesado en usarla?
+   ( ) Sí, definitivamente la usaría
+   ( ) Tal vez, necesito ver más detalles
+   ( ) No, no me parece útil
+
+P10. ¿Qué funcionalidades valoraría más en la plataforma?
+     (Puede marcar más de una)
+   [ ] Sistema de XP y niveles para estudiantes
+   [ ] Misiones y retos académicos configurables
+   [ ] Recompensas canjeables definidas por el docente
+   [ ] Reporte de progreso visible para padres
+   [ ] Panel de estadísticas por aula
+   [ ] Todas las anteriores
+
+P11. ¿Estaría dispuesto a implementar una solución de
+     gamificación en su aula si fuera fácil de usar?
+   ( ) Sí, estoy muy interesado
+   ( ) Sí, si tiene capacitación incluida
+   ( ) Tal vez, depende del precio
+   ( ) No
+
+----------------------------------------------------------------
+SECCIÓN 4 — DISPOSICIÓN A PAGAR
+(La más importante para el análisis de mercado)
+----------------------------------------------------------------
+
+P12. ¿Qué modelo de pago preferiría para una plataforma así?
+   ( ) Mensual por docente (pago individual)
+   ( ) Licencia anual por institución (pago institucional)
+   ( ) Pago único de por vida
+   ( ) No pagaría por ningún modelo
+
+P13. ¿Cuánto estaría dispuesto a pagar MENSUALMENTE por
+     docente para acceder a la plataforma completa?
+   ( ) Menos de S/. 20 al mes
+   ( ) Entre S/. 20 y S/. 35 al mes
+   ( ) Entre S/. 36 y S/. 55 al mes
+   ( ) Entre S/. 56 y S/. 80 al mes
+   ( ) No pagaría por ningún monto
+
+     NOTA: Esta pregunta define el precio ponderado del estudio.
+     El rango S/. 15–35/mes es el más frecuente entre docentes
+     peruanos según estudios comparables (Kahoot! Pro: ~S/. 37,
+     ClassDojo Plus: ~S/. 25 al mes por docente).
+
+P14. Si su institución pagara la suscripción,
+     ¿cuánto considera razonable que pague anualmente?
+   ( ) Menos de S/. 500 al año
+   ( ) Entre S/. 500 y S/. 1,000 al año
+   ( ) Entre S/. 1,001 y S/. 2,000 al año
+   ( ) Más de S/. 2,000 al año
+   ( ) No contrataría la plataforma
+
+----------------------------------------------------------------
+SECCIÓN 5 — CONDICIONES DE ADOPCIÓN
+----------------------------------------------------------------
+
+P15. ¿Necesitaría capacitación para usar la plataforma?
+   ( ) Sí, necesito capacitación presencial o virtual
+   ( ) No, aprendería solo con el tutorial
+   ( ) Solo necesito una demo de 20 minutos
+
+P16. ¿Bajo qué condición la probaría por primera vez?
+   ( ) Prueba gratuita de 30 días sin tarjeta
+   ( ) Demo en vivo con el equipo
+   ( ) Recomendación de un colega docente
+   ( ) Solo si la institución lo aprueba
+
+P17. ¿Recomendaría la plataforma a otros docentes si
+     tiene una buena experiencia?
+   ( ) Sí, definitivamente
+   ( ) Probablemente sí
+   ( ) No sé
+   ( ) No
+
+================================================================
+FIN DE LA ENCUESTA — Gracias por su tiempo
+================================================================
+
+NOTA METODOLÓGICA:
+Las preguntas P4, P7 y P13 son los filtros principales para
+el modelo de segmentación en cascada:
+  - P4  →  Mercado Disponible  (trabaja actualmente)
+  - P7  →  Mercado Efectivo    (percibe baja motivación)
+  - P13 →  Mercado Objetivo    (dispuesto a pagar)
+
+El precio ponderado se calcula sobre los respondentes de P13
+que eligieron un rango de pago (excluye "No pagaría").
+================================================================

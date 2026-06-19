@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { PaginationQueryDto, paginate } from '../common/dto/pagination-query.dto';
 
 @Injectable()
 export class DirectorService {
@@ -40,36 +41,48 @@ export class DirectorService {
     };
   }
 
-  async getTeachers() {
-    return this.prisma.user.findMany({
-      where: { role: Role.teacher },
-      select: {
-        id: true, name: true, email: true, isActive: true, createdAt: true,
-        _count: { select: { taughtClassrooms: true } },
+  async getTeachers(pagination: PaginationQueryDto = {}) {
+    return paginate(
+      this.prisma.user,
+      {
+        where: { role: Role.teacher },
+        select: {
+          id: true, name: true, email: true, isActive: true, createdAt: true,
+          _count: { select: { taughtClassrooms: true } },
+        },
+        orderBy: { name: 'asc' },
       },
-      orderBy: { name: 'asc' },
-    });
+      pagination,
+    );
   }
 
-  async getStudents() {
-    return this.prisma.user.findMany({
-      where: { role: Role.student },
-      select: {
-        id: true, name: true, email: true, level: true, experiencePoints: true,
-        points: true, characterType: true, isActive: true, createdAt: true,
+  async getStudents(pagination: PaginationQueryDto = {}) {
+    return paginate(
+      this.prisma.user,
+      {
+        where: { role: Role.student },
+        select: {
+          id: true, name: true, email: true, level: true, experiencePoints: true,
+          points: true, characterType: true, isActive: true, createdAt: true,
+        },
+        orderBy: [{ level: 'desc' }, { experiencePoints: 'desc' }],
       },
-      orderBy: [{ level: 'desc' }, { experiencePoints: 'desc' }],
-    });
+      pagination,
+    );
   }
 
-  async getAllClassrooms() {
-    return this.prisma.classroom.findMany({
-      include: {
-        teacher: { select: { id: true, name: true } },
-        _count: { select: { students: true } },
+  async getAllClassrooms(pagination: PaginationQueryDto = {}) {
+    return paginate(
+      this.prisma.classroom,
+      {
+        include: {
+          teacher: { select: { id: true, name: true } },
+          _count: { select: { students: true } },
+        },
+        orderBy: { createdAt: 'desc' },
       },
-      orderBy: { createdAt: 'desc' },
-    });
+      pagination,
+    );
   }
 
   async createUser(data: {

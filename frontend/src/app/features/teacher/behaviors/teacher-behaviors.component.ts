@@ -17,6 +17,7 @@ import { environment } from '@env/environment';
         <a routerLink="/teacher/dashboard"  class="nav-link-epic">🏰 Inicio</a>
         <a routerLink="/teacher/classrooms" class="nav-link-epic">🏛️ Aulas</a>
         <a routerLink="/teacher/behaviors"  class="nav-link-epic active">⭐ Comportamientos</a>
+        <a routerLink="/teacher/quests"     class="nav-link-epic">🗡️ Misiones</a>
         <a routerLink="/teacher/rewards"    class="nav-link-epic">🎁 Recompensas</a>
       </div>
       <a routerLink="/teacher/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Dashboard</a>
@@ -211,8 +212,8 @@ export class TeacherBehaviorsComponent implements OnInit {
 
   loadRecentAwards() {
     this.awardsLoading.set(true);
-    this.http.get<any[]>(`${environment.apiUrl}/behaviors/student-behaviors/${this.selectedClassroom}`).subscribe({
-      next: (res) => { this.recentAwards.set(res ?? []); this.awardsLoading.set(false); },
+    this.http.get<{ data: any[] }>(`${environment.apiUrl}/behaviors/student-behaviors/${this.selectedClassroom}`).subscribe({
+      next: (res) => { this.recentAwards.set(res.data ?? []); this.awardsLoading.set(false); },
       error: () => this.awardsLoading.set(false),
     });
   }
