@@ -41,6 +41,7 @@ export class RankingGateway implements OnGatewayConnection {
         });
         if (!dbUser || !dbUser.isActive) throw new Error('inactive or missing user');
         client.data.user = { id: payload.sub, role: dbUser.role };
+        client.join(`user:${payload.sub}`);
       } catch {
         client.disconnect(true);
       }
@@ -68,5 +69,9 @@ export class RankingGateway implements OnGatewayConnection {
   async emitRankingUpdate(classroomId: string): Promise<void> {
     const ranking = await this.rankingService.computeRanking(classroomId);
     this.server.to(`classroom:${classroomId}`).emit('ranking:update', { classroomId, ranking });
+  }
+
+  emitToUser(userId: string, event: string, payload: unknown): void {
+    this.server.to(`user:${userId}`).emit(event, payload);
   }
 }
