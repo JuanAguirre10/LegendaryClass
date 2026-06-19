@@ -10,6 +10,7 @@ import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { getJwtSecret } from '../auth/jwt-secret';
 import { RankingService } from './ranking.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @WebSocketGateway({
   namespace: 'ranking',
@@ -21,17 +22,24 @@ export class RankingGateway implements OnGatewayConnection {
   constructor(
     private jwt: JwtService,
     private rankingService: RankingService,
+    private prisma: PrismaService,
   ) {}
 
   // Valida el JWT del handshake; desconecta si es inválido. Guarda el user en el socket.
-  handleConnection(client: Socket) {
+  // Carga el usuario desde la DB para verificar isActive y obtener el rol actualizado.
+  async handleConnection(client: Socket) {
     try {
       const token =
         (client.handshake.auth?.token as string) ||
         (client.handshake.headers?.authorization as string)?.replace('Bearer ', '');
       if (!token) throw new Error('no token');
       const payload = this.jwt.verify(token, { secret: getJwtSecret() });
-      client.data.user = { id: payload.sub, role: payload.role };
+      const dbUser = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
+        select: { isActive: true, role: true },
+      });
+      if (!dbUser || !dbUser.isActive) throw new Error('inactive or missing user');
+      client.data.user = { id: payload.sub, role: dbUser.role };
     } catch {
       client.disconnect(true);
     }

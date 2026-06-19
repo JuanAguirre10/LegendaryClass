@@ -17,17 +17,24 @@ export interface RankingEntry {
 @Injectable({ providedIn: 'root' })
 export class RealtimeService implements OnDestroy {
   private socket?: Socket;
+  private socketToken: string | null = null;
 
   constructor(private auth: AuthService) {}
 
   private ensureSocket(): Socket {
+    const token = this.auth.token() ?? '';
+    if (this.socket && this.socketToken !== token) {
+      this.socket.disconnect();
+      this.socket = undefined;
+    }
     if (!this.socket) {
       // environment.apiUrl = http://localhost:3000/api/v1 → origin = http://localhost:3000
       const origin = environment.apiUrl.replace(/\/api\/v1\/?$/, '');
       this.socket = io(`${origin}/ranking`, {
-        auth: { token: this.auth.token() ?? '' },
+        auth: { token },
         transports: ['websocket'],
       });
+      this.socketToken = token;
     }
     return this.socket;
   }
