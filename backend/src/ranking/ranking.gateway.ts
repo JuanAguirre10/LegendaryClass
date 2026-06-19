@@ -26,26 +26,30 @@ export class RankingGateway implements OnGatewayConnection {
 
   // Valida el JWT del handshake; desconecta si es inválido. Guarda el user en el socket.
   // Carga el usuario desde la DB para verificar isActive y obtener el rol actualizado.
-  async handleConnection(client: Socket) {
-    try {
-      const token =
-        (client.handshake.auth?.token as string) ||
-        (client.handshake.headers?.authorization as string)?.replace('Bearer ', '');
-      if (!token) throw new Error('no token');
-      const payload = this.jwt.verify(token, { secret: getJwtSecret() });
-      const dbUser = await this.prisma.user.findUnique({
-        where: { id: payload.sub },
-        select: { isActive: true, role: true },
-      });
-      if (!dbUser || !dbUser.isActive) throw new Error('inactive or missing user');
-      client.data.user = { id: payload.sub, role: dbUser.role };
-    } catch {
-      client.disconnect(true);
-    }
+  // authReady es una promesa sincrónica que permite a onJoin esperar a que auth termine.
+  handleConnection(client: Socket) {
+    client.data.authReady = (async () => {
+      try {
+        const token =
+          (client.handshake.auth?.token as string) ||
+          (client.handshake.headers?.authorization as string)?.replace('Bearer ', '');
+        if (!token) throw new Error('no token');
+        const payload = this.jwt.verify(token, { secret: getJwtSecret() });
+        const dbUser = await this.prisma.user.findUnique({
+          where: { id: payload.sub },
+          select: { isActive: true, role: true },
+        });
+        if (!dbUser || !dbUser.isActive) throw new Error('inactive or missing user');
+        client.data.user = { id: payload.sub, role: dbUser.role };
+      } catch {
+        client.disconnect(true);
+      }
+    })();
   }
 
   @SubscribeMessage('join')
   async onJoin(@MessageBody() body: { classroomId: string }, @ConnectedSocket() client: Socket) {
+    await client.data.authReady;
     const user = client.data.user;
     if (!user) return;
     try {
