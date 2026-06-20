@@ -65,6 +65,7 @@
         </div>
       }
       <span class="points-indicator">💎 {{ user?.points ?? 0 }}</span>
+      <app-notification-bell />
       <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
     </div>
   </div>

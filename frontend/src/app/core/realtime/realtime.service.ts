@@ -54,6 +54,15 @@ export class RealtimeService implements OnDestroy {
     });
   }
 
+  onEvent<T>(event: string): Observable<T> {
+    const socket = this.ensureSocket();
+    return new Observable<T>((sub) => {
+      const handler = (payload: T) => sub.next(payload);
+      socket.on(event, handler);
+      return () => socket.off(event, handler);
+    });
+  }
+
   ngOnDestroy() {
     this.socket?.disconnect();
   }
