@@ -1,6 +1,7 @@
 // frontend/src/app/core/notifications/notification.service.ts
-import { Injectable, signal } from '@angular/core';
+import { Injectable, OnDestroy, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 import { environment } from '@env/environment';
 import { RealtimeService } from '../realtime/realtime.service';
 
@@ -10,19 +11,24 @@ export interface AppNotification {
 }
 
 @Injectable({ providedIn: 'root' })
-export class NotificationService {
+export class NotificationService implements OnDestroy {
   unreadCount = signal(0);
   items = signal<AppNotification[]>([]);
   private started = false;
+  private liveSub?: Subscription;
 
   constructor(private http: HttpClient, private realtime: RealtimeService) {}
+
+  ngOnDestroy(): void {
+    this.liveSub?.unsubscribe();
+  }
 
   // Llamar una vez tras el login (p. ej. desde el bell component).
   start(): void {
     if (this.started) return;
     this.started = true;
     this.refresh();
-    this.realtime.onEvent<AppNotification>('notification:new').subscribe((n) => {
+    this.liveSub = this.realtime.onEvent<AppNotification>('notification:new').subscribe((n) => {
       this.items.update((list) => [n, ...list]);
       this.unreadCount.update((c) => c + 1);
     });
@@ -30,9 +36,9 @@ export class NotificationService {
 
   refresh(): void {
     this.http.get<{ count: number }>(`${environment.apiUrl}/notifications/unread-count`)
-      .subscribe({ next: (r) => this.unreadCount.set(r.count) });
+      .subscribe({ next: (r) => this.unreadCount.set(r.count), error: () => undefined });
     this.http.get<{ data: AppNotification[] }>(`${environment.apiUrl}/notifications?limit=10&page=1`)
-      .subscribe({ next: (r) => this.items.set(r.data) });
+      .subscribe({ next: (r) => this.items.set(r.data), error: () => undefined });
   }
 
   markRead(n: AppNotification): void {

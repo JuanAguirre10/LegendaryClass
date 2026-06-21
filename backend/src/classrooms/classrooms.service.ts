@@ -3,7 +3,6 @@ import {
   NotFoundException,
   ForbiddenException,
   ConflictException,
-  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RankingGateway } from '../ranking/ranking.gateway';
@@ -47,7 +46,7 @@ export class ClassroomsService {
     });
   }
 
-  async findBySlug(slug: string, requesterId: string) {
+  async findBySlug(slug: string, _requesterId: string) {
     const classroom = await this.prisma.classroom.findUnique({
       where: { slug },
       include: {
@@ -123,7 +122,7 @@ export class ClassroomsService {
     return { message: 'Todos los estudiantes fueron eliminados' };
   }
 
-  async adjustPoints(slug: string, teacherId: string, studentId: string, points: number, notes?: string) {
+  async adjustPoints(slug: string, teacherId: string, studentId: string, points: number, _notes?: string) {
     const classroom = await this.findOwnedClassroom(slug, teacherId);
     const sp = await this.prisma.studentPoint.findUnique({
       where: { studentId_classroomId: { studentId, classroomId: classroom.id } },

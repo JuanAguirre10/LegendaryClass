@@ -26,6 +26,9 @@ export class NotificationsService {
         return { title: 'Actualización de canje', message: `Tu canje de "${data.rewardName}" fue ${STATUS_LABEL[data.status] ?? data.status}`, link: '/student/rewards' };
       case 'reward_pending':
         return { title: 'Canje pendiente', message: `${data.studentName} canjeó "${data.rewardName}" y espera tu aprobación`, link: '/teacher/rewards' };
+      default:
+        // Fallback exhaustivo: un tipo futuro no produce un payload undefined.
+        return { title: 'Notificación', message: 'Tienes una nueva notificación' };
     }
   }
 

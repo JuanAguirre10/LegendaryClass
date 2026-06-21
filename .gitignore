@@ -69,3 +69,6 @@ desktop.ini
 
 # Uploaded files (local disk storage)
 backend/uploads/
+
+# Scratch del flujo subagent-driven (SDD)
+.superpowers/

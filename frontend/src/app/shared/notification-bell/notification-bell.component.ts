@@ -1,5 +1,5 @@
 // frontend/src/app/shared/notification-bell/notification-bell.component.ts
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService, AppNotification } from '../../core/notifications/notification.service';
@@ -42,9 +42,15 @@ import { NotificationService, AppNotification } from '../../core/notifications/n
 })
 export class NotificationBellComponent implements OnInit {
   open = signal(false);
-  constructor(public notifications: NotificationService, private router: Router) {}
+  constructor(public notifications: NotificationService, private router: Router, private host: ElementRef) {}
   ngOnInit() { this.notifications.start(); }
   toggle() { this.open.update((o) => !o); }
+
+  // Cierra el dropdown al hacer clic fuera del componente.
+  @HostListener('document:click', ['$event.target'])
+  onDocumentClick(target: HTMLElement) {
+    if (this.open() && !this.host.nativeElement.contains(target)) this.open.set(false);
+  }
   onClick(n: AppNotification) {
     this.notifications.markRead(n);
     this.open.set(false);

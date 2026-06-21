@@ -1,6 +1,6 @@
 import {
   Controller, Get, Post, Patch, Delete, Body, Param,
-  UseGuards, Query, UseInterceptors, UploadedFile, BadRequestException,
+  UseGuards, UseInterceptors, UploadedFile, BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Role } from '@prisma/client';

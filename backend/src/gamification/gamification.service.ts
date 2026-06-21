@@ -110,8 +110,6 @@ export class GamificationService {
   // ─── Character bonus ────────────────────────────────────────────────────
 
   shouldApplyCharacterBonus(bonusType: CharacterBonusType, actionType: string): boolean {
-    const actions = STAT_MULTIPLIERS[bonusType];
-    // We reuse ACHIEVEMENT_DEFINITIONS bonus actions via CHARACTER_INFO
     const entry = Object.values(CHARACTER_INFO).find((c) => c.bonusType === bonusType);
     return entry ? entry.bonusActions.includes(actionType) : false;
   }

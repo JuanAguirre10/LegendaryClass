@@ -50,6 +50,10 @@ export class BehaviorsService {
 
   async delete(id: string, teacherId: string) {
     const behavior = await this.findOne(id);
+    const classroom = await this.prisma.classroom.findFirst({
+      where: { id: behavior.classroomId, teacherId },
+    });
+    if (!classroom) throw new ForbiddenException('No tienes permiso');
     const usageCount = (behavior as any)._count?.studentBehaviors ?? 0;
     if (usageCount > 0) {
       throw new BadRequestException('No puedes eliminar un comportamiento que ya fue asignado a estudiantes');
