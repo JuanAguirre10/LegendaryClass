@@ -1,6 +1,6 @@
 <!-- ══════════════════ EVOLUTION OVERLAY ══════════════════ -->
 @if (showEvolution()) {
-  <div class="evolution-overlay" (click)="closeEvolution()">
+  <div class="evolution-overlay" (click)="closeEvolution()" (keyup.enter)="closeEvolution()" (keyup.escape)="closeEvolution()" tabindex="0" role="button" aria-label="Cerrar">
     <div class="evolution-particles">
       @for (p of evolutionParticles; track p.id) {
         <div class="evolution-particle"
@@ -55,7 +55,7 @@
       @if (user?.characterType) {
         <div class="relative hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl"
           style="background: rgba(255,255,255,0.1); border: 1px solid rgba(251,191,36,0.3);">
-          <img [src]="getShieldImage()"
+          <img [src]="getShieldImage()" alt="Escudo del personaje"
             class="w-7 h-7 object-contain animate-float-shield"
             (error)="hideElement($event)" />
           <div>

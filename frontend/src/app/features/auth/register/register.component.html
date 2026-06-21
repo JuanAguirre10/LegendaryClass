@@ -39,34 +39,34 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
 
         <div>
-          <label class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
+          <label for="reg-name" class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
             Nombre Completo
           </label>
-          <input type="text" formControlName="name" placeholder="Tu nombre completo"
+          <input id="reg-name" type="text" formControlName="name" placeholder="Tu nombre completo"
             class="input-epic" />
         </div>
 
         <div>
-          <label class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
+          <label for="reg-email" class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
             Correo Electrónico
           </label>
-          <input type="email" formControlName="email" placeholder="tu&#64;email.com"
+          <input id="reg-email" type="email" formControlName="email" placeholder="tu&#64;email.com"
             class="input-epic" />
         </div>
 
         <div>
-          <label class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
+          <label for="reg-password" class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
             Contraseña
           </label>
-          <input type="password" formControlName="password" placeholder="Mínimo 8 caracteres"
+          <input id="reg-password" type="password" formControlName="password" placeholder="Mínimo 8 caracteres"
             class="input-epic" />
         </div>
 
         <!-- Selección de rol — igual al PHP -->
         <div>
-          <label class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">
+          <span class="block font-cinzel text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">
             Tipo de Aventurero
-          </label>
+          </span>
           <div class="grid grid-cols-3 gap-2">
             @for (role of roles; track role.value) {
               <button type="button" (click)="form.patchValue({ role: role.value })"

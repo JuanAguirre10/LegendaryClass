@@ -36,14 +36,14 @@ module.exports = tseslint.config(
       // Allow intentional `_`-prefixed throwaways and `{ x, ...rest }` omits;
       // surface genuinely unused code as warnings, not build-breaking errors.
       "@typescript-eslint/no-unused-vars": [
-        "warn",
+        "error",
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
           ignoreRestSiblings: true,
         },
       ],
-      "@typescript-eslint/no-empty-function": "warn",
+      "@typescript-eslint/no-empty-function": "error",
     },
   },
   {
@@ -53,11 +53,11 @@ module.exports = tseslint.config(
       ...angular.configs.templateAccessibility,
     ],
     rules: {
-      // Accessibility findings are worth tracking but should not fail the build yet.
-      "@angular-eslint/template/click-events-have-key-events": "warn",
-      "@angular-eslint/template/interactive-supports-focus": "warn",
-      "@angular-eslint/template/alt-text": "warn",
-      "@angular-eslint/template/label-has-associated-control": "warn",
+      // Accesibilidad: ya cumplida en todo el código, ahora enforced.
+      "@angular-eslint/template/click-events-have-key-events": "error",
+      "@angular-eslint/template/interactive-supports-focus": "error",
+      "@angular-eslint/template/alt-text": "error",
+      "@angular-eslint/template/label-has-associated-control": "error",
     },
   }
 );

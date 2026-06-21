@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, Input, computed } from '@angular/core';
+import { Component, OnInit, signal, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -153,7 +153,8 @@ import { AvatarUploadComponent } from '../../../shared/avatar-upload/avatar-uplo
                   <div>
                     <!-- Fila del estudiante -->
                     <div class="flex items-center gap-3 px-5 py-3 hover:bg-blue-50/30 transition-colors cursor-pointer"
-                      (click)="toggleAward(enrollment.student.id)">
+                      (click)="toggleAward(enrollment.student.id)" (keyup.enter)="toggleAward(enrollment.student.id)"
+                      tabindex="0" role="button">
                       <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0"
                         style="background: linear-gradient(135deg,#3b82f6,#1d4ed8);">
                         {{ charEmoji(enrollment.student?.characterType) }}

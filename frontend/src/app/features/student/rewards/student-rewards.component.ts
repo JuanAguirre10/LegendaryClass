@@ -27,7 +27,7 @@ export class StudentRewardsComponent implements OnInit {
   ngOnInit() {
     this.http.get<any>(`${environment.apiUrl}/users/profile`).subscribe({
       next: (p) => this.profile.set(p),
-      error: () => {},
+      error: () => { /* sin acción: estado vacío por defecto */ },
     });
 
     this.http.get<any[]>(`${environment.apiUrl}/classrooms/student/enrolled`).pipe(
@@ -53,7 +53,7 @@ export class StudentRewardsComponent implements OnInit {
 
     this.http.get<{ data: any[] }>(`${environment.apiUrl}/rewards/student/history`).subscribe({
       next: (res) => this.myRewards.set(res.data ?? []),
-      error: () => {},
+      error: () => { /* sin acción: estado vacío por defecto */ },
     });
   }
 

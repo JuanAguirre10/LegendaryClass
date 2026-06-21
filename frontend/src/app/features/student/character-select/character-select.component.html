@@ -42,7 +42,8 @@
     <!-- Grid de personajes -->
     <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 w-full max-w-6xl mb-10">
       @for (char of characters; track char.type) {
-        <div (click)="select(char.type)"
+        <div (click)="select(char.type)" (keyup.enter)="select(char.type)" tabindex="0" role="button"
+          [attr.aria-label]="'Elegir ' + char.type"
           class="character-card flex flex-col items-center text-center cursor-pointer"
           [class.selected]="selected() === char.type"
           [class.selecting]="selecting() === char.type">

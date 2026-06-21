@@ -44,7 +44,7 @@
               (error)="onImgError($event, charInfo?.icon ?? '🧙‍♂️')" />
           </div>
           <!-- Escudo flotante -->
-          <img [src]="getShieldImage()"
+          <img [src]="getShieldImage()" alt="Escudo del personaje"
             class="absolute -top-2 -right-2 w-12 h-12 animate-float-shield"
             style="filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));"
             (error)="hideElement($event)" />

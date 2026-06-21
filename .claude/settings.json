@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(bash .agents/skills/subagent-driven-development/scripts/review-package *)",
+      "Bash(bash .agents/skills/subagent-driven-development/scripts/task-brief *)",
+      "Bash(git push *)"
+    ]
+  }
+}

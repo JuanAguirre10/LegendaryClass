@@ -66,7 +66,7 @@ export class CharacterSelectComponent {
 
     this.loading.set(true);
     this.http.post(`${environment.apiUrl}/student/character/select`, { characterType }).subscribe({
-      next: (user: any) => {
+      next: () => {
         this.auth.updateUser({ characterType, firstCharacterSelection: true });
         this.router.navigate(['/student/dashboard']);
       },
