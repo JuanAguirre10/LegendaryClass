@@ -26,6 +26,10 @@ export class NotificationsService {
         return { title: 'Actualización de canje', message: `Tu canje de "${data.rewardName}" fue ${STATUS_LABEL[data.status] ?? data.status}`, link: '/student/rewards' };
       case 'reward_pending':
         return { title: 'Canje pendiente', message: `${data.studentName} canjeó "${data.rewardName}" y espera tu aprobación`, link: '/teacher/rewards' };
+      case 'template_review':
+        return data.approved
+          ? { title: 'Plantilla aprobada', message: `Tu plantilla "${data.title}" fue aprobada y ya está en el banco`, link: '/teacher/courses' }
+          : { title: 'Plantilla rechazada', message: `Tu plantilla "${data.title}" fue rechazada${data.note ? ': ' + data.note : ''}`, link: '/teacher/courses' };
       default:
         // Fallback exhaustivo: un tipo futuro no produce un payload undefined.
         return { title: 'Notificación', message: 'Tienes una nueva notificación' };

@@ -19,6 +19,7 @@ import { RankingModule } from './ranking/ranking.module';
 import { ExportModule } from './export/export.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { CoursesModule } from './courses/courses.module';
+import { TemplatesModule } from './templates/templates.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { CoursesModule } from './courses/courses.module';
     ExportModule,
     NotificationsModule,
     CoursesModule,
+    TemplatesModule,
   ],
   providers: [
     // Apply the rate limiter globally to every route
