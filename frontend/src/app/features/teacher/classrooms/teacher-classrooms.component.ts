@@ -36,7 +36,17 @@ import { environment } from '@env/environment';
     @if (showCreate) {
       <div class="legendary-card p-6 mb-6 grid grid-cols-2 gap-4">
         <input [(ngModel)]="newClass.name"        type="text" placeholder="Nombre del aula *"     class="input-epic col-span-2 text-sm" />
-        <input [(ngModel)]="newClass.subject"     type="text" placeholder="Asignatura"             class="input-epic text-sm" />
+        <select
+          [(ngModel)]="newClass.courseId"
+          name="courseId"
+          required
+          class="input-epic text-sm"
+        >
+          <option value="" disabled>Selecciona un curso</option>
+          @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ course.icon }} {{ course.name }}</option>
+          }
+        </select>
         <input [(ngModel)]="newClass.gradeLevel"  type="text" placeholder="Grado"                  class="input-epic text-sm" />
         <input [(ngModel)]="newClass.description" type="text" placeholder="Descripción (opcional)" class="input-epic col-span-2 text-sm" />
         <div class="col-span-2 flex gap-3 justify-end">
@@ -84,9 +94,10 @@ import { environment } from '@env/environment';
 })
 export class TeacherClassroomsComponent implements OnInit {
   classrooms = signal<any[]>([]);
+  courses = signal<{ id: string; name: string; category: string; icon: string }[]>([]);
   loading = signal(true);
   showCreate = false;
-  newClass = { name: '', subject: '', gradeLevel: '', description: '' };
+  newClass = { name: '', courseId: '', gradeLevel: '', description: '' };
 
   constructor(private http: HttpClient) {}
 
@@ -95,12 +106,20 @@ export class TeacherClassroomsComponent implements OnInit {
       next: (res) => { this.classrooms.set(res); this.loading.set(false); },
       error: () => this.loading.set(false),
     });
+    this.loadCourses();
+  }
+
+  private loadCourses(): void {
+    this.http.get<{ id: string; name: string; category: string; icon: string }[]>(`${environment.apiUrl}/courses`).subscribe({
+      next: (data) => this.courses.set(data),
+      error: () => undefined,
+    });
   }
 
   createClassroom() {
     if (!this.newClass.name) return;
     this.http.post(`${environment.apiUrl}/classrooms`, this.newClass).subscribe({
-      next: () => { this.showCreate = false; this.newClass = { name: '', subject: '', gradeLevel: '', description: '' }; this.ngOnInit(); },
+      next: () => { this.showCreate = false; this.newClass = { name: '', courseId: '', gradeLevel: '', description: '' }; this.ngOnInit(); },
       error: (err) => alert(err.error?.message ?? 'Error'),
     });
   }
