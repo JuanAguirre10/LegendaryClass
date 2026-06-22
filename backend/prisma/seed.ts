@@ -192,6 +192,24 @@ async function main() {
     create: { parentId: parent.id, childId: student1.id },
   });
 
+  // Courses
+  const coursesData = [
+    { name: 'Aritmética',              category: 'mathematics', icon: '🔢', color: '#3B82F6' },
+    { name: 'Álgebra',                 category: 'mathematics', icon: '📐', color: '#8B5CF6' },
+    { name: 'Geometría',               category: 'mathematics', icon: '📏', color: '#10B981' },
+    { name: 'Razonamiento Matemático', category: 'mathematics', icon: '🧮', color: '#F59E0B' },
+    { name: 'Trigonometría',           category: 'mathematics', icon: '📊', color: '#EF4444' },
+    { name: 'Química',                 category: 'sciences',    icon: '⚗️',  color: '#06B6D4' },
+    { name: 'Física',                  category: 'sciences',    icon: '⚡',  color: '#F97316' },
+  ];
+  for (const c of coursesData) {
+    await prisma.course.upsert({
+      where: { id: `course_${c.name.toLowerCase().replace(/\s+/g, '_')}` },
+      update: {},
+      create: { id: `course_${c.name.toLowerCase().replace(/\s+/g, '_')}`, ...c } as any,
+    });
+  }
+
   console.log('✅ Seed completado');
   console.log('');
   console.log('Cuentas de prueba:');

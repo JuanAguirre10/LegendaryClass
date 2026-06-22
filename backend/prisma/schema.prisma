@@ -94,6 +94,15 @@ enum NotificationType {
   reward_pending
 }
 
+enum CourseCategory {
+  mathematics
+  sciences
+  language
+  social
+  arts
+  other
+}
+
 // ─── User ──────────────────────────────────────────────────────────────────
 
 model User {
@@ -169,6 +178,24 @@ model User {
   @@map("users")
 }
 
+// ─── Course ────────────────────────────────────────────────────────────────
+
+model Course {
+  id          String         @id @default(cuid())
+  name        String
+  description String?
+  icon        String?
+  color       String?
+  category    CourseCategory
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  classrooms Classroom[]
+
+  @@map("courses")
+}
+
 // ─── Classroom ─────────────────────────────────────────────────────────────
 
 model Classroom {
@@ -186,6 +213,9 @@ model Classroom {
 
   teacherId String
   teacher   User   @relation("TeacherClassrooms", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  courseId  String?
+  course    Course? @relation(fields: [courseId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -226,7 +256,6 @@ model StudentPoint {
   classroomId      String
   totalPoints      Int       @default(0)
   level            Int       @default(1)
-  experiencePoints Int       @default(0)
   pointsSpent      Int       @default(0)
   streakDays       Int       @default(0)
   lastActivity     DateTime?
