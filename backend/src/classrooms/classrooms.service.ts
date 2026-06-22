@@ -9,7 +9,6 @@ import { GamificationService } from '../gamification/gamification.service';
 import { TemplatesService } from '../templates/templates.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { ImportActivityDto } from './dto/import-activity.dto';
-import { UpdateActivityDto } from './dto/update-activity.dto';
 import { localAvatarDiskPath } from '../common/upload/avatar-upload';
 import { promises as fsp } from 'fs';
 
@@ -130,7 +129,7 @@ export class ClassroomsService {
     const classroom = await this.findOwnedClassroom(slug, teacherId);
     // Route through gamification so User.points, positivePoints/negativePoints,
     // achievements, streak and ranking emit are all handled consistently.
-    await this.gamification.updateStudentPoints(studentId, classroom.id, points, 'behavior');
+    await this.gamification.updateStudentPoints(studentId, classroom.id, points);
     const sp = await this.prisma.studentPoint.findUnique({
       where: { studentId_classroomId: { studentId, classroomId: classroom.id } },
       select: { totalPoints: true },
@@ -241,7 +240,7 @@ export class ClassroomsService {
     slug: string,
     teacherId: string,
     activityId: string,
-    data: UpdateActivityDto,
+    data: { dueDate?: string; overrides?: Record<string, any>; isActive?: boolean },
   ) {
     const classroom = await this.findOwnedClassroom(slug, teacherId);
     const activity = await this.prisma.classroomActivity.findFirst({
