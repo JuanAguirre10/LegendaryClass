@@ -11,6 +11,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { ClassroomsService } from './classrooms.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
+import { ImportActivityDto } from './dto/import-activity.dto';
 import { multerAvatarOptions } from '../common/upload/avatar-upload';
 
 @ApiTags('Classrooms')
@@ -121,5 +122,51 @@ export class ClassroomsController {
   ) {
     if (!file) throw new BadRequestException('No se recibió ningún archivo');
     return this.classroomsService.setAvatar(slug, user, `/uploads/avatars/${file.filename}`);
+  }
+
+  // ─── Activity endpoints ────────────────────────────────────────────────
+
+  @Get(':slug/activities')
+  @Roles(Role.teacher, Role.student)
+  @ApiOperation({ summary: 'Listar actividades del aula' })
+  listActivities(
+    @Param('slug') slug: string,
+    @CurrentUser() user: { id: string; role: string },
+  ) {
+    return this.classroomsService.listActivities(slug, user.id, user.role);
+  }
+
+  @Post(':slug/activities')
+  @Roles(Role.teacher)
+  @ApiOperation({ summary: 'Importar actividad al aula (teacher)' })
+  importActivity(
+    @Param('slug') slug: string,
+    @Body() dto: ImportActivityDto,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.classroomsService.importActivity(slug, user.id, dto);
+  }
+
+  @Patch(':slug/activities/:activityId')
+  @Roles(Role.teacher)
+  @ApiOperation({ summary: 'Actualizar actividad del aula (teacher)' })
+  updateActivity(
+    @Param('slug') slug: string,
+    @Param('activityId') activityId: string,
+    @Body() data: { dueDate?: string; overrides?: Record<string, any>; isActive?: boolean },
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.classroomsService.updateActivity(slug, user.id, activityId, data);
+  }
+
+  @Delete(':slug/activities/:activityId')
+  @Roles(Role.teacher)
+  @ApiOperation({ summary: 'Eliminar actividad del aula (teacher)' })
+  removeActivity(
+    @Param('slug') slug: string,
+    @Param('activityId') activityId: string,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.classroomsService.removeActivity(slug, user.id, activityId);
   }
 }

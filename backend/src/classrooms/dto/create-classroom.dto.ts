@@ -14,11 +14,6 @@ export class CreateClassroomDto {
   @MaxLength(500)
   description?: string;
 
-  @ApiPropertyOptional({ example: 'Matemáticas' })
-  @IsOptional()
-  @IsString()
-  subject?: string;
-
   @ApiPropertyOptional({ example: '3ro Secundaria' })
   @IsOptional()
   @IsString()
@@ -28,4 +23,9 @@ export class CreateClassroomDto {
   @IsOptional()
   @IsString()
   schoolYear?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  courseId?: string;
 }

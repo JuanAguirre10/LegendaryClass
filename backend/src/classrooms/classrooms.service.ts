@@ -5,8 +5,10 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { RankingGateway } from '../ranking/ranking.gateway';
+import { GamificationService } from '../gamification/gamification.service';
+import { TemplatesService } from '../templates/templates.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
+import { ImportActivityDto } from './dto/import-activity.dto';
 import { localAvatarDiskPath } from '../common/upload/avatar-upload';
 import { promises as fsp } from 'fs';
 
@@ -14,13 +16,14 @@ import { promises as fsp } from 'fs';
 export class ClassroomsService {
   constructor(
     private prisma: PrismaService,
-    private rankingGateway: RankingGateway,
+    private gamification: GamificationService,
+    private templates: TemplatesService,
   ) {}
 
   // ─── Teacher operations ─────────────────────────────────────────────────
 
   async create(teacherId: string, dto: CreateClassroomDto) {
-    const slug = await this.generateUniqueSlug(dto.name, dto.subject, dto.gradeLevel);
+    const slug = await this.generateUniqueSlug(dto.name, undefined, dto.gradeLevel);
     const classCode = await this.generateUniqueCode();
     const schoolYear = dto.schoolYear ?? this.getCurrentSchoolYear();
 
@@ -76,12 +79,12 @@ export class ClassroomsService {
   async update(slug: string, teacherId: string, data: Partial<CreateClassroomDto>) {
     const classroom = await this.findOwnedClassroom(slug, teacherId);
 
-    // Regenerate slug if name/subject/gradeLevel changed
-    const needsNewSlug = data.name || data.subject || data.gradeLevel;
+    // Regenerate slug if name/gradeLevel changed
+    const needsNewSlug = data.name || data.gradeLevel;
     const newSlug = needsNewSlug
       ? await this.generateUniqueSlug(
           data.name ?? classroom.name,
-          data.subject ?? classroom.subject ?? undefined,
+          undefined,
           data.gradeLevel ?? classroom.gradeLevel ?? undefined,
           classroom.id,
         )
@@ -124,19 +127,14 @@ export class ClassroomsService {
 
   async adjustPoints(slug: string, teacherId: string, studentId: string, points: number, _notes?: string) {
     const classroom = await this.findOwnedClassroom(slug, teacherId);
+    // Route through gamification so User.points, positivePoints/negativePoints,
+    // achievements, streak and ranking emit are all handled consistently.
+    await this.gamification.updateStudentPoints(studentId, classroom.id, points, 'behavior');
     const sp = await this.prisma.studentPoint.findUnique({
       where: { studentId_classroomId: { studentId, classroomId: classroom.id } },
+      select: { totalPoints: true },
     });
-    const newTotal = Math.max(0, (sp?.totalPoints ?? 0) + points);
-    await this.prisma.studentPoint.upsert({
-      where: { studentId_classroomId: { studentId, classroomId: classroom.id } },
-      create: { studentId, classroomId: classroom.id, totalPoints: newTotal, level: Math.floor(newTotal / 100) + 1 },
-      update: { totalPoints: newTotal, level: Math.floor(newTotal / 100) + 1 },
-    });
-    await this.rankingGateway
-      .emitRankingUpdate(classroom.id)
-      .catch((err) => console.error('ranking emit failed', err));
-    return { message: 'Puntos ajustados', newTotal };
+    return { message: 'Puntos ajustados', newTotal: sp?.totalPoints ?? 0 };
   }
 
   // ─── Student operations ─────────────────────────────────────────────────
@@ -166,7 +164,7 @@ export class ClassroomsService {
         _count: { select: { students: true } },
         studentPoints: {
           where: { studentId },
-          select: { totalPoints: true, level: true, experiencePoints: true },
+          select: { totalPoints: true, level: true },
         },
       },
     });
@@ -190,6 +188,84 @@ export class ClassroomsService {
     const prev = localAvatarDiskPath(classroom.avatar ?? null);
     if (prev) fsp.unlink(prev).catch(() => undefined);
     return { avatar: avatarUrl };
+  }
+
+  // ─── Classroom Activities ────────────────────────────────────────────────
+
+  async listActivities(slug: string, requesterId: string, requesterRole: string) {
+    const classroom = await this.prisma.classroom.findUnique({ where: { slug } });
+    if (!classroom) throw new NotFoundException('Aula no encontrada');
+
+    // teacher must own it; student must be enrolled
+    if (requesterRole === 'teacher' && classroom.teacherId !== requesterId) {
+      throw new ForbiddenException('No tienes permiso sobre esta aula');
+    }
+    if (requesterRole === 'student') {
+      const enrollment = await this.prisma.classroomStudent.findUnique({
+        where: { classroomId_studentId: { classroomId: classroom.id, studentId: requesterId } },
+      });
+      if (!enrollment) throw new ForbiddenException('No estás inscrito en esta aula');
+    }
+
+    return this.prisma.classroomActivity.findMany({
+      where: { classroomId: classroom.id, isActive: true },
+      orderBy: { assignedAt: 'desc' },
+    });
+  }
+
+  async importActivity(slug: string, teacherId: string, dto: ImportActivityDto) {
+    const classroom = await this.findOwnedClassroom(slug, teacherId);
+
+    // If templateId provided and mode=copy, take a snapshot of the template content
+    let overrides = dto.overrides ?? {};
+    if (dto.templateId && dto.mode === 'copy') {
+      const template = await this.templates.findOneRaw(dto.templateId, dto.activityType);
+      const { id: _id, courseId: _c, authorId: _a, approvedById: _ab, createdAt: _cr, updatedAt: _up, status: _st, ...snapshot } = template as any;
+      overrides = { ...snapshot, ...overrides };
+    }
+
+    return this.prisma.classroomActivity.create({
+      data: {
+        classroomId: classroom.id,
+        activityType: dto.activityType,
+        templateId: dto.templateId ?? null,
+        mode: dto.mode,
+        overrides,
+        dueDate: dto.dueDate ? new Date(dto.dueDate) : null,
+      },
+    });
+  }
+
+  async updateActivity(
+    slug: string,
+    teacherId: string,
+    activityId: string,
+    data: { dueDate?: string; overrides?: Record<string, any>; isActive?: boolean },
+  ) {
+    const classroom = await this.findOwnedClassroom(slug, teacherId);
+    const activity = await this.prisma.classroomActivity.findFirst({
+      where: { id: activityId, classroomId: classroom.id },
+    });
+    if (!activity) throw new NotFoundException('Actividad no encontrada');
+
+    return this.prisma.classroomActivity.update({
+      where: { id: activityId },
+      data: {
+        ...(data.dueDate !== undefined ? { dueDate: data.dueDate ? new Date(data.dueDate) : null } : {}),
+        ...(data.overrides !== undefined ? { overrides: data.overrides } : {}),
+        ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
+      },
+    });
+  }
+
+  async removeActivity(slug: string, teacherId: string, activityId: string) {
+    const classroom = await this.findOwnedClassroom(slug, teacherId);
+    const activity = await this.prisma.classroomActivity.findFirst({
+      where: { id: activityId, classroomId: classroom.id },
+    });
+    if (!activity) throw new NotFoundException('Actividad no encontrada');
+    await this.prisma.classroomActivity.delete({ where: { id: activityId } });
+    return { message: 'Actividad eliminada' };
   }
 
   // ─── Helpers ────────────────────────────────────────────────────────────

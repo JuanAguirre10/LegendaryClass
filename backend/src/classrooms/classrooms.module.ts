@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ClassroomsService } from './classrooms.service';
 import { ClassroomsController } from './classrooms.controller';
-import { RankingModule } from '../ranking/ranking.module';
+import { GamificationModule } from '../gamification/gamification.module';
+import { TemplatesModule } from '../templates/templates.module';
 
 @Module({
-  imports: [RankingModule],
+  imports: [GamificationModule, TemplatesModule],
   providers: [ClassroomsService],
   controllers: [ClassroomsController],
   exports: [ClassroomsService],
