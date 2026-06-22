@@ -92,6 +92,7 @@ enum NotificationType {
   achievement
   reward_status
   reward_pending
+  template_review
 }
 
 enum CourseCategory {
@@ -101,6 +102,31 @@ enum CourseCategory {
   social
   arts
   other
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+}
+
+enum TemplateStatus {
+  draft
+  pending
+  approved
+  rejected
+}
+
+enum ActivityType {
+  homework
+  exercise
+  form
+  exam
+}
+
+enum ActivityMode {
+  reference
+  copy
 }
 
 // ─── User ──────────────────────────────────────────────────────────────────
@@ -175,6 +201,16 @@ model User {
   children    ParentChild[] @relation("ParentChildren")
   parents     ParentChild[] @relation("ChildParents")
 
+  // Template relations
+  homeworkAuthored  HomeworkTemplate[] @relation("HomeworkAuthor")
+  homeworkApproved  HomeworkTemplate[] @relation("HomeworkApprover")
+  exerciseAuthored  ExerciseTemplate[] @relation("ExerciseAuthor")
+  exerciseApproved  ExerciseTemplate[] @relation("ExerciseApprover")
+  formAuthored      FormTemplate[]     @relation("FormAuthor")
+  formApproved      FormTemplate[]     @relation("FormApprover")
+  examAuthored      ExamTemplate[]     @relation("ExamAuthor")
+  examApproved      ExamTemplate[]     @relation("ExamApprover")
+
   @@map("users")
 }
 
@@ -191,9 +227,138 @@ model Course {
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
-  classrooms Classroom[]
+  classrooms         Classroom[]
+  homeworkTemplates  HomeworkTemplate[]
+  exerciseTemplates  ExerciseTemplate[]
+  formTemplates      FormTemplate[]
+  examTemplates      ExamTemplate[]
 
   @@map("courses")
+}
+
+// ─── HomeworkTemplate ──────────────────────────────────────────────────────
+
+model HomeworkTemplate {
+  id             String         @id @default(cuid())
+  courseId       String
+  title          String
+  description    String?
+  xpReward       Int            @default(50)
+  difficulty     Difficulty
+  status         TemplateStatus @default(pending)
+  rejectionNote  String?
+  authorId       String
+  approvedById   String?
+  approvedAt     DateTime?
+  instructions   String
+  defaultDueDays Int            @default(7)
+  attachmentUrl  String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  course     Course @relation(fields: [courseId], references: [id])
+  author     User   @relation("HomeworkAuthor",   fields: [authorId],     references: [id])
+  approvedBy User?  @relation("HomeworkApprover", fields: [approvedById], references: [id])
+
+  @@map("homework_templates")
+}
+
+// ─── ExerciseTemplate ─────────────────────────────────────────────────────
+
+model ExerciseTemplate {
+  id            String         @id @default(cuid())
+  courseId      String
+  title         String
+  description   String?
+  xpReward      Int            @default(50)
+  difficulty    Difficulty
+  status        TemplateStatus @default(pending)
+  rejectionNote String?
+  authorId      String
+  approvedById  String?
+  approvedAt    DateTime?
+  problems      Json
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  course     Course @relation(fields: [courseId], references: [id])
+  author     User   @relation("ExerciseAuthor",   fields: [authorId],     references: [id])
+  approvedBy User?  @relation("ExerciseApprover", fields: [approvedById], references: [id])
+
+  @@map("exercise_templates")
+}
+
+// ─── FormTemplate ─────────────────────────────────────────────────────────
+
+model FormTemplate {
+  id            String         @id @default(cuid())
+  courseId      String
+  title         String
+  description   String?
+  xpReward      Int            @default(50)
+  difficulty    Difficulty
+  status        TemplateStatus @default(pending)
+  rejectionNote String?
+  authorId      String
+  approvedById  String?
+  approvedAt    DateTime?
+  questions     Json
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  course     Course @relation(fields: [courseId], references: [id])
+  author     User   @relation("FormAuthor",   fields: [authorId],     references: [id])
+  approvedBy User?  @relation("FormApprover", fields: [approvedById], references: [id])
+
+  @@map("form_templates")
+}
+
+// ─── ExamTemplate ─────────────────────────────────────────────────────────
+
+model ExamTemplate {
+  id              String         @id @default(cuid())
+  courseId        String
+  title           String
+  description     String?
+  xpReward        Int            @default(50)
+  difficulty      Difficulty
+  status          TemplateStatus @default(pending)
+  rejectionNote   String?
+  authorId        String
+  approvedById    String?
+  approvedAt      DateTime?
+  questions       Json
+  durationMinutes Int
+  passingScore    Int
+  totalPoints     Int
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  course     Course @relation(fields: [courseId], references: [id])
+  author     User   @relation("ExamAuthor",   fields: [authorId],     references: [id])
+  approvedBy User?  @relation("ExamApprover", fields: [approvedById], references: [id])
+
+  @@map("exam_templates")
+}
+
+// ─── ClassroomActivity ────────────────────────────────────────────────────
+
+model ClassroomActivity {
+  id           String       @id @default(cuid())
+  classroomId  String
+  activityType ActivityType
+  templateId   String?
+  mode         ActivityMode
+  overrides    Json         @default("{}")
+  dueDate      DateTime?
+  assignedAt   DateTime     @default(now())
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  @@map("classroom_activities")
 }
 
 // ─── Classroom ─────────────────────────────────────────────────────────────
@@ -228,6 +393,7 @@ model Classroom {
   studentPoints  StudentPoint[]
   experienceLogs ExperienceLog[]
   quests         Quest[]
+  activities     ClassroomActivity[]
 
   @@index([teacherId])
   @@map("classrooms")
