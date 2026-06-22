@@ -36,6 +36,14 @@ LegendaryClass es una plataforma web que convierte el aula en un videojuego de r
 - El **director** tiene una vista global del sistema: estadísticas, gestión de usuarios, listados de aulas.
 - Los **padres** pueden vincular a sus hijos y monitorear su progreso.
 
+### Funcionalidades destacadas
+
+- **🏆 Ranking de aula en vivo** — leaderboard por puntos de aula que se actualiza en tiempo real (WebSocket) cuando el profesor asigna o ajusta puntos.
+- **🔔 Notificaciones in-app en tiempo real** — avisos de subida de nivel, logros desbloqueados, cambios de estado de canje (al alumno) y canjes pendientes (al profesor), con campana y contador de no-leídas.
+- **📊 Exportación a Excel** — el profesor descarga el reporte de su aula (ranking + comportamientos) y el director un libro institucional (estudiantes, profesores, aulas, resumen).
+- **🖼️ Subida de avatar/foto** — usuarios y aulas suben imagen propia (almacenamiento local, validación de tipo/tamaño).
+- **🔒 Endurecimiento** — JWT con _fail-fast_, rate-limiting + helmet, índices de foreign keys, paginación de listados (`{ data, meta }`), ESLint con reglas de accesibilidad.
+
 ---
 
 ## Arquitectura
@@ -202,6 +210,7 @@ npm run db:reset          # Resetea la BD completa — ¡borra todos los datos!
 | `Quest` | Misión activa/completada con recompensa de XP |
 | `QuestStudent` | Relación estudiante ↔ misión con estado de completado |
 | `ParentChild` | Relación padre ↔ hijo para el módulo de seguimiento |
+| `Notification` | Notificación in-app (tipo, título, mensaje, link, leída) entregada en tiempo real |
 
 ### Modificar el schema
 
@@ -406,8 +415,9 @@ frontend/src/app/
 
 ## API — Endpoints
 
-Base URL: `http://localhost:3000/api`  
-Documentación interactiva: `http://localhost:3000/api/docs`
+Base URL: `http://localhost:3000/api/v1` (versionado por URI)  
+Documentación interactiva: `http://localhost:3000/api/docs`  
+WebSocket (tiempo real): mismo origen, namespace por defecto — eventos `ranking:update` y `notification:new`. Archivos subidos servidos en `http://localhost:3000/uploads/…`
 
 ### Autenticación
 
@@ -502,6 +512,35 @@ Documentación interactiva: `http://localhost:3000/api/docs`
 | `GET  /parent/children/:id/progress` | parent | Progreso detallado de un hijo |
 | `POST /parent/link-child` | parent | Vincular hijo por email |
 | `DELETE /parent/unlink-child/:id` | parent | Desvincular hijo |
+
+### Ranking (tiempo real)
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/ranking/classroom/:classroomId` | Ranking del aula (carga inicial); en vivo vía evento socket `ranking:update` |
+
+### Notificaciones
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET   | `/notifications` | Lista paginada de las notificaciones del usuario |
+| GET   | `/notifications/unread-count` | Contador de no-leídas |
+| PATCH | `/notifications/:id/read` | Marcar una como leída |
+| PATCH | `/notifications/read-all` | Marcar todas como leídas |
+
+### Exportar a Excel
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/export/classroom/:classroomId` | `.xlsx` del aula (Ranking + Comportamientos) — profesor dueño o director |
+| GET | `/export/institution` | `.xlsx` institucional (Estudiantes, Profesores, Aulas, Resumen) — director |
+
+### Subir avatar/foto
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST | `/users/profile/avatar` | Subir foto de perfil (multipart `file`; jpg/png/webp, máx 2 MB) |
+| POST | `/classrooms/:slug/avatar` | Subir imagen del aula — profesor dueño o director |
 
 ---
 
