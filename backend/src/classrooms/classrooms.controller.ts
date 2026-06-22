@@ -12,6 +12,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { ClassroomsService } from './classrooms.service';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { ImportActivityDto } from './dto/import-activity.dto';
+import { UpdateActivityDto } from './dto/update-activity.dto';
 import { multerAvatarOptions } from '../common/upload/avatar-upload';
 
 @ApiTags('Classrooms')
@@ -153,7 +154,7 @@ export class ClassroomsController {
   updateActivity(
     @Param('slug') slug: string,
     @Param('activityId') activityId: string,
-    @Body() data: { dueDate?: string; overrides?: Record<string, any>; isActive?: boolean },
+    @Body() data: UpdateActivityDto,
     @CurrentUser() user: { id: string },
   ) {
     return this.classroomsService.updateActivity(slug, user.id, activityId, data);
