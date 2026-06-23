@@ -24,9 +24,6 @@ export class RankingGateway implements OnGatewayConnection {
     private prisma: PrismaService,
   ) {}
 
-  // Valida el JWT del handshake; desconecta si es inválido. Guarda el user en el socket.
-  // Carga el usuario desde la DB para verificar isActive y obtener el rol actualizado.
-  // authReady es una promesa sincrónica que permite a onJoin esperar a que auth termine.
   handleConnection(client: Socket) {
     client.data.authReady = (async () => {
       try {
@@ -42,6 +39,8 @@ export class RankingGateway implements OnGatewayConnection {
         if (!dbUser || !dbUser.isActive) throw new Error('inactive or missing user');
         client.data.user = { id: payload.sub, role: dbUser.role };
         client.join(`user:${payload.sub}`);
+        // Join global ranking room for all authenticated users
+        client.join('global_ranking');
       } catch {
         client.disconnect(true);
       }
@@ -69,6 +68,11 @@ export class RankingGateway implements OnGatewayConnection {
   async emitRankingUpdate(classroomId: string): Promise<void> {
     const ranking = await this.rankingService.computeRanking(classroomId);
     this.server.to(`classroom:${classroomId}`).emit('ranking:update', { classroomId, ranking });
+  }
+
+  async emitGlobalRankingUpdate(): Promise<void> {
+    const ranking = await this.rankingService.getGlobalRanking({ id: '', role: 'director' });
+    this.server.to('global_ranking').emit('ranking:global', { ranking });
   }
 
   emitToUser(userId: string, event: string, payload: unknown): void {
