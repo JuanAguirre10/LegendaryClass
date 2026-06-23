@@ -31,5 +31,15 @@ export const directorRoutes: Routes = [
     loadComponent: () =>
       import('./reports/director-reports.component').then((m) => m.DirectorReportsComponent),
   },
+  {
+    path: 'courses',
+    loadComponent: () =>
+      import('./courses/director-courses.component').then((m) => m.DirectorCoursesComponent),
+  },
+  {
+    path: 'courses/:courseId/templates',
+    loadComponent: () =>
+      import('./templates/director-templates.component').then((m) => m.DirectorTemplatesComponent),
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 ];
