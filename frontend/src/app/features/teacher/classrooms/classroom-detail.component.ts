@@ -7,11 +7,12 @@ import { environment } from '@env/environment';
 import { ClassroomRankingComponent } from '../../shared/classroom-ranking/classroom-ranking.component';
 import { ExportService } from '../../../core/export/export.service';
 import { AvatarUploadComponent } from '../../../shared/avatar-upload/avatar-upload.component';
+import { MathPipe } from '../../../shared/math/math.pipe';
 
 @Component({
   selector: 'app-teacher-classroom-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, ClassroomRankingComponent, AvatarUploadComponent],
+  imports: [CommonModule, RouterLink, FormsModule, ClassroomRankingComponent, AvatarUploadComponent, MathPipe],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -334,7 +335,7 @@ import { AvatarUploadComponent } from '../../../shared/avatar-upload/avatar-uplo
             <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between">
               <div>
                 <span class="text-xs font-medium text-purple-600 uppercase">{{ act.activityType }}</span>
-                <p class="font-medium text-gray-900 mt-0.5">{{ act.overrides?.title ?? '(sin título)' }}</p>
+                <p class="font-medium text-gray-900 mt-0.5" [innerHTML]="(act.overrides?.title ?? '(sin título)') | math"></p>
                 @if (act.dueDate) {
                   <p class="text-xs text-gray-400 mt-0.5">Fecha límite: {{ act.dueDate | date:'dd/MM/yyyy' }}</p>
                 }

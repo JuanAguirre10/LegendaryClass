@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '@env/environment';
+import { MathPipe } from '../../../shared/math/math.pipe';
 
 interface Template {
   id: string;
@@ -23,7 +24,7 @@ interface Classroom {
 @Component({
   selector: 'app-teacher-templates',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MathPipe],
   templateUrl: './teacher-templates.component.html',
 })
 export class TeacherTemplatesComponent implements OnInit {
