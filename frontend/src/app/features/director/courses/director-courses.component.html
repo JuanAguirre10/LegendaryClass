@@ -1,6 +1,6 @@
 <div class="p-6 max-w-5xl mx-auto">
   <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">Catálogo de Cursos</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-50">Catálogo de Cursos</h1>
     <button (click)="openCreate()"
       class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
       + Nuevo curso
@@ -8,9 +8,9 @@
   </div>
 
   <!-- Course table -->
-  <div class="bg-white rounded-xl shadow overflow-hidden">
+  <div class="bg-white dark:bg-slate-800 rounded-xl shadow overflow-hidden">
     <table class="w-full text-sm">
-      <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+      <thead class="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 uppercase text-xs">
         <tr>
           <th class="px-4 py-3 text-left">Curso</th>
           <th class="px-4 py-3 text-left">Categoría</th>
@@ -19,24 +19,24 @@
           <th class="px-4 py-3 text-right">Acciones</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-100">
+      <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
         @for (course of courses(); track course.id) {
-          <tr class="hover:bg-gray-50">
-            <td class="px-4 py-3 font-medium">
+          <tr class="hover:bg-gray-50 dark:hover:bg-slate-800">
+            <td class="px-4 py-3 font-medium text-gray-900 dark:text-slate-50">
               {{ course.icon }} {{ course.name }}
             </td>
-            <td class="px-4 py-3 text-gray-500">{{ course.category }}</td>
-            <td class="px-4 py-3 text-center text-gray-700">{{ totalTemplates(course) }}</td>
+            <td class="px-4 py-3 text-gray-500 dark:text-slate-400">{{ course.category }}</td>
+            <td class="px-4 py-3 text-center text-gray-700 dark:text-slate-200">{{ totalTemplates(course) }}</td>
             <td class="px-4 py-3 text-center">
-              <span [class]="course.isActive ? 'text-green-700 bg-green-100' : 'text-gray-500 bg-gray-100'"
+              <span [class]="course.isActive ? 'text-green-700 bg-green-100' : 'text-gray-500 bg-gray-100 dark:bg-slate-700 dark:text-slate-400'"
                 class="px-2 py-1 rounded-full text-xs font-medium">
                 {{ course.isActive ? 'Activo' : 'Inactivo' }}
               </span>
             </td>
             <td class="px-4 py-3 text-right space-x-2">
               <a [routerLink]="['/director/courses', course.id, 'templates']"
-                class="text-purple-600 hover:underline text-xs">Plantillas</a>
-              <button (click)="openEdit(course)" class="text-blue-600 hover:underline text-xs">Editar</button>
+                class="text-purple-600 dark:text-purple-400 hover:underline text-xs">Plantillas</a>
+              <button (click)="openEdit(course)" class="text-blue-600 dark:text-blue-400 hover:underline text-xs">Editar</button>
               <button (click)="deactivate(course.id)" class="text-red-500 hover:underline text-xs">Desactivar</button>
             </td>
           </tr>
@@ -48,23 +48,23 @@
   <!-- Modal form -->
   @if (showForm()) {
     <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
-        <h2 class="text-lg font-semibold mb-4">{{ editingId() ? 'Editar' : 'Nuevo' }} curso</h2>
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 w-full max-w-md">
+        <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-slate-50">{{ editingId() ? 'Editar' : 'Nuevo' }} curso</h2>
         <div class="space-y-3">
-          <input [(ngModel)]="form.name" placeholder="Nombre *" class="w-full border rounded-lg px-3 py-2 text-sm" />
-          <input [(ngModel)]="form.description" placeholder="Descripción" class="w-full border rounded-lg px-3 py-2 text-sm" />
+          <input [(ngModel)]="form.name" placeholder="Nombre *" class="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-50" />
+          <input [(ngModel)]="form.description" placeholder="Descripción" class="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-50" />
           <div class="flex gap-3">
-            <input [(ngModel)]="form.icon" placeholder="Ícono (emoji)" class="w-24 border rounded-lg px-3 py-2 text-sm" />
-            <input type="color" [(ngModel)]="form.color" class="h-10 w-16 border rounded-lg cursor-pointer" />
+            <input [(ngModel)]="form.icon" placeholder="Ícono (emoji)" class="w-24 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-50" />
+            <input type="color" [(ngModel)]="form.color" class="h-10 w-16 border border-gray-300 dark:border-slate-600 rounded-lg cursor-pointer" />
           </div>
-          <select [(ngModel)]="form.category" class="w-full border rounded-lg px-3 py-2 text-sm">
+          <select [(ngModel)]="form.category" class="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-50">
             @for (cat of categories; track cat) {
               <option [value]="cat">{{ cat }}</option>
             }
           </select>
         </div>
         <div class="flex gap-3 mt-5 justify-end">
-          <button (click)="showForm.set(false)" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+          <button (click)="showForm.set(false)" class="px-4 py-2 text-sm text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg">Cancelar</button>
           <button (click)="save()" class="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700">Guardar</button>
         </div>
       </div>

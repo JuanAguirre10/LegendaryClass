@@ -3,7 +3,9 @@
   <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
     <a routerLink="/parent/dashboard" class="legendary-logo text-xl">👨‍👩‍👧 LegendaryClass</a>
     <div class="flex items-center gap-3">
-      <span class="font-cinzel text-sm text-gray-600 font-semibold">{{ user?.name }}</span>
+      <a routerLink="/parent/settings" class="nav-link-epic">⚙️ Config</a>
+      <span class="font-cinzel text-sm text-gray-600 dark:text-slate-300 font-semibold">{{ user?.name }}</span>
+      <app-theme-toggle />
       <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
     </div>
   </div>
@@ -25,8 +27,8 @@
   <div class="min-h-[60vh] flex items-center justify-center">
     <div class="glass-panel p-12 text-center animate-fade-in-up">
       <div class="text-8xl mb-6 animate-float">👨‍👩‍👧</div>
-      <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">Cargando el progreso...</h2>
-      <p class="font-playfair text-gray-500">Reuniendo información de tus aventureros</p>
+      <h2 class="font-cinzel font-black text-2xl text-gray-800 dark:text-slate-100 mb-3">Cargando el progreso...</h2>
+      <p class="font-playfair text-gray-500 dark:text-slate-400">Reuniendo información de tus aventureros</p>
     </div>
   </div>
 } @else if (data()) {
@@ -38,8 +40,8 @@
       <!-- Sin hijos vinculados -->
       <div class="legendary-card p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 opacity-70">👶</div>
-        <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">¡Aún no tienes aventureros vinculados!</h2>
-        <p class="font-playfair text-gray-500 mb-8">Vincula la cuenta de tu hijo/a para seguir su progreso en LegendaryClass</p>
+        <h2 class="font-cinzel font-black text-2xl text-gray-800 dark:text-slate-100 mb-3">¡Aún no tienes aventureros vinculados!</h2>
+        <p class="font-playfair text-gray-500 dark:text-slate-400 mb-8">Vincula la cuenta de tu hijo/a para seguir su progreso en LegendaryClass</p>
 
         <button (click)="showLink = !showLink" class="btn-epic btn-gold text-sm py-3 px-8 mb-6">
           🔗 Vincular Estudiante
@@ -78,7 +80,7 @@
                   (error)="hideElement($event)" />
               </div>
               <div>
-                <h3 class="font-cinzel font-black text-gray-800 text-lg">{{ child.name }}</h3>
+                <h3 class="font-cinzel font-black text-gray-800 dark:text-slate-100 text-lg">{{ child.name }}</h3>
                 <p class="font-cinzel text-amber-600 text-sm">
                   {{ child.characterType ? charData[child.characterType]?.name : 'Sin clase' }}
                   · Nivel {{ child.level ?? 1 }}
@@ -91,24 +93,24 @@
               <div class="text-center rounded-xl p-3"
                 style="background: linear-gradient(135deg,rgba(251,191,36,0.15),rgba(245,158,11,0.1)); border: 1px solid rgba(251,191,36,0.3);">
                 <div class="font-cinzel font-black text-amber-600 text-xl">{{ child.points ?? 0 }}</div>
-                <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">Puntos</div>
+                <div class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide">Puntos</div>
               </div>
               <div class="text-center rounded-xl p-3"
                 style="background: linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.1)); border: 1px solid rgba(16,185,129,0.3);">
-                <div class="font-cinzel font-black text-green-600 text-xl">{{ child.questsCompleted ?? 0 }}</div>
-                <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">Misiones</div>
+                <div class="font-cinzel font-black text-green-600 dark:text-green-400 text-xl">{{ child.questsCompleted ?? 0 }}</div>
+                <div class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide">Misiones</div>
               </div>
               <div class="text-center rounded-xl p-3"
                 style="background: linear-gradient(135deg,rgba(59,130,246,0.15),rgba(37,99,235,0.1)); border: 1px solid rgba(59,130,246,0.3);">
-                <div class="font-cinzel font-black text-blue-600 text-xl">{{ child.loginStreak ?? 0 }}</div>
-                <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">Racha</div>
+                <div class="font-cinzel font-black text-blue-600 dark:text-blue-400 text-xl">{{ child.loginStreak ?? 0 }}</div>
+                <div class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide">Racha</div>
               </div>
             </div>
 
             <!-- Barra XP -->
             @if (child.xpInfo) {
               <div>
-                <div class="flex justify-between font-cinzel text-xs text-gray-500 mb-1">
+                <div class="flex justify-between font-cinzel text-xs text-gray-500 dark:text-slate-400 mb-1">
                   <span>{{ child.xpInfo.xp }} XP</span>
                   <span>{{ child.xpInfo.nextLevelXp }} XP — Nivel {{ child.xpInfo.level + 1 }}</span>
                 </div>

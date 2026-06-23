@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { environment } from '@env/environment';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 interface ManagedUser {
   id: string;
@@ -17,7 +18,7 @@ interface ManagedUser {
 @Component({
   selector: 'app-director-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -29,15 +30,19 @@ interface ManagedUser {
         <a routerLink="/director/students"   class="nav-link-epic">⚔️ Estudiantes</a>
         <a routerLink="/director/users"      class="nav-link-epic active">👥 Usuarios</a>
         <a routerLink="/director/reports"    class="nav-link-epic">📊 Reportes</a>
+        <a routerLink="/director/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
       </div>
-      <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
+      <div class="flex items-center gap-3">
+        <app-theme-toggle />
+        <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
+      </div>
     </div>
   </nav>
 
   <div class="z-content py-10 max-w-6xl mx-auto px-6">
     <div class="mb-8">
       <h1 class="epic-title" style="font-size:clamp(1.8rem,4vw,2.8rem);">👥 Gestión de Usuarios</h1>
-      <p class="font-cinzel text-gray-500 text-sm tracking-widest uppercase mt-1">
+      <p class="font-cinzel text-gray-500 dark:text-slate-400 text-sm tracking-widest uppercase mt-1">
         Crea cuentas y administra roles y accesos de la institución
       </p>
     </div>
@@ -54,13 +59,13 @@ interface ManagedUser {
       <h2 class="font-cinzel font-bold text-purple-700 text-lg mb-4">➕ Crear nuevo usuario</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <input [(ngModel)]="form.name" type="text" placeholder="Nombre completo"
-          class="px-4 py-2 rounded-lg border border-gray-200 font-playfair text-sm focus:border-purple-400 focus:outline-none">
+          class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-600 font-playfair text-sm focus:border-purple-400 focus:outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-50">
         <input [(ngModel)]="form.email" type="email" placeholder="Email"
-          class="px-4 py-2 rounded-lg border border-gray-200 font-playfair text-sm focus:border-purple-400 focus:outline-none">
+          class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-600 font-playfair text-sm focus:border-purple-400 focus:outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-50">
         <input [(ngModel)]="form.password" type="password" placeholder="Contraseña (mín. 8)"
-          class="px-4 py-2 rounded-lg border border-gray-200 font-playfair text-sm focus:border-purple-400 focus:outline-none">
+          class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-600 font-playfair text-sm focus:border-purple-400 focus:outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-50">
         <select [(ngModel)]="form.role"
-          class="px-4 py-2 rounded-lg border border-gray-200 font-cinzel text-sm focus:border-purple-400 focus:outline-none">
+          class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-600 font-cinzel text-sm focus:border-purple-400 focus:outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-50">
           <option value="teacher">📚 Profesor</option>
           <option value="student">⚔️ Estudiante</option>
           <option value="parent">👨‍👩‍👧 Padre/Madre</option>
@@ -76,7 +81,7 @@ interface ManagedUser {
     <!-- Lista -->
     @if (loading()) {
       <div class="legendary-card p-12 text-center"><div class="text-7xl mb-4 animate-float">👥</div>
-        <p class="font-cinzel text-gray-500">Cargando usuarios...</p></div>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">Cargando usuarios...</p></div>
     } @else if (users().length > 0) {
       <div class="adventure-card overflow-hidden animate-fade-in-up">
         <table class="w-full">
@@ -90,14 +95,14 @@ interface ManagedUser {
           </thead>
           <tbody>
             @for (u of users(); track u.id) {
-              <tr class="border-b border-gray-100 hover:bg-purple-50/30 transition-colors">
+              <tr class="border-b border-gray-100 dark:border-slate-700 hover:bg-purple-50/30 transition-colors">
                 <td class="px-5 py-4">
-                  <span class="font-cinzel font-bold text-gray-800 text-sm">{{ u.name }}</span>
-                  <span class="block font-playfair text-gray-400 text-xs">{{ u.email }}</span>
+                  <span class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm">{{ u.name }}</span>
+                  <span class="block font-playfair text-gray-400 dark:text-slate-500 text-xs">{{ u.email }}</span>
                 </td>
                 <td class="px-5 py-4 text-center">
                   <select [ngModel]="u.role" (ngModelChange)="changeRole(u, $event)"
-                    class="px-3 py-1 rounded-full border border-gray-200 font-cinzel text-xs capitalize focus:border-purple-400 focus:outline-none">
+                    class="px-3 py-1 rounded-full border border-gray-200 dark:border-slate-600 font-cinzel text-xs capitalize focus:border-purple-400 focus:outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-50">
                     <option value="teacher">Profesor</option>
                     <option value="student">Estudiante</option>
                     <option value="parent">Padre/Madre</option>
@@ -108,7 +113,7 @@ interface ManagedUser {
                   @if (u.isActive) {
                     <span class="font-cinzel text-xs px-2 py-1 rounded-full bg-green-50 text-green-700">Activo</span>
                   } @else {
-                    <span class="font-cinzel text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Inactivo</span>
+                    <span class="font-cinzel text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400">Inactivo</span>
                   }
                 </td>
                 <td class="px-5 py-4 text-center">
@@ -125,7 +130,7 @@ interface ManagedUser {
       </div>
     } @else {
       <div class="legendary-card p-12 text-center"><div class="text-8xl mb-6 opacity-70">👥</div>
-        <p class="font-cinzel text-gray-500">No hay usuarios para mostrar</p></div>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">No hay usuarios para mostrar</p></div>
     }
   </div>
   `,

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-director-teachers',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -19,21 +20,25 @@ import { environment } from '@env/environment';
         <a routerLink="/director/students"   class="nav-link-epic">⚔️ Estudiantes</a>
         <a routerLink="/director/users"      class="nav-link-epic">👥 Usuarios</a>
         <a routerLink="/director/reports"    class="nav-link-epic">📊 Reportes</a>
+        <a routerLink="/director/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
       </div>
-      <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
+      <div class="flex items-center gap-3">
+        <app-theme-toggle />
+        <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
+      </div>
     </div>
   </nav>
 
   <div class="z-content py-10 max-w-5xl mx-auto px-6">
     <div class="mb-8">
       <h1 class="epic-title" style="font-size:clamp(1.8rem,4vw,2.8rem);">📚 Profesores</h1>
-      <p class="font-cinzel text-gray-500 text-sm tracking-widest uppercase mt-1">Cuerpo docente de la institución</p>
+      <p class="font-cinzel text-gray-500 dark:text-slate-400 text-sm tracking-widest uppercase mt-1">Cuerpo docente de la institución</p>
     </div>
 
     @if (loading()) {
       <div class="legendary-card p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 animate-float">📚</div>
-        <p class="font-cinzel text-gray-500">Convocando a los maestros...</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">Convocando a los maestros...</p>
       </div>
     } @else if (teachers().length > 0) {
       <div class="adventure-card overflow-hidden animate-fade-in-up">
@@ -48,16 +53,16 @@ import { environment } from '@env/environment';
           </thead>
           <tbody>
             @for (t of teachers(); track t.id) {
-              <tr class="border-b border-gray-100 hover:bg-purple-50/30 transition-colors">
+              <tr class="border-b border-gray-100 dark:border-slate-700 hover:bg-purple-50/30 transition-colors">
                 <td class="px-5 py-4">
                   <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-lg">📚</div>
-                    <span class="font-cinzel font-bold text-gray-800 text-sm">{{ t.name }}</span>
+                    <div class="w-9 h-9 rounded-full bg-purple-100 dark:bg-slate-700 flex items-center justify-center text-lg">📚</div>
+                    <span class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm">{{ t.name }}</span>
                   </div>
                 </td>
-                <td class="px-5 py-4 font-playfair text-gray-500 text-sm">{{ t.email }}</td>
+                <td class="px-5 py-4 font-playfair text-gray-500 dark:text-slate-400 text-sm">{{ t.email }}</td>
                 <td class="px-5 py-4 text-center">
-                  <span class="font-cinzel font-black text-purple-600 text-lg">{{ t._count?.taughtClassrooms ?? 0 }}</span>
+                  <span class="font-cinzel font-black text-purple-600 dark:text-purple-400 text-lg">{{ t._count?.taughtClassrooms ?? 0 }}</span>
                 </td>
                 <td class="px-5 py-4 text-center">
                   <span class="font-cinzel text-xs font-bold px-3 py-1 rounded-full"
@@ -74,7 +79,7 @@ import { environment } from '@env/environment';
     } @else {
       <div class="legendary-card p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 opacity-70">📚</div>
-        <p class="font-cinzel text-gray-500">No hay profesores registrados aún</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">No hay profesores registrados aún</p>
       </div>
     }
   </div>

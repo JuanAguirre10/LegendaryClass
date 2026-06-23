@@ -10,10 +10,12 @@
       <a routerLink="/director/students"   routerLinkActive="active" class="nav-link-epic">🎓 Estudiantes</a>
       <a routerLink="/director/users"      routerLinkActive="active" class="nav-link-epic">👥 Usuarios</a>
       <a routerLink="/director/reports"    routerLinkActive="active" class="nav-link-epic">📊 Reportes</a>
+      <a routerLink="/director/settings"   routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
     </div>
 
     <div class="flex items-center gap-3">
-      <span class="font-cinzel text-sm text-gray-600 font-semibold">{{ user?.name }}</span>
+      <span class="font-cinzel text-sm text-gray-600 dark:text-slate-300 font-semibold">{{ user?.name }}</span>
+      <app-theme-toggle />
       <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
     </div>
   </div>
@@ -39,8 +41,8 @@
   <div class="min-h-[60vh] flex items-center justify-center">
     <div class="glass-panel p-12 text-center animate-fade-in-up">
       <div class="text-8xl mb-6 animate-float">👑</div>
-      <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">Cargando estadísticas...</h2>
-      <p class="font-playfair text-gray-500">Preparando la vista global del reino</p>
+      <h2 class="font-cinzel font-black text-2xl text-gray-800 dark:text-slate-100 mb-3">Cargando estadísticas...</h2>
+      <p class="font-playfair text-gray-500 dark:text-slate-400">Preparando la vista global del reino</p>
     </div>
   </div>
 } @else if (stats()) {
@@ -63,7 +65,7 @@
         <div class="legendary-card p-5 text-center animate-fade-in-up">
           <div class="text-4xl mb-2">{{ s.icon }}</div>
           <div class="font-cinzel font-black text-3xl mb-1" [class]="s.color">{{ s.value ?? 0 }}</div>
-          <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">{{ s.label }}</div>
+          <div class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide">{{ s.label }}</div>
         </div>
       }
     </div>
@@ -72,10 +74,10 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
       <div class="adventure-card p-7">
-        <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+        <h3 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-3">
           <span class="text-2xl">👩‍🏫</span> Gestión de Profesores
         </h3>
-        <p class="font-playfair text-gray-600 text-sm mb-5">Supervisa y gestiona el cuerpo docente de la institución.</p>
+        <p class="font-playfair text-gray-600 dark:text-slate-300 text-sm mb-5">Supervisa y gestiona el cuerpo docente de la institución.</p>
         <div class="space-y-3">
           <a routerLink="/director/teachers" class="btn-epic btn-blue w-full text-center block text-xs py-3">
             📋 Ver Todos los Profesores
@@ -84,10 +86,10 @@
       </div>
 
       <div class="adventure-card p-7">
-        <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+        <h3 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-3">
           <span class="text-2xl">🎓</span> Gestión de Estudiantes
         </h3>
-        <p class="font-playfair text-gray-600 text-sm mb-5">Monitorea el progreso y actividad de todos los aventureros.</p>
+        <p class="font-playfair text-gray-600 dark:text-slate-300 text-sm mb-5">Monitorea el progreso y actividad de todos los aventureros.</p>
         <div class="space-y-3">
           <a routerLink="/director/students" class="btn-epic btn-green w-full text-center block text-xs py-3">
             📋 Ver Todos los Estudiantes
@@ -96,10 +98,10 @@
       </div>
 
       <div class="adventure-card p-7">
-        <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+        <h3 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-3">
           <span class="text-2xl">📊</span> Reportes y Análisis
         </h3>
-        <p class="font-playfair text-gray-600 text-sm mb-5">Obtén insights y métricas sobre el desempeño del sistema.</p>
+        <p class="font-playfair text-gray-600 dark:text-slate-300 text-sm mb-5">Obtén insights y métricas sobre el desempeño del sistema.</p>
         <div class="space-y-3">
           <a routerLink="/director/reports" class="btn-epic btn-purple w-full text-center block text-xs py-3">
             📈 Ver Reportes
@@ -111,7 +113,7 @@
 
     <!-- Resumen del sistema -->
     <div class="adventure-card p-8">
-      <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3">
+      <h3 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-6 flex items-center gap-3">
         <span class="text-3xl">🌟</span>
         Resumen del Sistema LegendaryClass
       </h3>
@@ -121,16 +123,16 @@
           <h4 class="font-cinzel font-bold text-purple-700 mb-3">Actividad del Mes</h4>
           <div class="space-y-2">
             <div class="flex justify-between font-playfair text-sm">
-              <span class="text-gray-600">Nuevos estudiantes:</span>
-              <span class="font-bold text-purple-600">{{ stats().monthly?.newStudents ?? 0 }}</span>
+              <span class="text-gray-600 dark:text-slate-300">Nuevos estudiantes:</span>
+              <span class="font-bold text-purple-600 dark:text-purple-400">{{ stats().monthly?.newStudents ?? 0 }}</span>
             </div>
             <div class="flex justify-between font-playfair text-sm">
-              <span class="text-gray-600">Nuevos profesores:</span>
-              <span class="font-bold text-blue-600">{{ stats().monthly?.newTeachers ?? 0 }}</span>
+              <span class="text-gray-600 dark:text-slate-300">Nuevos profesores:</span>
+              <span class="font-bold text-blue-600 dark:text-blue-400">{{ stats().monthly?.newTeachers ?? 0 }}</span>
             </div>
             <div class="flex justify-between font-playfair text-sm">
-              <span class="text-gray-600">Comportamientos otorgados:</span>
-              <span class="font-bold text-green-600">{{ stats().monthly?.behaviorsAwarded ?? 0 }}</span>
+              <span class="text-gray-600 dark:text-slate-300">Comportamientos otorgados:</span>
+              <span class="font-bold text-green-600 dark:text-green-400">{{ stats().monthly?.behaviorsAwarded ?? 0 }}</span>
             </div>
           </div>
         </div>
@@ -140,15 +142,15 @@
           <h4 class="font-cinzel font-bold text-green-700 mb-3">Estado Global</h4>
           <div class="space-y-2">
             <div class="flex justify-between font-playfair text-sm">
-              <span class="text-gray-600">Total usuarios:</span>
-              <span class="font-bold text-gray-800">{{ (stats().totalTeachers ?? 0) + (stats().totalStudents ?? 0) + (stats().totalParents ?? 0) }}</span>
+              <span class="text-gray-600 dark:text-slate-300">Total usuarios:</span>
+              <span class="font-bold text-gray-800 dark:text-slate-100">{{ (stats().totalTeachers ?? 0) + (stats().totalStudents ?? 0) + (stats().totalParents ?? 0) }}</span>
             </div>
             <div class="flex justify-between font-playfair text-sm">
-              <span class="text-gray-600">Aulas totales:</span>
-              <span class="font-bold text-gray-800">{{ stats().totalClassrooms ?? 0 }}</span>
+              <span class="text-gray-600 dark:text-slate-300">Aulas totales:</span>
+              <span class="font-bold text-gray-800 dark:text-slate-100">{{ stats().totalClassrooms ?? 0 }}</span>
             </div>
             <div class="flex justify-between font-playfair text-sm">
-              <span class="text-gray-600">Canjes aprobados:</span>
+              <span class="text-gray-600 dark:text-slate-300">Canjes aprobados:</span>
               <span class="font-bold text-amber-600">{{ stats().totalRewardsRedeemed ?? 0 }}</span>
             </div>
           </div>

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-director-students',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -19,15 +20,19 @@ import { environment } from '@env/environment';
         <a routerLink="/director/students"   class="nav-link-epic active">⚔️ Estudiantes</a>
         <a routerLink="/director/users"      class="nav-link-epic">👥 Usuarios</a>
         <a routerLink="/director/reports"    class="nav-link-epic">📊 Reportes</a>
+        <a routerLink="/director/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
       </div>
-      <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
+      <div class="flex items-center gap-3">
+        <app-theme-toggle />
+        <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
+      </div>
     </div>
   </nav>
 
   <div class="z-content py-10 max-w-6xl mx-auto px-6">
     <div class="mb-8">
       <h1 class="epic-title" style="font-size:clamp(1.8rem,4vw,2.8rem);">⚔️ Estudiantes</h1>
-      <p class="font-cinzel text-gray-500 text-sm tracking-widest uppercase mt-1">
+      <p class="font-cinzel text-gray-500 dark:text-slate-400 text-sm tracking-widest uppercase mt-1">
         {{ students().length }} aventureros registrados en la institución
       </p>
     </div>
@@ -46,9 +51,9 @@ import { environment } from '@env/environment';
           </thead>
           <tbody>
             @for (s of students(); track s.id) {
-              <tr class="border-b border-gray-100 hover:bg-purple-50/30 transition-colors">
+              <tr class="border-b border-gray-100 dark:border-slate-700 hover:bg-purple-50/30 transition-colors">
                 <td class="px-5 py-4">
-                  <span class="font-cinzel font-bold text-gray-800 text-sm">{{ s.name }}</span>
+                  <span class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm">{{ s.name }}</span>
                 </td>
                 <td class="px-5 py-4 text-center">
                   <span class="font-cinzel text-sm px-2 py-1 rounded-full bg-purple-50 text-purple-700 capitalize">
@@ -56,13 +61,13 @@ import { environment } from '@env/environment';
                   </span>
                 </td>
                 <td class="px-5 py-4 text-center">
-                  <span class="font-cinzel font-black text-purple-600 text-lg">{{ s.level }}</span>
+                  <span class="font-cinzel font-black text-purple-600 dark:text-purple-400 text-lg">{{ s.level }}</span>
                 </td>
                 <td class="px-5 py-4 text-center">
                   <span class="font-cinzel text-amber-600 font-bold text-sm">{{ s.experiencePoints }} XP</span>
                 </td>
                 <td class="px-5 py-4 text-center">
-                  <span class="font-cinzel text-green-600 font-bold text-sm">{{ s.points }} pts</span>
+                  <span class="font-cinzel text-green-600 dark:text-green-400 font-bold text-sm">{{ s.points }} pts</span>
                 </td>
               </tr>
             }
@@ -72,7 +77,7 @@ import { environment } from '@env/environment';
     } @else {
       <div class="legendary-card p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 opacity-70">⚔️</div>
-        <p class="font-cinzel text-gray-500">No hay estudiantes registrados aún</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">No hay estudiantes registrados aún</p>
       </div>
     }
   </div>

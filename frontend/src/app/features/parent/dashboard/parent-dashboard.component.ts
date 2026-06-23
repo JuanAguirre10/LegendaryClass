@@ -7,11 +7,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { CHARACTER_DATA } from '../../../core/models/user.model';
 import { environment } from '@env/environment';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-parent-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent],
   templateUrl: './parent-dashboard.component.html',
 })
 export class ParentDashboardComponent implements OnInit {

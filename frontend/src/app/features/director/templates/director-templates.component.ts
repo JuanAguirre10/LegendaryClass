@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '@env/environment';
 import { MathPipe } from '../../../shared/math/math.pipe';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 interface Template {
   id: string; title: string; description?: string; status: string;
@@ -15,7 +16,7 @@ interface Template {
 @Component({
   selector: 'app-director-templates',
   standalone: true,
-  imports: [CommonModule, FormsModule, MathPipe],
+  imports: [CommonModule, FormsModule, MathPipe, ThemeToggleComponent],
   templateUrl: './director-templates.component.html',
 })
 export class DirectorTemplatesComponent implements OnInit {

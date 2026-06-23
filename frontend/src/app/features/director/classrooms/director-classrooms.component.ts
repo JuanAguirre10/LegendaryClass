@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-director-classrooms',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -19,8 +20,12 @@ import { environment } from '@env/environment';
         <a routerLink="/director/students"   class="nav-link-epic">⚔️ Estudiantes</a>
         <a routerLink="/director/users"      class="nav-link-epic">👥 Usuarios</a>
         <a routerLink="/director/reports"    class="nav-link-epic">📊 Reportes</a>
+        <a routerLink="/director/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
       </div>
-      <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
+      <div class="flex items-center gap-3">
+        <app-theme-toggle />
+        <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
+      </div>
     </div>
   </nav>
 
@@ -51,15 +56,15 @@ import { environment } from '@env/environment';
           </thead>
           <tbody>
             @for (c of classrooms(); track c.id) {
-              <tr class="border-b border-gray-100 hover:bg-purple-50/30 transition-colors">
+              <tr class="border-b border-gray-100 dark:border-slate-700 hover:bg-purple-50/30 transition-colors">
                 <td class="px-5 py-4">
-                  <span class="font-cinzel font-bold text-gray-800 text-sm">{{ c.name }}</span>
+                  <span class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm">{{ c.name }}</span>
                   @if (c.subject) {
-                    <span class="block font-playfair text-gray-400 text-xs">{{ c.subject }}</span>
+                    <span class="block font-playfair text-gray-400 dark:text-slate-500 text-xs">{{ c.subject }}</span>
                   }
                 </td>
                 <td class="px-5 py-4">
-                  <span class="font-cinzel text-gray-600 text-sm">{{ c.teacher?.name ?? '—' }}</span>
+                  <span class="font-cinzel text-gray-600 dark:text-slate-300 text-sm">{{ c.teacher?.name ?? '—' }}</span>
                 </td>
                 <td class="px-5 py-4 text-center">
                   <span class="font-mono text-xs px-2 py-1 rounded-full bg-purple-50 text-purple-700 tracking-widest">
@@ -67,13 +72,13 @@ import { environment } from '@env/environment';
                   </span>
                 </td>
                 <td class="px-5 py-4 text-center">
-                  <span class="font-cinzel font-black text-purple-600 text-lg">{{ c._count?.students ?? 0 }}</span>
+                  <span class="font-cinzel font-black text-purple-600 dark:text-purple-400 text-lg">{{ c._count?.students ?? 0 }}</span>
                 </td>
                 <td class="px-5 py-4 text-center">
                   @if (c.isActive) {
                     <span class="font-cinzel text-xs px-2 py-1 rounded-full bg-green-50 text-green-700">Activa</span>
                   } @else {
-                    <span class="font-cinzel text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Inactiva</span>
+                    <span class="font-cinzel text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400">Inactiva</span>
                   }
                 </td>
               </tr>
@@ -84,7 +89,7 @@ import { environment } from '@env/environment';
     } @else {
       <div class="legendary-card p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 opacity-70">🏛️</div>
-        <p class="font-cinzel text-gray-500">No hay aulas registradas aún</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">No hay aulas registradas aún</p>
       </div>
     }
   </div>
