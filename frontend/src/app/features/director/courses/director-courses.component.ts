@@ -4,8 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { environment } from '@env/environment';
-import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
-
 interface Course {
   id: string; name: string; description?: string; icon?: string;
   color?: string; category: string; isActive: boolean;
@@ -15,7 +13,7 @@ interface Course {
 @Component({
   selector: 'app-director-courses',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './director-courses.component.html',
 })
 export class DirectorCoursesComponent implements OnInit {

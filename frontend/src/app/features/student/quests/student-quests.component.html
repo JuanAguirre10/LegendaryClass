@@ -70,9 +70,8 @@
     </div>
   } @else if (quests().length === 0) {
     <!-- Empty state — dashed orange border -->
-    <div class="text-center py-12 rounded-2xl animate-fade-in-up"
-      style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
-             border:2px dashed rgba(245,158,11,0.3);">
+    <div class="text-center py-12 rounded-2xl animate-fade-in-up legendary-card"
+      style="border:2px dashed rgba(245,158,11,0.3);">
       <div class="text-6xl mb-4">📜</div>
       <h3 class="font-cinzel font-bold text-gray-600 dark:text-slate-300 text-xl mb-2">Sin misiones por ahora</h3>
       <p class="font-playfair text-gray-500 dark:text-slate-400 mb-4">Tu maestro aún no ha asignado misiones. ¡Vuelve pronto!</p>
@@ -91,9 +90,8 @@
       </h2>
       <div class="space-y-4 mb-8">
         @for (quest of activeQuests(); track quest.id) {
-          <div class="rounded-2xl p-5 animate-fade-in-up transition-all duration-300 hover:-translate-y-1"
-            style="background:linear-gradient(135deg,rgba(255,255,255,0.97),rgba(255,255,255,0.92));
-                   border:2px solid rgba(245,158,11,0.2);
+          <div class="rounded-2xl p-5 animate-fade-in-up transition-all duration-300 hover:-translate-y-1 legendary-card"
+            style="border:2px solid rgba(245,158,11,0.2);
                    box-shadow:0 8px 25px rgba(0,0,0,0.08);"
             [style.box-shadow]="'0 8px 25px rgba(0,0,0,0.08), 0 15px 35px rgba(245,158,11,0)'">
             <div class="flex items-start justify-between gap-4 flex-wrap">
