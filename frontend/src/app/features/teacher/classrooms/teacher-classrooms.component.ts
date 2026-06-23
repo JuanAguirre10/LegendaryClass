@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-teacher-classrooms',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -19,8 +20,12 @@ import { environment } from '@env/environment';
         <a routerLink="/teacher/behaviors"  class="nav-link-epic">⭐ Comportamientos</a>
         <a routerLink="/teacher/quests"     class="nav-link-epic">🗡️ Misiones</a>
         <a routerLink="/teacher/rewards"    class="nav-link-epic">🎁 Recompensas</a>
+        <a routerLink="/teacher/settings"   class="nav-link-epic">⚙️ Config</a>
       </div>
-      <a routerLink="/teacher/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Dashboard</a>
+      <div class="flex items-center gap-3">
+        <app-theme-toggle />
+        <a routerLink="/teacher/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Dashboard</a>
+      </div>
     </div>
   </nav>
 
@@ -28,7 +33,7 @@ import { environment } from '@env/environment';
     <div class="flex items-center justify-between mb-8">
       <div>
         <h1 class="epic-title" style="font-size:clamp(1.8rem,4vw,2.8rem);">🏛️ Mis Aulas</h1>
-        <p class="font-cinzel text-gray-500 text-sm tracking-widest uppercase mt-1">Gestiona tus dominios mágicos</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400 text-sm tracking-widest uppercase mt-1">Gestiona tus dominios mágicos</p>
       </div>
       <button (click)="showCreate = !showCreate" class="btn-epic btn-green text-sm py-2 px-5">➕ Nueva Aula</button>
     </div>
@@ -50,7 +55,7 @@ import { environment } from '@env/environment';
         <input [(ngModel)]="newClass.gradeLevel"  type="text" placeholder="Grado"                  class="input-epic text-sm" />
         <input [(ngModel)]="newClass.description" type="text" placeholder="Descripción (opcional)" class="input-epic col-span-2 text-sm" />
         <div class="col-span-2 flex gap-3 justify-end">
-          <button (click)="showCreate = false" class="font-cinzel text-gray-500 px-4 py-2 text-sm hover:text-gray-700 transition">Cancelar</button>
+          <button (click)="showCreate = false" class="font-cinzel text-gray-500 dark:text-slate-400 px-4 py-2 text-sm hover:text-gray-700 dark:hover:text-slate-200 transition">Cancelar</button>
           <button (click)="createClassroom()" class="btn-epic btn-green text-sm py-2 px-6">Crear Aula</button>
         </div>
       </div>
@@ -59,13 +64,13 @@ import { environment } from '@env/environment';
     @if (loading()) {
       <div class="glass-panel p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 animate-float">🏛️</div>
-        <p class="font-cinzel text-gray-500">Cargando aulas...</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">Cargando aulas...</p>
       </div>
     } @else if (classrooms().length === 0) {
       <div class="legendary-card p-16 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 opacity-70">🏫</div>
-        <h2 class="font-cinzel font-black text-2xl text-gray-700 mb-3">¡Aún no tienes aulas!</h2>
-        <p class="font-playfair text-gray-500 mb-6">Crea tu primera aula para comenzar a gestionar estudiantes.</p>
+        <h2 class="font-cinzel font-black text-2xl text-gray-700 dark:text-slate-200 mb-3">¡Aún no tienes aulas!</h2>
+        <p class="font-playfair text-gray-500 dark:text-slate-400 mb-6">Crea tu primera aula para comenzar a gestionar estudiantes.</p>
         <button (click)="showCreate = true" class="btn-epic btn-green text-sm py-2 px-6">➕ Crear Primera Aula</button>
       </div>
     } @else {
@@ -76,9 +81,9 @@ import { environment } from '@env/environment';
               <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
                 style="background: linear-gradient(135deg,#3b82f6,#1d4ed8);">🏫</div>
               <div class="flex-1">
-                <h3 class="font-cinzel font-black text-gray-800 text-lg group-hover:text-blue-700 transition">{{ c.name }}</h3>
-                <p class="font-playfair text-sm text-gray-500">{{ c.subject }}{{ c.gradeLevel ? ' · ' + c.gradeLevel : '' }}</p>
-                <p class="font-playfair text-xs text-gray-400 mt-1">
+                <h3 class="font-cinzel font-black text-gray-800 dark:text-slate-100 text-lg group-hover:text-blue-700 transition">{{ c.name }}</h3>
+                <p class="font-playfair text-sm text-gray-500 dark:text-slate-400">{{ c.subject }}{{ c.gradeLevel ? ' · ' + c.gradeLevel : '' }}</p>
+                <p class="font-playfair text-xs text-gray-400 dark:text-slate-500 mt-1">
                   {{ c._count?.students ?? 0 }} estudiantes ·
                   Código: <span class="font-mono font-bold text-amber-600">{{ c.classCode }}</span>
                 </p>

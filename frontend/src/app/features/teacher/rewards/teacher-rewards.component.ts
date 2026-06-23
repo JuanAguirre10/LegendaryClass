@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-teacher-rewards',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -19,8 +20,12 @@ import { environment } from '@env/environment';
         <a routerLink="/teacher/behaviors"  class="nav-link-epic">⭐ Comportamientos</a>
         <a routerLink="/teacher/quests"     class="nav-link-epic">🗡️ Misiones</a>
         <a routerLink="/teacher/rewards"    class="nav-link-epic active">🎁 Recompensas</a>
+        <a routerLink="/teacher/settings"   class="nav-link-epic">⚙️ Config</a>
       </div>
-      <a routerLink="/teacher/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Dashboard</a>
+      <div class="flex items-center gap-3">
+        <app-theme-toggle />
+        <a routerLink="/teacher/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Dashboard</a>
+      </div>
     </div>
   </nav>
 
@@ -37,7 +42,7 @@ import { environment } from '@env/environment';
     <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
       <div>
         <h1 class="epic-title" style="font-size:clamp(1.8rem,4vw,2.8rem);">🎁 Recompensas</h1>
-        <p class="font-cinzel text-gray-500 text-sm tracking-widest uppercase mt-1">Gestiona y aprueba recompensas</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400 text-sm tracking-widest uppercase mt-1">Gestiona y aprueba recompensas</p>
       </div>
       <div class="flex items-center gap-3">
         <select [(ngModel)]="selectedClassroom" (ngModelChange)="onClassroomChange()"
@@ -58,14 +63,14 @@ import { environment } from '@env/environment';
     @if (!selectedClassroom) {
       <div class="legendary-card p-16 text-center">
         <div class="text-8xl mb-4 opacity-70">🎁</div>
-        <p class="font-cinzel text-gray-500">Selecciona un aula para gestionar sus recompensas</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">Selecciona un aula para gestionar sus recompensas</p>
       </div>
     } @else {
 
       <!-- Formulario nueva recompensa -->
       @if (showCreate) {
         <div class="legendary-card p-6 mb-6 animate-fade-in-up">
-          <h3 class="font-cinzel font-bold text-gray-800 text-lg mb-4">🎁 Crear Recompensa</h3>
+          <h3 class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-lg mb-4">🎁 Crear Recompensa</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <input [(ngModel)]="newReward.name" type="text" placeholder="Nombre *"
               class="input-epic text-sm sm:col-span-2 lg:col-span-1" />
@@ -97,7 +102,7 @@ import { environment } from '@env/environment';
           </div>
           <div class="flex gap-3 justify-end mt-4">
             <button (click)="showCreate = false"
-              class="font-cinzel text-gray-500 px-4 py-2 text-sm hover:text-gray-700 transition">Cancelar</button>
+              class="font-cinzel text-gray-500 dark:text-slate-400 px-4 py-2 text-sm hover:text-gray-700 dark:hover:text-slate-200 transition">Cancelar</button>
             <button (click)="createReward()" [disabled]="saving()"
               class="btn-epic btn-green text-sm py-2 px-6">
               {{ saving() ? '...' : 'Crear Recompensa' }}
@@ -110,13 +115,13 @@ import { environment } from '@env/environment';
 
         <!-- Recompensas (col-span-3) -->
         <div class="lg:col-span-3">
-          <h2 class="font-cinzel font-bold text-gray-700 text-base mb-3 uppercase tracking-wide">🎁 Recompensas del Aula</h2>
+          <h2 class="font-cinzel font-bold text-gray-700 dark:text-slate-200 text-base mb-3 uppercase tracking-wide">🎁 Recompensas del Aula</h2>
           @if (loading()) {
-            <div class="legendary-card p-8 text-center"><div class="text-5xl animate-float mb-3">🎁</div><p class="font-cinzel text-gray-400">Cargando...</p></div>
+            <div class="legendary-card p-8 text-center"><div class="text-5xl animate-float mb-3">🎁</div><p class="font-cinzel text-gray-400 dark:text-slate-500">Cargando...</p></div>
           } @else if (rewards().length === 0) {
             <div class="legendary-card p-12 text-center">
               <div class="text-6xl mb-4 opacity-70">🎁</div>
-              <p class="font-cinzel text-gray-500 mb-4">No hay recompensas para esta aula</p>
+              <p class="font-cinzel text-gray-500 dark:text-slate-400 mb-4">No hay recompensas para esta aula</p>
               <button (click)="showCreate = true" class="btn-epic btn-green text-sm py-2 px-5">➕ Crear Recompensa</button>
             </div>
           } @else {
@@ -127,21 +132,21 @@ import { environment } from '@env/environment';
                   <div class="flex items-start justify-between gap-3">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center gap-2 flex-wrap mb-1">
-                        <span class="font-cinzel font-black text-gray-800">{{ r.name }}</span>
+                        <span class="font-cinzel font-black text-gray-800 dark:text-slate-100">{{ r.name }}</span>
                         <span class="font-cinzel text-xs px-2 py-0.5 rounded-full"
                           [style.background]="rarityBg(r.rarity)"
                           [style.color]="rarityColor(r.rarity)">
                           {{ rarityLabel(r.rarity) }}
                         </span>
                         @if (!r.isActive) {
-                          <span class="font-cinzel text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-600">Inactiva</span>
+                          <span class="font-cinzel text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-600 dark:text-red-400">Inactiva</span>
                         }
                       </div>
-                      <p class="font-playfair text-gray-500 text-xs mb-1">{{ r.description }}</p>
+                      <p class="font-playfair text-gray-500 dark:text-slate-400 text-xs mb-1">{{ r.description }}</p>
                       <div class="flex items-center gap-3 text-xs">
                         <span class="font-cinzel font-bold text-amber-600">💎 {{ r.costPoints }} pts</span>
-                        @if (r.xpBonus > 0) { <span class="font-cinzel text-green-600">+{{ r.xpBonus }} XP bonus</span> }
-                        @if (r.stockQuantity !== null) { <span class="font-cinzel text-gray-400">Stock: {{ r.stockQuantity }}</span> }
+                        @if (r.xpBonus > 0) { <span class="font-cinzel text-green-600 dark:text-green-400">+{{ r.xpBonus }} XP bonus</span> }
+                        @if (r.stockQuantity !== null) { <span class="font-cinzel text-gray-400 dark:text-slate-500">Stock: {{ r.stockQuantity }}</span> }
                       </div>
                     </div>
                     <button (click)="toggleStatus(r)"
@@ -159,7 +164,7 @@ import { environment } from '@env/environment';
 
         <!-- Canjes pendientes (col-span-2) -->
         <div class="lg:col-span-2">
-          <h2 class="font-cinzel font-bold text-gray-700 text-base mb-3 uppercase tracking-wide flex items-center gap-2">
+          <h2 class="font-cinzel font-bold text-gray-700 dark:text-slate-200 text-base mb-3 uppercase tracking-wide flex items-center gap-2">
             ⏳ Canjes Pendientes
             @if (pendingCount() > 0) {
               <span class="bg-red-500 text-white font-cinzel font-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -172,15 +177,15 @@ import { environment } from '@env/environment';
           } @else if (redemptions().length === 0) {
             <div class="legendary-card p-10 text-center">
               <div class="text-5xl mb-3 opacity-50">✅</div>
-              <p class="font-cinzel text-gray-400 text-sm">Sin canjes pendientes</p>
+              <p class="font-cinzel text-gray-400 dark:text-slate-500 text-sm">Sin canjes pendientes</p>
             </div>
           } @else {
             <div class="space-y-3">
               @for (rd of redemptions(); track rd.id) {
                 <div class="legendary-card p-4 animate-fade-in-up">
                   <div class="mb-2">
-                    <p class="font-cinzel font-bold text-gray-800 text-sm">{{ rd.student?.name }}</p>
-                    <p class="font-playfair text-gray-500 text-xs">{{ rd.reward?.name }}</p>
+                    <p class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm">{{ rd.student?.name }}</p>
+                    <p class="font-playfair text-gray-500 dark:text-slate-400 text-xs">{{ rd.reward?.name }}</p>
                     <div class="flex items-center gap-2 mt-1">
                       <span class="font-cinzel text-xs px-2 py-0.5 rounded-full"
                         [class.bg-yellow-100]="rd.status==='pending'"

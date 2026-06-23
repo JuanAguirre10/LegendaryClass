@@ -8,11 +8,12 @@ import { ClassroomRankingComponent } from '../../shared/classroom-ranking/classr
 import { ExportService } from '../../../core/export/export.service';
 import { AvatarUploadComponent } from '../../../shared/avatar-upload/avatar-upload.component';
 import { MathPipe } from '../../../shared/math/math.pipe';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-teacher-classroom-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, ClassroomRankingComponent, AvatarUploadComponent, MathPipe],
+  imports: [CommonModule, RouterLink, FormsModule, ClassroomRankingComponent, AvatarUploadComponent, MathPipe, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
@@ -23,8 +24,12 @@ import { MathPipe } from '../../../shared/math/math.pipe';
         <a routerLink="/teacher/behaviors"  class="nav-link-epic">⭐ Comportamientos</a>
         <a routerLink="/teacher/quests"     class="nav-link-epic">🗡️ Misiones</a>
         <a routerLink="/teacher/rewards"    class="nav-link-epic">🎁 Recompensas</a>
+        <a routerLink="/teacher/settings"   class="nav-link-epic">⚙️ Config</a>
       </div>
-      <a routerLink="/teacher/classrooms" class="btn-epic btn-blue text-xs py-2 px-4">← Mis Aulas</a>
+      <div class="flex items-center gap-3">
+        <app-theme-toggle />
+        <a routerLink="/teacher/classrooms" class="btn-epic btn-blue text-xs py-2 px-4">← Mis Aulas</a>
+      </div>
     </div>
   </nav>
 
@@ -41,7 +46,7 @@ import { MathPipe } from '../../../shared/math/math.pipe';
     @if (loading()) {
       <div class="legendary-card p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 animate-float">🏛️</div>
-        <p class="font-cinzel text-gray-500">Cargando aula...</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">Cargando aula...</p>
       </div>
     } @else if (classroom()) {
 
@@ -89,7 +94,7 @@ import { MathPipe } from '../../../shared/math/math.pipe';
           <div class="legendary-card p-4 text-center animate-fade-in-up">
             <div class="text-3xl mb-1">{{ stat.icon }}</div>
             <div class="font-cinzel font-black text-2xl mb-0.5" [class]="stat.color">{{ stat.value }}</div>
-            <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">{{ stat.label }}</div>
+            <div class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide">{{ stat.label }}</div>
           </div>
         }
       </div>
@@ -97,7 +102,7 @@ import { MathPipe } from '../../../shared/math/math.pipe';
       <!-- Formulario nuevo comportamiento -->
       @if (showNewBehaviorForm) {
         <div class="legendary-card p-6 mb-6 animate-fade-in-up">
-          <h3 class="font-cinzel font-bold text-gray-800 text-lg mb-4">⭐ Crear Comportamiento</h3>
+          <h3 class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-lg mb-4">⭐ Crear Comportamiento</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <input [(ngModel)]="newBehavior.name" type="text" placeholder="Nombre *"
               class="input-epic text-sm sm:col-span-2 lg:col-span-1" />
@@ -122,7 +127,7 @@ import { MathPipe } from '../../../shared/math/math.pipe';
           </div>
           <div class="flex gap-3 justify-end mt-4">
             <button (click)="showNewBehaviorForm = false"
-              class="font-cinzel text-gray-500 px-4 py-2 text-sm hover:text-gray-700 transition">Cancelar</button>
+              class="font-cinzel text-gray-500 dark:text-slate-400 px-4 py-2 text-sm hover:text-gray-700 dark:hover:text-slate-200 transition">Cancelar</button>
             <button (click)="createBehavior()" [disabled]="savingBehavior()"
               class="btn-epic btn-green text-sm py-2 px-6">
               {{ savingBehavior() ? '...' : 'Guardar Comportamiento' }}
@@ -132,7 +137,7 @@ import { MathPipe } from '../../../shared/math/math.pipe';
       }
 
       <!-- Tab navigation -->
-      <div class="flex gap-1 border-b border-gray-200 mb-6">
+      <div class="flex gap-1 border-b border-gray-200 dark:border-slate-700 mb-6">
         <button (click)="activeTab.set('students')"
           class="px-4 py-2 text-sm font-medium transition-colors"
           [class.border-b-2]="activeTab() === 'students'"
@@ -166,19 +171,19 @@ import { MathPipe } from '../../../shared/math/math.pipe';
           <!-- Lista de estudiantes (col-span-2) -->
           <div class="lg:col-span-2">
             <div class="adventure-card overflow-hidden animate-fade-in-up">
-              <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="font-cinzel font-black text-gray-800 text-lg">⚔️ Aventureros</h2>
-                <span class="font-cinzel text-xs text-gray-400">Clic en un estudiante para asignar puntos</span>
+              <div class="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                <h2 class="font-cinzel font-black text-gray-800 dark:text-slate-100 text-lg">⚔️ Aventureros</h2>
+                <span class="font-cinzel text-xs text-gray-400 dark:text-slate-500">Clic en un estudiante para asignar puntos</span>
               </div>
 
               @if ((classroom().students?.length ?? 0) === 0) {
                 <div class="p-10 text-center">
                   <div class="text-6xl mb-4 opacity-70">👥</div>
-                  <p class="font-cinzel text-gray-500 text-sm">Aún no hay estudiantes en esta aula</p>
-                  <p class="font-playfair text-gray-400 text-xs mt-2">Comparte el código <span class="font-mono font-bold text-amber-500">{{ classroom().classCode }}</span></p>
+                  <p class="font-cinzel text-gray-500 dark:text-slate-400 text-sm">Aún no hay estudiantes en esta aula</p>
+                  <p class="font-playfair text-gray-400 dark:text-slate-500 text-xs mt-2">Comparte el código <span class="font-mono font-bold text-amber-500">{{ classroom().classCode }}</span></p>
                 </div>
               } @else {
-                <div class="divide-y divide-gray-100">
+                <div class="divide-y divide-gray-100 dark:divide-slate-700">
                   @for (enrollment of classroom().students; track enrollment.studentId) {
                     <div>
                       <!-- Fila del estudiante -->
@@ -190,23 +195,23 @@ import { MathPipe } from '../../../shared/math/math.pipe';
                           {{ charEmoji(enrollment.student?.characterType) }}
                         </div>
                         <div class="flex-1 min-w-0">
-                          <div class="font-cinzel font-bold text-gray-800 text-sm truncate">{{ enrollment.student?.name }}</div>
-                          <div class="font-playfair text-xs text-gray-500 capitalize">
+                          <div class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm truncate">{{ enrollment.student?.name }}</div>
+                          <div class="font-playfair text-xs text-gray-500 dark:text-slate-400 capitalize">
                             {{ enrollment.student?.characterType ?? 'Sin clase' }} · Nv.{{ enrollment.student?.level ?? 1 }}
                           </div>
                         </div>
                         <!-- Puntos del aula -->
                         <div class="text-right flex-shrink-0">
                           <div class="font-cinzel font-black text-green-600 text-base">{{ getStudentPoints(enrollment.student.id) }}</div>
-                          <div class="font-cinzel text-xs text-gray-400">pts aula</div>
+                          <div class="font-cinzel text-xs text-gray-400 dark:text-slate-500">pts aula</div>
                         </div>
                         <!-- XP global -->
                         <div class="text-right flex-shrink-0 hidden sm:block">
                           <div class="font-cinzel font-bold text-amber-600 text-sm">{{ enrollment.student?.experiencePoints ?? 0 }}</div>
-                          <div class="font-cinzel text-xs text-gray-400">XP total</div>
+                          <div class="font-cinzel text-xs text-gray-400 dark:text-slate-500">XP total</div>
                         </div>
                         <!-- Toggle icon -->
-                        <div class="text-gray-400 text-sm flex-shrink-0">
+                        <div class="text-gray-400 dark:text-slate-500 text-sm flex-shrink-0">
                           {{ awardingTo() === enrollment.student.id ? '▲' : '▼' }}
                         </div>
                       </div>
@@ -219,7 +224,7 @@ import { MathPipe } from '../../../shared/math/math.pipe';
                             Asignar comportamiento a {{ enrollment.student?.name }}
                           </p>
                           @if ((classroom().behaviors?.length ?? 0) === 0) {
-                            <p class="font-playfair text-xs text-gray-500 mb-3">
+                            <p class="font-playfair text-xs text-gray-500 dark:text-slate-400 mb-3">
                               No hay comportamientos en esta aula.
                               <button (click)="showNewBehaviorForm = true; awardingTo.set(null)"
                                 class="text-blue-600 underline">Crear uno</button>
@@ -291,13 +296,13 @@ import { MathPipe } from '../../../shared/math/math.pipe';
       <!-- Tab: Comportamientos -->
       @if (activeTab() === 'behaviors') {
         <div class="legendary-card p-5 animate-fade-in-up">
-          <h3 class="font-cinzel font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <h3 class="font-cinzel font-bold text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-2">
             <span>⭐</span> Comportamientos del aula
           </h3>
           @if ((classroom().behaviors?.length ?? 0) === 0) {
             <div class="text-center py-6">
               <div class="text-5xl mb-3 opacity-50">📋</div>
-              <p class="font-cinzel text-gray-500 text-xs">Sin comportamientos</p>
+              <p class="font-cinzel text-gray-500 dark:text-slate-400 text-xs">Sin comportamientos</p>
               <button (click)="showNewBehaviorForm = true; activeTab.set('students')"
                 class="mt-3 btn-epic btn-green text-xs py-2 px-4">➕ Crear</button>
             </div>
@@ -307,8 +312,8 @@ import { MathPipe } from '../../../shared/math/math.pipe';
                 <div class="flex items-center justify-between p-2 rounded-xl"
                   style="background: rgba(248,250,252,0.8); border: 1px solid rgba(226,232,240,0.8);">
                   <div class="flex-1 min-w-0">
-                    <p class="font-cinzel text-xs font-bold text-gray-700 truncate">{{ b.name }}</p>
-                    <p class="font-playfair text-[10px] text-gray-400 capitalize">{{ b.category }}</p>
+                    <p class="font-cinzel text-xs font-bold text-gray-700 dark:text-slate-200 truncate">{{ b.name }}</p>
+                    <p class="font-playfair text-[10px] text-gray-400 dark:text-slate-500 capitalize">{{ b.category }}</p>
                   </div>
                   <span class="font-cinzel font-black text-sm ml-2"
                     [class.text-green-600]="b.points > 0"
@@ -332,12 +337,12 @@ import { MathPipe } from '../../../shared/math/math.pipe';
             }
           </div>
           @for (act of activities(); track act.id) {
-            <div class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+            <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between">
               <div>
-                <span class="text-xs font-medium text-purple-600 uppercase">{{ act.activityType }}</span>
-                <p class="font-medium text-gray-900 mt-0.5" [innerHTML]="(act.overrides?.title ?? '(sin título)') | math"></p>
+                <span class="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase">{{ act.activityType }}</span>
+                <p class="font-medium text-gray-900 dark:text-slate-50 mt-0.5" [innerHTML]="(act.overrides?.title ?? '(sin título)') | math"></p>
                 @if (act.dueDate) {
-                  <p class="text-xs text-gray-400 mt-0.5">Fecha límite: {{ act.dueDate | date:'dd/MM/yyyy' }}</p>
+                  <p class="text-xs text-gray-400 dark:text-slate-500 mt-0.5">Fecha límite: {{ act.dueDate | date:'dd/MM/yyyy' }}</p>
                 }
               </div>
               <button (click)="removeActivity(act.id)"
@@ -345,7 +350,7 @@ import { MathPipe } from '../../../shared/math/math.pipe';
             </div>
           }
           @if (activities().length === 0) {
-            <p class="text-center text-gray-400 py-10">No hay actividades en este salón. Importa del banco.</p>
+            <p class="text-center text-gray-400 dark:text-slate-500 py-10">No hay actividades en este salón. Importa del banco.</p>
           }
         </div>
       }
@@ -353,7 +358,7 @@ import { MathPipe } from '../../../shared/math/math.pipe';
     } @else {
       <div class="legendary-card p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 opacity-70">🏛️</div>
-        <p class="font-cinzel text-gray-500">Aula no encontrada</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">Aula no encontrada</p>
         <a routerLink="/teacher/classrooms" class="btn-epic btn-blue text-sm mt-4 inline-block">← Volver a Aulas</a>
       </div>
     }

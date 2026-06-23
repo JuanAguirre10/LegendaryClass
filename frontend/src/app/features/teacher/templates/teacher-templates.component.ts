@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '@env/environment';
 import { MathPipe } from '../../../shared/math/math.pipe';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 interface Template {
   id: string;
@@ -24,7 +25,7 @@ interface Classroom {
 @Component({
   selector: 'app-teacher-templates',
   standalone: true,
-  imports: [CommonModule, FormsModule, MathPipe],
+  imports: [CommonModule, FormsModule, MathPipe, ThemeToggleComponent],
   templateUrl: './teacher-templates.component.html',
 })
 export class TeacherTemplatesComponent implements OnInit {

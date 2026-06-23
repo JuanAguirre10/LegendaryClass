@@ -9,11 +9,13 @@
       <a routerLink="/teacher/behaviors"   routerLinkActive="active" class="nav-link-epic">⭐ Comportamientos</a>
       <a routerLink="/teacher/quests"      routerLinkActive="active" class="nav-link-epic">🗡️ Misiones</a>
       <a routerLink="/teacher/rewards"     routerLinkActive="active" class="nav-link-epic">🎁 Recompensas</a>
+      <a routerLink="/teacher/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
     </div>
 
     <div class="flex items-center gap-3">
-      <span class="font-cinzel text-sm text-gray-600 font-semibold">{{ user?.name }}</span>
+      <span class="font-cinzel text-sm text-gray-600 dark:text-slate-300 font-semibold">{{ user?.name }}</span>
       <app-notification-bell />
+      <app-theme-toggle />
       <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
     </div>
   </div>
@@ -35,8 +37,8 @@
   <div class="min-h-[60vh] flex items-center justify-center">
     <div class="glass-panel p-12 text-center animate-fade-in-up">
       <div class="text-8xl mb-6 animate-float">📚</div>
-      <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">Cargando tu Portal...</h2>
-      <p class="font-playfair text-gray-500">Preparando el panel del maestro</p>
+      <h2 class="font-cinzel font-black text-2xl text-gray-800 dark:text-slate-100 mb-3">Cargando tu Portal...</h2>
+      <p class="font-playfair text-gray-500 dark:text-slate-400">Preparando el panel del maestro</p>
     </div>
   </div>
 } @else if (data()) {
@@ -49,12 +51,12 @@
       @for (stat of [
         { icon: '🏫', label: 'Aulas Activas',          value: data().classrooms.length,        color: 'text-blue-600' },
         { icon: '⭐', label: 'Comportamientos',         value: data().recentBehaviors.length,    color: 'text-amber-600' },
-        { icon: '🎁', label: 'Canjes Pendientes',       value: data().pendingRewards.length,     color: 'text-purple-600' }
+        { icon: '🎁', label: 'Canjes Pendientes',       value: data().pendingRewards.length,     color: 'text-purple-600 dark:text-purple-400' }
       ]; track stat.label) {
         <div class="legendary-card p-6 text-center animate-fade-in-up">
           <div class="text-5xl mb-3">{{ stat.icon }}</div>
           <div class="font-cinzel font-black text-3xl mb-1" [class]="stat.color">{{ stat.value }}</div>
-          <div class="font-cinzel text-sm text-gray-500 uppercase tracking-wide">{{ stat.label }}</div>
+          <div class="font-cinzel text-sm text-gray-500 dark:text-slate-400 uppercase tracking-wide">{{ stat.label }}</div>
         </div>
       }
     </div>
@@ -64,12 +66,12 @@
 
       <!-- Mis Dominios Mágicos -->
       <div class="adventure-card p-8">
-        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-4 flex items-center gap-3"
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-3"
           style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
           <span class="text-3xl">🏰</span>
           Mis Dominios Mágicos
         </h3>
-        <p class="font-playfair text-gray-600 mb-6">Administra tus aulas y supervisa a tus aventureros estudiantes.</p>
+        <p class="font-playfair text-gray-600 dark:text-slate-300 mb-6">Administra tus aulas y supervisa a tus aventureros estudiantes.</p>
         <div class="space-y-3">
           <a routerLink="/teacher/classrooms" class="btn-epic btn-blue w-full text-center block text-sm py-3">
             🏛️ Ver Todas las Aulas
@@ -77,7 +79,7 @@
           <a routerLink="/teacher/classrooms/new" class="btn-epic btn-green w-full text-center block text-sm py-3">
             ➕ Crear Nueva Aula
           </a>
-          <p class="font-playfair text-sm text-gray-500 text-center mt-3">
+          <p class="font-playfair text-sm text-gray-500 dark:text-slate-400 text-center mt-3">
             {{ data().classrooms.length }} aulas activas
           </p>
         </div>
@@ -85,12 +87,12 @@
 
       <!-- Sistema de Recompensas -->
       <div class="adventure-card p-8">
-        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-4 flex items-center gap-3"
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-3"
           style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
           <span class="text-3xl">⭐</span>
           Sistema de Recompensas
         </h3>
-        <p class="font-playfair text-gray-600 mb-6">Otorga puntos y reconocimientos a tus estudiantes aventureros.</p>
+        <p class="font-playfair text-gray-600 dark:text-slate-300 mb-6">Otorga puntos y reconocimientos a tus estudiantes aventureros.</p>
         <div class="space-y-3">
           <a routerLink="/teacher/behaviors" class="btn-epic btn-purple w-full text-center block text-sm py-3">
             📝 Gestionar Comportamientos
@@ -98,7 +100,7 @@
           <a routerLink="/teacher/rewards" class="btn-epic btn-gold w-full text-center block text-sm py-3">
             🎁 Gestionar Recompensas
           </a>
-          <p class="font-playfair text-sm text-gray-500 text-center mt-3">
+          <p class="font-playfair text-sm text-gray-500 dark:text-slate-400 text-center mt-3">
             {{ data().recentBehaviors.length }} comportamientos otorgados
           </p>
         </div>
@@ -108,7 +110,7 @@
 
     <!-- Acciones Rápidas -->
     <div class="adventure-card p-8 mb-8">
-      <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+      <h3 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-6 flex items-center gap-3"
         style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
         <span class="text-3xl">⚡</span>
         Acciones Rápidas del Maestro
@@ -123,7 +125,7 @@
 
     <!-- Actividades recientes -->
     <div class="adventure-card p-8">
-      <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+      <h3 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-6 flex items-center gap-3"
         style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
         <span class="text-3xl">📈</span>
         Actividades Recientes de mis Aventureros
@@ -132,18 +134,18 @@
         @if (data().recentBehaviors.length === 0) {
           <div class="text-center py-12">
             <div class="text-6xl mb-4 opacity-70">📈</div>
-            <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡Comienza tu aventura!</h4>
-            <p class="font-playfair text-gray-500 mb-6">No hay actividades recientes. Crea tu primera aula y comienza a otorgar puntos.</p>
+            <h4 class="font-cinzel font-bold text-xl text-gray-700 dark:text-slate-200 mb-3">¡Comienza tu aventura!</h4>
+            <p class="font-playfair text-gray-500 dark:text-slate-400 mb-6">No hay actividades recientes. Crea tu primera aula y comienza a otorgar puntos.</p>
             <a routerLink="/teacher/classrooms/new" class="btn-epic btn-green text-sm py-2 px-6">🏰 Crear Mi Primera Aula</a>
           </div>
         }
         @for (b of data().recentBehaviors.slice(0, 10); track b.id) {
-          <div class="flex items-center gap-4 p-3 rounded-xl transition-all duration-200 hover:bg-gray-50"
+          <div class="flex items-center gap-4 p-3 rounded-xl transition-all duration-200 hover:bg-gray-50 dark:hover:bg-slate-800"
             style="border-bottom: 1px solid rgba(0,0,0,0.05);">
             <div class="text-2xl">{{ b.pointsAwarded > 0 ? '⭐' : '⚠️' }}</div>
             <div class="flex-1">
-              <div class="font-cinzel font-bold text-gray-800 text-sm">{{ b.student?.name }}</div>
-              <div class="font-playfair text-xs text-gray-600">{{ b.behavior?.name }}</div>
+              <div class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm">{{ b.student?.name }}</div>
+              <div class="font-playfair text-xs text-gray-600 dark:text-slate-300">{{ b.behavior?.name }}</div>
             </div>
             <div class="text-right">
               <div class="font-cinzel font-black text-sm"
@@ -151,7 +153,7 @@
                 [class.text-red-600]="b.pointsAwarded < 0">
                 {{ b.pointsAwarded > 0 ? '+' : '' }}{{ b.pointsAwarded }}
               </div>
-              <div class="font-playfair text-xs text-gray-400">puntos</div>
+              <div class="font-playfair text-xs text-gray-400 dark:text-slate-500">puntos</div>
             </div>
           </div>
         }
