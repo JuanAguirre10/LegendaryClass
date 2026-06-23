@@ -118,6 +118,7 @@ export class TeacherClassroomsComponent implements OnInit {
 
   createClassroom() {
     if (!this.newClass.name) return;
+    if (!this.newClass.courseId) return;
     this.http.post(`${environment.apiUrl}/classrooms`, this.newClass).subscribe({
       next: () => { this.showCreate = false; this.newClass = { name: '', courseId: '', gradeLevel: '', description: '' }; this.ngOnInit(); },
       error: (err) => alert(err.error?.message ?? 'Error'),

@@ -41,7 +41,7 @@ export class TeacherTemplatesComponent implements OnInit {
     this.http.get<Template[]>(`${environment.apiUrl}/courses/${this.courseId}/templates`).subscribe({
       next: (data) => this.templates.set(data),
     });
-    this.http.get<Classroom[]>(`${environment.apiUrl}/classrooms`).subscribe({
+    this.http.get<Classroom[]>(`${environment.apiUrl}/classrooms/mine`).subscribe({
       next: (data) => this.classrooms.set(data),
     });
   }

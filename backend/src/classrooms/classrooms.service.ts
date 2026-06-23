@@ -11,6 +11,7 @@ import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { ImportActivityDto } from './dto/import-activity.dto';
 import { localAvatarDiskPath } from '../common/upload/avatar-upload';
 import { promises as fsp } from 'fs';
+import { TemplateStatus, ActivityMode } from '@prisma/client';
 
 @Injectable()
 export class ClassroomsService {
@@ -216,11 +217,17 @@ export class ClassroomsService {
   async importActivity(slug: string, teacherId: string, dto: ImportActivityDto) {
     const classroom = await this.findOwnedClassroom(slug, teacherId);
 
-    // If templateId provided and mode=copy, take a snapshot of the template content
+    let template: any = null;
+    if (dto.templateId) {
+      template = await this.templates.findOneRaw(dto.templateId, dto.activityType);
+      if (template.status !== TemplateStatus.approved) {
+        throw new ForbiddenException('Solo se pueden importar plantillas aprobadas');
+      }
+    }
+
     let overrides = dto.overrides ?? {};
-    if (dto.templateId && dto.mode === 'copy') {
-      const template = await this.templates.findOneRaw(dto.templateId, dto.activityType);
-      const { id: _id, courseId: _c, authorId: _a, approvedById: _ab, createdAt: _cr, updatedAt: _up, status: _st, ...snapshot } = template as any;
+    if (dto.templateId && dto.mode === ActivityMode.copy && template) {
+      const { id: _id, courseId: _c, authorId: _a, approvedById: _ab, createdAt: _cr, updatedAt: _up, status: _st, rejectionNote: _rn, ...snapshot } = template as any;
       overrides = { ...snapshot, ...overrides };
     }
 
