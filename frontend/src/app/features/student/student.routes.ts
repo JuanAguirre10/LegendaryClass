@@ -46,5 +46,11 @@ export const studentRoutes: Routes = [
     loadComponent: () =>
       import('./join-classroom/join-classroom.component').then((m) => m.JoinClassroomComponent),
   },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('../../shared/settings/settings-page.component')
+        .then((m) => m.SettingsPageComponent),
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 ];

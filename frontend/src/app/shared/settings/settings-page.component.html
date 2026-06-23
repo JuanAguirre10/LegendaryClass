@@ -1,0 +1,133 @@
+<!-- Nav mínima de Configuración -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-2xl mx-auto px-6 py-3 flex items-center justify-between">
+    <span class="legendary-logo text-xl">⚔️ LegendaryClass</span>
+    <div class="flex items-center gap-2">
+      <app-theme-toggle />
+      <a [routerLink]="backRoute()" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+    </div>
+  </div>
+</nav>
+
+<div class="z-content py-10 max-w-2xl mx-auto px-6">
+
+  <h1 class="font-cinzel font-black text-3xl text-gray-800 dark:text-slate-100 mb-8 flex items-center gap-3">
+    <span class="text-4xl">⚙️</span> Configuración
+  </h1>
+
+  <!-- ── Apariencia ── -->
+  <div class="legendary-card p-7 mb-6">
+    <h3 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-5 flex items-center gap-3">
+      <span class="text-2xl">🎨</span> Apariencia
+    </h3>
+    <p class="font-playfair text-gray-500 dark:text-slate-400 text-sm mb-4">
+      Elige entre modo claro, nocturno, o deja que se sincronice con tu sistema.
+    </p>
+    <div class="flex gap-3 flex-wrap">
+      <button
+        (click)="theme.setMode('light')"
+        [class.ring-2]="theme.mode() === 'light'"
+        class="flex items-center gap-2 px-5 py-3 rounded-xl font-cinzel text-sm font-semibold
+               transition-all duration-300 border-2
+               bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200
+               border-gray-200 dark:border-slate-600
+               hover:border-amber-400 ring-amber-500 ring-offset-1">
+        ☀️ Claro
+      </button>
+      <button
+        (click)="theme.setMode('dark')"
+        [class.ring-2]="theme.mode() === 'dark'"
+        class="flex items-center gap-2 px-5 py-3 rounded-xl font-cinzel text-sm font-semibold
+               transition-all duration-300 border-2
+               bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200
+               border-gray-200 dark:border-slate-600
+               hover:border-amber-400 ring-amber-500 ring-offset-1">
+        🌙 Nocturno
+      </button>
+      <button
+        (click)="theme.setMode('system')"
+        [class.ring-2]="theme.mode() === 'system'"
+        class="flex items-center gap-2 px-5 py-3 rounded-xl font-cinzel text-sm font-semibold
+               transition-all duration-300 border-2
+               bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-200
+               border-gray-200 dark:border-slate-600
+               hover:border-amber-400 ring-amber-500 ring-offset-1">
+        💻 Sistema
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Cuenta ── -->
+  <div class="legendary-card p-7 mb-6">
+    <h3 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-5 flex items-center gap-3">
+      <span class="text-2xl">👤</span> Cuenta
+    </h3>
+
+    <!-- Nombre -->
+    <div class="mb-5">
+      <label class="block font-cinzel font-semibold text-sm text-gray-700 dark:text-slate-300 mb-2">Nombre</label>
+      @if (nameMessage()) {
+        <div class="mb-2 px-4 py-2 rounded-lg font-cinzel text-xs"
+          [class]="nameMessage()!.type === 'success'
+            ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+            : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'">
+          {{ nameMessage()!.text }}
+        </div>
+      }
+      <div class="flex gap-3">
+        <input [ngModel]="name()" (ngModelChange)="name.set($event)"
+          type="text" placeholder="Tu nombre de aventurero"
+          class="input-epic flex-1 text-sm" />
+        <button (click)="saveName()" [disabled]="savingName()"
+          class="btn-epic btn-purple text-sm py-2 px-5 whitespace-nowrap disabled:opacity-50">
+          {{ savingName() ? '...' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Email (solo lectura) -->
+    <div class="mb-6">
+      <label class="block font-cinzel font-semibold text-sm text-gray-700 dark:text-slate-300 mb-2">Email</label>
+      <p class="input-epic text-sm opacity-60 cursor-default select-all">{{ auth.user()?.email }}</p>
+    </div>
+
+    <!-- Avatar -->
+    <div>
+      <label class="block font-cinzel font-semibold text-sm text-gray-700 dark:text-slate-300 mb-3">
+        🖼️ Foto de perfil
+      </label>
+      <app-avatar-upload
+        uploadPath="/users/profile/avatar"
+        [currentAvatar]="auth.user()?.avatar"
+        (uploaded)="onAvatarUploaded($event)" />
+    </div>
+  </div>
+
+  <!-- ── Seguridad ── -->
+  <div class="legendary-card p-7">
+    <h3 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-5 flex items-center gap-3">
+      <span class="text-2xl">🔒</span> Seguridad
+    </h3>
+    @if (pwMessage()) {
+      <div class="mb-4 px-4 py-2 rounded-lg font-cinzel text-xs"
+        [class]="pwMessage()!.type === 'success'
+          ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+          : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'">
+        {{ pwMessage()!.text }}
+      </div>
+    }
+    <div class="flex flex-col sm:flex-row gap-3">
+      <input [(ngModel)]="newPassword" type="password"
+        placeholder="Nueva contraseña (mín. 8)"
+        class="input-epic text-sm flex-1" />
+      <input [(ngModel)]="confirmPassword" type="password"
+        placeholder="Confirmar contraseña"
+        class="input-epic text-sm flex-1" />
+      <button (click)="changePassword()" [disabled]="savingPw()"
+        class="btn-epic btn-purple text-sm py-2 px-6 whitespace-nowrap disabled:opacity-50">
+        {{ savingPw() ? '...' : 'Actualizar' }}
+      </button>
+    </div>
+  </div>
+
+</div>
