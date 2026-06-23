@@ -854,3 +854,101 @@ html { scroll-behavior: smooth; }
 .max-h-0   { max-height: 0; }
 .max-h-64  { max-height: 16rem; }
 
+/* ═══════════════════════════════════════════════════════
+   DARK MODE OVERRIDES — appended; do not move above existing rules
+═══════════════════════════════════════════════════════ */
+
+/* Body overlay — dark RPG */
+.dark body::before {
+  background: linear-gradient(
+    135deg,
+    rgba(15,23,42,0.92) 0%,
+    rgba(15,23,42,0.88) 25%,
+    rgba(15,23,42,0.90) 50%,
+    rgba(15,23,42,0.88) 75%,
+    rgba(15,23,42,0.92) 100%
+  );
+}
+
+/* Legendary card */
+.dark .legendary-card {
+  background: linear-gradient(135deg,
+    rgba(30,41,59,0.97) 0%,
+    rgba(30,41,59,0.94) 50%,
+    rgba(30,41,59,0.97) 100%);
+  border-color: rgba(251,191,36,0.15);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.40),
+    0 0 20px rgba(251,191,36,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.dark .legendary-card:hover {
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.55),
+    0 0 30px rgba(251,191,36,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* Adventure card */
+.dark .adventure-card {
+  background: linear-gradient(135deg,
+    rgba(30,41,59,0.97) 0%,
+    rgba(30,41,59,0.94) 50%,
+    rgba(30,41,59,0.97) 100%);
+  border-color: rgba(251,191,36,0.15);
+  box-shadow:
+    0 15px 40px rgba(0,0,0,0.45),
+    0 0 30px rgba(34,197,94,0.05),
+    inset 0 2px 0 rgba(255,255,255,0.03);
+}
+
+/* Glass panel */
+.dark .glass-panel {
+  background: rgba(15,23,42,0.90);
+  border-color: rgba(251,191,36,0.12);
+}
+
+/* Nav */
+.dark .legendary-nav {
+  background: linear-gradient(135deg,
+    rgba(15,23,42,0.97) 0%,
+    rgba(15,23,42,0.95) 50%,
+    rgba(15,23,42,0.97) 100%);
+  border-bottom-color: rgba(251,191,36,0.20);
+  box-shadow: 0 2px 15px rgba(0,0,0,0.3), 0 0 15px rgba(217,119,6,0.06);
+}
+
+/* Nav links */
+.dark .nav-link-epic {
+  color: #cbd5e1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+.dark .nav-link-epic:hover {
+  color: #fbbf24;
+  border-bottom-color: rgba(251,191,36,0.5);
+}
+.dark .nav-link-epic.active {
+  color: #fbbf24;
+  border-bottom-color: #f59e0b;
+  background: linear-gradient(135deg, rgba(217,119,6,0.15) 0%, rgba(245,158,11,0.10) 100%);
+}
+
+/* Inputs */
+.dark .input-epic {
+  background: rgba(30,41,59,0.90);
+  border-color: rgba(71,85,105,0.7);
+  color: #e2e8f0;
+}
+.dark .input-epic::placeholder {
+  color: rgba(148,163,184,0.6);
+}
+.dark .input-epic:focus {
+  border-color: rgba(99,102,241,0.8);
+  background: rgba(30,41,59,0.95);
+  box-shadow: 0 0 15px rgba(99,102,241,0.2), 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Scrollbar */
+.dark ::-webkit-scrollbar-track { background: #1e293b; }
+.dark ::-webkit-scrollbar-thumb { background: #d97706; }
+
