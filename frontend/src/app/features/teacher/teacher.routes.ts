@@ -31,5 +31,10 @@ export const teacherRoutes: Routes = [
     loadComponent: () =>
       import('./rewards/teacher-rewards.component').then((m) => m.TeacherRewardsComponent),
   },
+  {
+    path: 'courses/:courseId/templates',
+    loadComponent: () =>
+      import('./templates/teacher-templates.component').then((m) => m.TeacherTemplatesComponent),
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 ];

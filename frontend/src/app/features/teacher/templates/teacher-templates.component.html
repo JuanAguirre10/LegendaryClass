@@ -1,0 +1,88 @@
+<div class="p-6 max-w-5xl mx-auto">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">Banco de Plantillas</h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    @for (tmpl of templates(); track tmpl.id) {
+      <div class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-medium text-purple-600 uppercase tracking-wide">{{ tmpl.activityType }}</span>
+          <p class="font-semibold text-gray-900 mt-1">{{ tmpl.title }}</p>
+          @if (tmpl.description) {
+            <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ tmpl.description }}</p>
+          }
+          <p class="text-xs text-gray-400 mt-2">{{ tmpl.difficulty }} · {{ tmpl.xpReward }} XP</p>
+        </div>
+        <button
+          (click)="openImport(tmpl)"
+          class="mt-4 w-full py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium"
+        >
+          Importar al salón
+        </button>
+      </div>
+    }
+    @if (templates().length === 0) {
+      <p class="col-span-3 text-center text-gray-400 py-16">No hay plantillas aprobadas para este curso.</p>
+    }
+  </div>
+
+  <!-- Import modal -->
+  @if (importing()) {
+    <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl">
+        @if (importSuccess()) {
+          <div class="text-center py-4">
+            <p class="text-2xl">&#10003;</p>
+            <p class="font-semibold text-green-700 mt-2">¡Importada correctamente!</p>
+          </div>
+        } @else {
+          <h3 class="font-semibold text-gray-900 mb-4">Importar "{{ importing()!.title }}"</h3>
+          <div class="space-y-3">
+            <div>
+              <label for="import-classroom" class="text-xs font-medium text-gray-600 block mb-1">Salón destino</label>
+              <select
+                id="import-classroom"
+                [(ngModel)]="importForm.classroomSlug"
+                class="w-full border rounded-lg px-3 py-2 text-sm"
+              >
+                <option value="" disabled>Selecciona un salón</option>
+                @for (c of classrooms(); track c.id) {
+                  <option [value]="c.slug">{{ c.name }}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label for="import-mode" class="text-xs font-medium text-gray-600 block mb-1">Modo</label>
+              <select id="import-mode" [(ngModel)]="importForm.mode" class="w-full border rounded-lg px-3 py-2 text-sm">
+                <option value="copy">Copia (independiente)</option>
+                <option value="reference">Referencia (recibe actualizaciones)</option>
+              </select>
+            </div>
+            <div>
+              <label for="import-due-date" class="text-xs font-medium text-gray-600 block mb-1">Fecha límite (opcional)</label>
+              <input
+                id="import-due-date"
+                type="date"
+                [(ngModel)]="importForm.dueDate"
+                class="w-full border rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          <div class="flex gap-3 mt-5 justify-end">
+            <button
+              (click)="importing.set(null)"
+              class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
+            >
+              Cancelar
+            </button>
+            <button
+              (click)="confirmImport()"
+              class="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+            >
+              Importar
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
