@@ -62,8 +62,7 @@
     </div>
 
     <!-- Filters -->
-    <div class="rounded-2xl p-5 mb-6 animate-fade-in-up"
-      style="background:rgba(255,255,255,0.9); border:2px solid rgba(147,51,234,0.1);">
+    <div class="rounded-2xl p-5 mb-6 animate-fade-in-up bg-white/90 dark:bg-slate-800 border-2 border-purple-100 dark:border-slate-700">
       <h3 class="font-cinzel font-bold text-gray-800 dark:text-slate-100 mb-3">🔍 Filtrar Recompensas:</h3>
       <div class="flex flex-wrap gap-2">
         @for (f of filters; track f.key) {
@@ -84,9 +83,8 @@
         <p class="font-cinzel text-gray-500 dark:text-slate-400">Cargando la tienda...</p>
       </div>
     } @else if (filteredRewards().length === 0) {
-      <div class="text-center py-16 rounded-3xl animate-fade-in-up"
-        style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
-               border:3px solid rgba(147,51,234,0.2); backdrop-filter:blur(15px);">
+      <div class="legendary-card text-center py-16 rounded-3xl animate-fade-in-up"
+        style="border:3px solid rgba(147,51,234,0.2); backdrop-filter:blur(15px);">
         <div class="text-8xl mb-4 opacity-70">🏪</div>
         <h2 class="font-cinzel-decorative font-bold text-gray-700 dark:text-slate-200 text-2xl mb-3">¡Tienda en Construcción!</h2>
         <p class="font-playfair text-gray-500 dark:text-slate-400 text-lg max-w-md mx-auto">
@@ -98,9 +96,8 @@
       <div class="grid gap-6 animate-fade-in-up"
         style="grid-template-columns: repeat(auto-fit, minmax(350px,1fr));">
         @for (r of filteredRewards(); track r.id) {
-          <div class="relative rounded-2xl overflow-hidden transition-all duration-400 hover:-translate-y-2 hover:scale-[1.02]"
-            style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
-                   border-right:3px solid rgba(147,51,234,0.2);
+          <div class="relative rounded-2xl overflow-hidden transition-all duration-400 hover:-translate-y-2 hover:scale-[1.02] bg-white/95 dark:bg-slate-800"
+            style="border-right:3px solid rgba(147,51,234,0.2);
                    border-top:3px solid rgba(147,51,234,0.2);
                    border-bottom:3px solid rgba(147,51,234,0.2);
                    box-shadow:0 10px 30px rgba(0,0,0,0.1);"

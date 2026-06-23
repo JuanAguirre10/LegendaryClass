@@ -32,7 +32,8 @@ export class SettingsPageComponent implements OnInit {
       case 'director':
       case 'admin':             return '/director/dashboard';
       case 'parent':            return '/parent/dashboard';
-      default:                  return '/student/dashboard';
+      case 'student':           return '/student/dashboard';
+      default:                  return '/auth/login';
     }
   });
 
@@ -44,6 +45,10 @@ export class SettingsPageComponent implements OnInit {
 
   ngOnInit() {
     this.name.set(this.auth.user()?.name ?? '');
+    this.http.get<{ name?: string }>(`${environment.apiUrl}/users/profile`).subscribe({
+      next: (p) => { if (p.name) this.name.set(p.name); },
+      error: () => {},
+    });
   }
 
   saveName() {

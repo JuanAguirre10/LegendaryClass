@@ -7,6 +7,7 @@ import { UsersService } from './users.service';
 import { multerAvatarOptions, localAvatarDiskPath } from '../common/upload/avatar-upload';
 import { promises as fsp } from 'fs';
 import * as bcrypt from 'bcrypt';
+import { UpdateProfileDto, UpdatePasswordDto } from './dto/users.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -28,13 +29,13 @@ export class UsersController {
   @Patch('profile')
   updateProfile(
     @CurrentUser() user: any,
-    @Body() body: { name?: string; avatar?: string; gradeLevel?: string; phone?: string },
+    @Body() body: UpdateProfileDto,
   ) {
     return this.usersService.update(user.id, body);
   }
 
   @Patch('profile/password')
-  async updatePassword(@CurrentUser() user: any, @Body() body: { password: string }) {
+  async updatePassword(@CurrentUser() user: any, @Body() body: UpdatePasswordDto) {
     const hashed = await bcrypt.hash(body.password, 10);
     await this.usersService.updatePassword(user.id, hashed);
     return { message: 'Contraseña actualizada' };

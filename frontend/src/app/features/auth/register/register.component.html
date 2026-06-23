@@ -32,7 +32,7 @@
       </p>
 
       @if (error()) {
-        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg p-3 mb-4 text-sm font-playfair">
+        <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-400 rounded-lg p-3 mb-4 text-sm font-playfair">
           {{ error() }}
         </div>
       }
@@ -72,15 +72,14 @@
             @for (role of roles; track role.value) {
               <button type="button" (click)="form.patchValue({ role: role.value })"
                 class="flex flex-col items-center py-3 rounded-xl border-2 transition-all duration-200 cursor-pointer"
-                [class.border-amber-400]="form.get('role')?.value === role.value"
-                [class.bg-amber-50]="form.get('role')?.value === role.value"
-                [class.shadow-md]="form.get('role')?.value === role.value"
-                [class.border-gray-200]="form.get('role')?.value !== role.value"
-                [class.bg-white]="form.get('role')?.value !== role.value">
+                [ngClass]="form.get('role')?.value === role.value
+                  ? 'border-amber-400 bg-amber-50 dark:bg-amber-900/30 dark:border-amber-500 shadow-md'
+                  : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'">
                 <span class="text-2xl">{{ role.icon }}</span>
                 <span class="font-cinzel text-xs font-bold mt-1 uppercase tracking-wide"
-                  [class.text-amber-700]="form.get('role')?.value === role.value"
-                  [class.text-gray-600]="form.get('role')?.value !== role.value">
+                  [ngClass]="form.get('role')?.value === role.value
+                    ? 'text-amber-700 dark:text-amber-400'
+                    : 'text-gray-600 dark:text-slate-300'">
                   {{ role.label }}
                 </span>
               </button>
