@@ -30,9 +30,7 @@ const CHARACTER_ICONS: Record<string, string> = {
       <div class="grid grid-cols-3 gap-2 mb-4">
         @for (p of podium(); track p.studentId) {
           <div class="text-center p-3 rounded-xl"
-            [class.bg-amber-50]="p.rank === 1"
-            [class.dark:bg-amber-900]="p.rank === 1"
-            [class.bg-opacity-20]="p.rank === 1">
+            [ngClass]="p.rank === 1 ? 'bg-amber-50 dark:bg-amber-900/20' : ''">
             <div class="text-2xl">{{ medal(p.rank) }}</div>
             <div class="text-lg">{{ charIcon(p.characterType) }}</div>
             <div class="font-cinzel font-bold text-xs truncate dark:text-slate-100">{{ p.name }}</div>
@@ -52,9 +50,7 @@ const CHARACTER_ICONS: Record<string, string> = {
       <div class="space-y-1">
         @for (r of rest(); track r.studentId) {
           <div class="flex items-center gap-2 px-3 py-2 rounded-lg"
-            [class.bg-blue-50]="r.studentId === myId"
-            [class.dark:bg-blue-900]="r.studentId === myId"
-            [class.bg-opacity-20]="r.studentId === myId">
+            [ngClass]="r.studentId === myId ? 'bg-blue-50 dark:bg-blue-900/20' : ''">
             <span class="font-cinzel font-black text-gray-400 dark:text-slate-500 w-5 text-sm">{{ r.rank }}</span>
             @if (r.rankChange !== null) {
               <span class="text-xs px-1 rounded font-bold w-8 text-center"
