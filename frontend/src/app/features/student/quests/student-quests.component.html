@@ -9,8 +9,12 @@
       <a routerLink="/student/rewards"      class="nav-link-epic">🛒 Tienda</a>
       <a routerLink="/student/achievements" class="nav-link-epic">🏆 Logros</a>
       <a routerLink="/student/profile"      class="nav-link-epic">👤 Perfil</a>
+      <a routerLink="/student/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
     </div>
-    <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+    <div class="flex items-center gap-3">
+      <app-theme-toggle />
+      <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+    </div>
   </div>
 </nav>
 
@@ -62,7 +66,7 @@
   @if (loading()) {
     <div class="text-center py-16">
       <div class="text-8xl mb-4 animate-float">📜</div>
-      <p class="font-cinzel text-gray-500">Cargando misiones...</p>
+      <p class="font-cinzel text-gray-500 dark:text-slate-400">Cargando misiones...</p>
     </div>
   } @else if (quests().length === 0) {
     <!-- Empty state — dashed orange border -->
@@ -70,8 +74,8 @@
       style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
              border:2px dashed rgba(245,158,11,0.3);">
       <div class="text-6xl mb-4">📜</div>
-      <h3 class="font-cinzel font-bold text-gray-600 text-xl mb-2">Sin misiones por ahora</h3>
-      <p class="font-playfair text-gray-500 mb-4">Tu maestro aún no ha asignado misiones. ¡Vuelve pronto!</p>
+      <h3 class="font-cinzel font-bold text-gray-600 dark:text-slate-300 text-xl mb-2">Sin misiones por ahora</h3>
+      <p class="font-playfair text-gray-500 dark:text-slate-400 mb-4">Tu maestro aún no ha asignado misiones. ¡Vuelve pronto!</p>
       <a routerLink="/student/dashboard"
         class="inline-block font-cinzel font-bold text-white px-6 py-2 rounded-xl"
         style="background:linear-gradient(135deg,#d97706,#b45309);">
@@ -82,7 +86,7 @@
 
     <!-- Active quests -->
     @if (activeQuests().length > 0) {
-      <h2 class="font-cinzel font-bold text-gray-700 text-lg mb-3 flex items-center gap-2 animate-fade-in-up">
+      <h2 class="font-cinzel font-bold text-gray-700 dark:text-slate-200 text-lg mb-3 flex items-center gap-2 animate-fade-in-up">
         ⚔️ Misiones Activas
       </h2>
       <div class="space-y-4 mb-8">
@@ -96,15 +100,15 @@
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-3 mb-2 flex-wrap">
                   <span style="font-size:1.5rem;">{{ questIcon(quest.type) }}</span>
-                  <h3 class="font-cinzel font-bold text-gray-800 text-lg">{{ quest.title }}</h3>
+                  <h3 class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-lg">{{ quest.title }}</h3>
                   <span class="font-cinzel font-bold text-xs px-3 py-1 rounded-full uppercase"
                     style="background:rgba(245,158,11,0.15); color:#b45309; border:1px solid rgba(245,158,11,0.3);">
                     {{ quest.type ?? 'misión' }}
                   </span>
                 </div>
-                <p class="font-playfair text-gray-600 text-sm mb-3">{{ quest.description }}</p>
+                <p class="font-playfair text-gray-600 dark:text-slate-300 text-sm mb-3">{{ quest.description }}</p>
                 @if (quest.dueDate) {
-                  <div class="flex items-center gap-1 font-playfair text-xs text-gray-500">
+                  <div class="flex items-center gap-1 font-playfair text-xs text-gray-500 dark:text-slate-400">
                     <span>⏰</span>
                     <span>Vence: {{ quest.dueDate | date:'dd/MM/yyyy' }}</span>
                   </div>
@@ -129,7 +133,7 @@
 
     <!-- Completed quests -->
     @if (completedQuests().length > 0) {
-      <h2 class="font-cinzel font-bold text-gray-600 text-lg mb-3 flex items-center gap-2 animate-fade-in-up">
+      <h2 class="font-cinzel font-bold text-gray-600 dark:text-slate-300 text-lg mb-3 flex items-center gap-2 animate-fade-in-up">
         ✅ Completadas
       </h2>
       <div class="space-y-3">
@@ -142,8 +146,8 @@
               <div class="flex items-center gap-3">
                 <span style="font-size:1.25rem;">✅</span>
                 <div>
-                  <h3 class="font-cinzel font-bold text-gray-600 line-through">{{ quest.title }}</h3>
-                  <p class="font-playfair text-gray-400 text-sm">{{ quest.description }}</p>
+                  <h3 class="font-cinzel font-bold text-gray-600 dark:text-slate-300 line-through">{{ quest.title }}</h3>
+                  <p class="font-playfair text-gray-400 dark:text-slate-500 text-sm">{{ quest.description }}</p>
                 </div>
               </div>
               <span class="font-cinzel font-bold text-sm opacity-60 px-3 py-1 rounded-full"
@@ -160,7 +164,7 @@
   <!-- Back -->
   <div class="mt-8 text-center">
     <a routerLink="/student/dashboard"
-      class="inline-flex items-center gap-2 font-cinzel font-bold text-gray-600 px-6 py-3 rounded-xl transition hover:bg-white/60"
+      class="inline-flex items-center gap-2 font-cinzel font-bold text-gray-600 dark:text-slate-300 px-6 py-3 rounded-xl transition hover:bg-white/60"
       style="border:2px solid rgba(107,114,128,0.3);">
       ← Volver al Dashboard
     </a>

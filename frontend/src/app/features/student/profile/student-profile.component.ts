@@ -1,29 +1,22 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/auth/auth.service';
 import { CHARACTER_DATA, charImagePath, charShieldPath, levelToTier } from '../../../core/models/user.model';
 import { environment } from '@env/environment';
-import { AvatarUploadComponent } from '../../../shared/avatar-upload/avatar-upload.component';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-student-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive, AvatarUploadComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
   templateUrl: './student-profile.component.html',
 })
 export class StudentProfileComponent implements OnInit {
   profile = signal<any>(null);
   loading = signal(true);
   charInfo: any = null;
-
-  // Cambio de contraseña
-  newPassword = '';
-  confirmPassword = '';
-  savingPw = signal(false);
-  pwMessage = signal<{ text: string; type: 'success' | 'error' } | null>(null);
 
   constructor(private http: HttpClient, public auth: AuthService) {}
 
@@ -48,31 +41,6 @@ export class StudentProfileComponent implements OnInit {
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
-    });
-  }
-
-  changePassword() {
-    if (this.savingPw()) return;
-    if (this.newPassword.length < 8) {
-      this.pwMessage.set({ text: 'La contraseña debe tener al menos 8 caracteres', type: 'error' });
-      return;
-    }
-    if (this.newPassword !== this.confirmPassword) {
-      this.pwMessage.set({ text: 'Las contraseñas no coinciden', type: 'error' });
-      return;
-    }
-    this.savingPw.set(true);
-    this.http.patch(`${environment.apiUrl}/users/profile/password`, { password: this.newPassword }).subscribe({
-      next: () => {
-        this.pwMessage.set({ text: 'Contraseña actualizada correctamente', type: 'success' });
-        this.newPassword = '';
-        this.confirmPassword = '';
-        this.savingPw.set(false);
-      },
-      error: (err) => {
-        this.pwMessage.set({ text: err.error?.message ?? 'Error al actualizar la contraseña', type: 'error' });
-        this.savingPw.set(false);
-      },
     });
   }
 
@@ -123,7 +91,4 @@ export class StudentProfileComponent implements OnInit {
     (event.target as HTMLElement).style.display = 'none';
   }
 
-  onAvatarUploaded(avatar: string) {
-    this.profile.update((p: any) => (p ? { ...p, avatar } : p));
-  }
 }

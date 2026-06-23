@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-student-quests',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
   templateUrl: './student-quests.component.html',
 })
 export class StudentQuestsComponent implements OnInit {

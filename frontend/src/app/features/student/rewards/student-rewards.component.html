@@ -9,8 +9,12 @@
       <a routerLink="/student/rewards"      routerLinkActive="active" class="nav-link-epic">🛒 Tienda</a>
       <a routerLink="/student/achievements" class="nav-link-epic">🏆 Logros</a>
       <a routerLink="/student/profile"      class="nav-link-epic">👤 Perfil</a>
+      <a routerLink="/student/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
     </div>
-    <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+    <div class="flex items-center gap-3">
+      <app-theme-toggle />
+      <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+    </div>
   </div>
 </nav>
 
@@ -60,7 +64,7 @@
     <!-- Filters -->
     <div class="rounded-2xl p-5 mb-6 animate-fade-in-up"
       style="background:rgba(255,255,255,0.9); border:2px solid rgba(147,51,234,0.1);">
-      <h3 class="font-cinzel font-bold text-gray-800 mb-3">🔍 Filtrar Recompensas:</h3>
+      <h3 class="font-cinzel font-bold text-gray-800 dark:text-slate-100 mb-3">🔍 Filtrar Recompensas:</h3>
       <div class="flex flex-wrap gap-2">
         @for (f of filters; track f.key) {
           <button (click)="setFilter(f.key)"
@@ -77,15 +81,15 @@
     @if (loading()) {
       <div class="text-center py-20 animate-fade-in-up">
         <div class="text-8xl mb-4 animate-float">🛒</div>
-        <p class="font-cinzel text-gray-500">Cargando la tienda...</p>
+        <p class="font-cinzel text-gray-500 dark:text-slate-400">Cargando la tienda...</p>
       </div>
     } @else if (filteredRewards().length === 0) {
       <div class="text-center py-16 rounded-3xl animate-fade-in-up"
         style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));
                border:3px solid rgba(147,51,234,0.2); backdrop-filter:blur(15px);">
         <div class="text-8xl mb-4 opacity-70">🏪</div>
-        <h2 class="font-cinzel-decorative font-bold text-gray-700 text-2xl mb-3">¡Tienda en Construcción!</h2>
-        <p class="font-playfair text-gray-500 text-lg max-w-md mx-auto">
+        <h2 class="font-cinzel-decorative font-bold text-gray-700 dark:text-slate-200 text-2xl mb-3">¡Tienda en Construcción!</h2>
+        <p class="font-playfair text-gray-500 dark:text-slate-400 text-lg max-w-md mx-auto">
           Los comerciantes legendarios están preparando increíbles recompensas para ti.
         </p>
       </div>
@@ -114,8 +118,8 @@
               <span class="block mb-3" style="font-size:4rem; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.2));">
                 {{ r.icon ?? '🎁' }}
               </span>
-              <h3 class="font-cinzel font-bold text-gray-800 text-xl mb-2">{{ r.name }}</h3>
-              <p class="font-playfair text-gray-500 text-sm leading-relaxed">{{ r.description }}</p>
+              <h3 class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-xl mb-2">{{ r.name }}</h3>
+              <p class="font-playfair text-gray-500 dark:text-slate-400 text-sm leading-relaxed">{{ r.description }}</p>
             </div>
 
             <!-- Features -->
@@ -157,8 +161,8 @@
     @if (myRewards().length > 0) {
       <div class="mt-12 animate-fade-in-up">
         <div class="text-center mb-6">
-          <h2 class="font-cinzel font-bold text-2xl text-gray-800 mb-1">🎒 Mis Recompensas</h2>
-          <p class="font-playfair text-gray-500 text-sm">Recompensas que has canjeado recientemente</p>
+          <h2 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-1">🎒 Mis Recompensas</h2>
+          <p class="font-playfair text-gray-500 dark:text-slate-400 text-sm">Recompensas que has canjeado recientemente</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           @for (mr of myRewards(); track mr.id) {
@@ -168,8 +172,8 @@
                 <div class="flex items-center gap-3">
                   <span style="font-size:1.5rem;">{{ mr.reward?.icon ?? '🎁' }}</span>
                   <div>
-                    <h4 class="font-cinzel font-bold text-gray-800 text-sm">{{ mr.reward?.name ?? 'Recompensa' }}</h4>
-                    <p class="font-playfair text-xs text-purple-600 font-semibold">{{ mr.pointsSpent }} 💎</p>
+                    <h4 class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm">{{ mr.reward?.name ?? 'Recompensa' }}</h4>
+                    <p class="font-playfair text-xs text-purple-600 dark:text-purple-400 font-semibold">{{ mr.pointsSpent }} 💎</p>
                   </div>
                 </div>
                 <span class="font-cinzel text-xs px-2 py-1 rounded-full"
@@ -188,8 +192,8 @@
       <div class="mt-12 text-center py-8 rounded-2xl"
         style="background:white; border:2px solid rgba(229,231,235,1);">
         <div style="font-size:2.5rem;" class="mb-3">🎒</div>
-        <h3 class="font-cinzel font-bold text-gray-700 text-lg mb-1">Aún no tienes recompensas</h3>
-        <p class="font-playfair text-gray-500 text-sm">¡Canjea tu primera recompensa arriba!</p>
+        <h3 class="font-cinzel font-bold text-gray-700 dark:text-slate-200 text-lg mb-1">Aún no tienes recompensas</h3>
+        <p class="font-playfair text-gray-500 dark:text-slate-400 text-sm">¡Canjea tu primera recompensa arriba!</p>
       </div>
     }
 

@@ -7,11 +7,12 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { CHARACTER_DATA, charImagePath, charShieldPath, levelToTier } from '../../../core/models/user.model';
 import { environment } from '@env/environment';
 import { NotificationBellComponent } from '../../../shared/notification-bell/notification-bell.component';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-student-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, NotificationBellComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, NotificationBellComponent, ThemeToggleComponent],
   templateUrl: './student-dashboard.component.html',
 })
 export class StudentDashboardComponent implements OnInit {

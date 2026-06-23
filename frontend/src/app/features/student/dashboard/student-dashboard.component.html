@@ -47,6 +47,7 @@
       <a routerLink="/student/rewards" routerLinkActive="active" class="nav-link-epic">🛒 Tienda</a>
       <a routerLink="/student/achievements" routerLinkActive="active" class="nav-link-epic">🏆 Logros</a>
       <a routerLink="/student/profile" routerLinkActive="active" class="nav-link-epic">👤 Perfil</a>
+      <a routerLink="/student/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
     </div>
 
     <!-- User info + puntos -->
@@ -66,6 +67,7 @@
       }
       <span class="points-indicator">💎 {{ user?.points ?? 0 }}</span>
       <app-notification-bell />
+      <app-theme-toggle />
       <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
     </div>
   </div>
@@ -76,8 +78,8 @@
   <div class="min-h-screen flex items-center justify-center">
     <div class="glass-panel p-12 text-center animate-fade-in-up">
       <div class="text-8xl mb-6 animate-float">⚔️</div>
-      <h2 class="font-cinzel font-black text-2xl text-gray-800 mb-3">Cargando tu Aventura...</h2>
-      <p class="font-playfair text-gray-500">Preparando tu mundo legendario</p>
+      <h2 class="font-cinzel font-black text-2xl text-gray-800 dark:text-slate-100 mb-3">Cargando tu Aventura...</h2>
+      <p class="font-playfair text-gray-500 dark:text-slate-400">Preparando tu mundo legendario</p>
     </div>
   </div>
 } @else if (data()) {
@@ -245,7 +247,7 @@
 
       <!-- Mis Dominios Legendarios -->
       <div class="adventure-card p-6 animate-fade-in-up stagger-1">
-        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-6 flex items-center gap-3"
           style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
           <span class="text-3xl">🏰</span>
           Mis Dominios Legendarios
@@ -254,8 +256,8 @@
           @if (data().classrooms.length === 0) {
             <div class="text-center py-10">
               <div class="text-6xl mb-4 opacity-70">🏰</div>
-              <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡Aún no tienes dominios!</h4>
-              <p class="font-playfair text-gray-500 mb-6">Únete a un aula para comenzar tu aventura educativa</p>
+              <h4 class="font-cinzel font-bold text-xl text-gray-700 dark:text-slate-200 mb-3">¡Aún no tienes dominios!</h4>
+              <p class="font-playfair text-gray-500 dark:text-slate-400 mb-6">Únete a un aula para comenzar tu aventura educativa</p>
               <a routerLink="/student/classrooms" class="btn-epic btn-green text-xs py-2 px-6">🚪 Unirse a un Dominio</a>
             </div>
           }
@@ -263,9 +265,9 @@
             <div class="flex items-center justify-between p-4 rounded-xl border-2 border-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
               style="background: linear-gradient(to right, #f0fdf4, #eff6ff);">
               <div>
-                <div class="font-cinzel font-bold text-gray-800">{{ classroom.name }}</div>
-                <div class="font-playfair text-sm text-gray-600">Maestro: {{ classroom.teacher?.name }}</div>
-                <div class="text-xs text-green-600 mt-1 font-cinzel">{{ classroom.studentsCount ?? 0 }} aventureros</div>
+                <div class="font-cinzel font-bold text-gray-800 dark:text-slate-100">{{ classroom.name }}</div>
+                <div class="font-playfair text-sm text-gray-600 dark:text-slate-300">Maestro: {{ classroom.teacher?.name }}</div>
+                <div class="text-xs text-green-600 dark:text-green-400 mt-1 font-cinzel">{{ classroom.studentsCount ?? 0 }} aventureros</div>
               </div>
               <a [routerLink]="['/student/classrooms', classroom.id]"
                 class="btn-epic btn-green text-xs py-2 px-4">
@@ -278,7 +280,7 @@
 
       <!-- Misiones Activas -->
       <div class="adventure-card p-6 animate-fade-in-up stagger-2">
-        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-6 flex items-center gap-3"
           style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
           <span class="text-3xl">🗡️</span>
           Misiones Activas
@@ -287,21 +289,21 @@
           @if (data().quests.length === 0) {
             <div class="text-center py-10">
               <div class="text-6xl mb-4 opacity-70">🗡️</div>
-              <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡No hay misiones activas!</h4>
-              <p class="font-playfair text-gray-500">Las misiones aparecerán cuando tus maestros las asignen</p>
+              <h4 class="font-cinzel font-bold text-xl text-gray-700 dark:text-slate-200 mb-3">¡No hay misiones activas!</h4>
+              <p class="font-playfair text-gray-500 dark:text-slate-400">Las misiones aparecerán cuando tus maestros las asignen</p>
             </div>
           }
           @for (quest of data().quests.slice(0, 4); track quest.id) {
             <div class="quest-item p-4">
               <div class="flex items-center justify-between gap-3">
                 <div class="flex-1">
-                  <div class="font-cinzel font-bold text-gray-800 mb-1">{{ quest.title }}</div>
-                  <div class="font-playfair text-sm text-gray-600 mb-2">{{ quest.description }}</div>
+                  <div class="font-cinzel font-bold text-gray-800 dark:text-slate-100 mb-1">{{ quest.title }}</div>
+                  <div class="font-playfair text-sm text-gray-600 dark:text-slate-300 mb-2">{{ quest.description }}</div>
                   <div class="flex items-center gap-2 text-xs">
                     <span class="bg-amber-200 text-amber-800 px-2 py-1 rounded-full font-cinzel font-bold">
                       +{{ quest.xpReward ?? 50 }} XP
                     </span>
-                    <span class="text-gray-500 font-playfair">{{ quest.type ?? 'general' }}</span>
+                    <span class="text-gray-500 dark:text-slate-400 font-playfair">{{ quest.type ?? 'general' }}</span>
                   </div>
                 </div>
                 <a routerLink="/student/quests" class="btn-epic btn-green text-xs py-2 px-3">✅ Ver</a>
@@ -318,7 +320,7 @@
 
       <!-- Logros Recientes -->
       <div class="adventure-card p-6 animate-fade-in-up stagger-3">
-        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-6 flex items-center gap-3"
           style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
           <span class="text-3xl">🏆</span>
           Logros Recientes
@@ -327,8 +329,8 @@
           @if ((data().achievements?.length ?? 0) === 0) {
             <div class="text-center py-10">
               <div class="text-6xl mb-4 opacity-70">🏆</div>
-              <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡Próximamente tendrás logros!</h4>
-              <p class="font-playfair text-gray-500">Completa misiones y tareas para desbloquear logros épicos</p>
+              <h4 class="font-cinzel font-bold text-xl text-gray-700 dark:text-slate-200 mb-3">¡Próximamente tendrás logros!</h4>
+              <p class="font-playfair text-gray-500 dark:text-slate-400">Completa misiones y tareas para desbloquear logros épicos</p>
             </div>
           }
           @for (achievement of (data().achievements ?? []).slice(0, 4); track achievement.id) {
@@ -336,9 +338,9 @@
               <div class="flex items-center gap-4">
                 <div class="text-3xl">{{ achievement.icon ?? '🏆' }}</div>
                 <div class="flex-1">
-                  <div class="font-cinzel font-bold text-gray-800">{{ achievement.name }}</div>
-                  <div class="font-playfair text-sm text-gray-600">{{ achievement.description }}</div>
-                  <div class="text-xs text-purple-600 mt-1 font-cinzel">
+                  <div class="font-cinzel font-bold text-gray-800 dark:text-slate-100">{{ achievement.name }}</div>
+                  <div class="font-playfair text-sm text-gray-600 dark:text-slate-300">{{ achievement.description }}</div>
+                  <div class="text-xs text-purple-600 dark:text-purple-400 mt-1 font-cinzel">
                     +{{ achievement.xpReward ?? 25 }} XP
                   </div>
                 </div>
@@ -357,7 +359,7 @@
 
       <!-- Tienda Legendaria -->
       <div class="adventure-card p-6 animate-fade-in-up stagger-4">
-        <h3 class="font-cinzel font-bold text-2xl text-gray-800 mb-6 flex items-center gap-3"
+        <h3 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-6 flex items-center gap-3"
           style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
           <span class="text-3xl">🛒</span>
           Tienda Legendaria
@@ -366,8 +368,8 @@
           @if ((data().rewards?.length ?? 0) === 0) {
             <div class="text-center py-10">
               <div class="text-6xl mb-4 opacity-70">🛒</div>
-              <h4 class="font-cinzel font-bold text-xl text-gray-700 mb-3">¡Tienda en construcción!</h4>
-              <p class="font-playfair text-gray-500">Pronto habrá recompensas increíbles disponibles</p>
+              <h4 class="font-cinzel font-bold text-xl text-gray-700 dark:text-slate-200 mb-3">¡Tienda en construcción!</h4>
+              <p class="font-playfair text-gray-500 dark:text-slate-400">Pronto habrá recompensas increíbles disponibles</p>
             </div>
           }
           @for (reward of (data().rewards ?? []).slice(0, 4); track reward.id) {
@@ -376,9 +378,9 @@
                 <div class="flex items-center gap-3 flex-1">
                   <div class="text-3xl">{{ reward.icon ?? '🎁' }}</div>
                   <div>
-                    <div class="font-cinzel font-bold text-gray-800">{{ reward.name }}</div>
-                    <div class="font-playfair text-sm text-gray-600">{{ reward.description }}</div>
-                    <div class="text-xs text-blue-600 mt-1 font-cinzel">💰 {{ reward.costPoints ?? reward.cost ?? 50 }} puntos</div>
+                    <div class="font-cinzel font-bold text-gray-800 dark:text-slate-100">{{ reward.name }}</div>
+                    <div class="font-playfair text-sm text-gray-600 dark:text-slate-300">{{ reward.description }}</div>
+                    <div class="text-xs text-blue-600 dark:text-blue-400 mt-1 font-cinzel">💰 {{ reward.costPoints ?? reward.cost ?? 50 }} puntos</div>
                   </div>
                 </div>
                 <button class="btn-epic text-xs py-2 px-3"
@@ -393,7 +395,7 @@
         </div>
         @if ((data().rewards?.length ?? 0) > 0) {
           <div class="text-center mt-6">
-            <p class="font-playfair text-sm text-gray-600 mb-3">
+            <p class="font-playfair text-sm text-gray-600 dark:text-slate-300 mb-3">
               Tienes {{ user?.points ?? 0 }} puntos disponibles
             </p>
             <a routerLink="/student/rewards" class="btn-epic btn-blue text-xs py-2 px-6">

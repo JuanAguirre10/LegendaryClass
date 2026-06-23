@@ -9,8 +9,12 @@
       <a routerLink="/student/rewards"     class="nav-link-epic">🛒 Tienda</a>
       <a routerLink="/student/achievements" class="nav-link-epic">🏆 Logros</a>
       <a routerLink="/student/profile"     routerLinkActive="active" class="nav-link-epic">👤 Perfil</a>
+      <a routerLink="/student/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
     </div>
-    <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+    <div class="flex items-center gap-3">
+      <app-theme-toggle />
+      <a routerLink="/student/dashboard" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+    </div>
   </div>
 </nav>
 
@@ -18,7 +22,7 @@
   @if (!profile()) {
     <div class="glass-panel p-12 text-center animate-fade-in-up">
       <div class="text-8xl mb-6 animate-float">👤</div>
-      <p class="font-cinzel text-gray-500">Cargando perfil...</p>
+      <p class="font-cinzel text-gray-500 dark:text-slate-400">Cargando perfil...</p>
     </div>
   } @else {
 
@@ -81,7 +85,7 @@
 
     <!-- Stats del personaje -->
     <div class="legendary-card p-7 mb-6 animate-fade-in-up">
-      <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-6 flex items-center gap-3"
+      <h3 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-6 flex items-center gap-3"
         style="text-shadow: 0 2px 4px rgba(255,255,255,0.8);">
         <span class="text-2xl">📊</span>
         Estadísticas de Aventurero
@@ -92,7 +96,7 @@
             style="background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85)); border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
             <div class="text-2xl mb-1">{{ stat.icon }}</div>
             <div class="font-cinzel font-black text-2xl mb-1" [style.color]="stat.color">{{ stat.value ?? 10 }}</div>
-            <div class="font-cinzel text-xs text-gray-500 uppercase tracking-wide">{{ stat.name }}</div>
+            <div class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide">{{ stat.name }}</div>
             <!-- Mini barra -->
             <div class="mt-2 h-1.5 rounded-full overflow-hidden" style="background: rgba(0,0,0,0.1);">
               <div class="h-full rounded-full transition-all duration-700" [style.width.%]="((stat.value ?? 10) / 50) * 100" [style.background]="stat.color"></div>
@@ -104,17 +108,17 @@
 
     <!-- XP Info -->
     <div class="legendary-card p-7 animate-fade-in-up">
-      <h3 class="font-cinzel font-bold text-xl text-gray-800 mb-5 flex items-center gap-3">
+      <h3 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-5 flex items-center gap-3">
         <span class="text-2xl">⭐</span>
         Progreso de Nivel
       </h3>
       <div class="flex items-center gap-6">
         <div class="text-center">
           <div class="font-cinzel font-black text-4xl text-amber-600">{{ profile().level ?? 1 }}</div>
-          <div class="font-cinzel text-xs text-gray-500 uppercase">Nivel Actual</div>
+          <div class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase">Nivel Actual</div>
         </div>
         <div class="flex-1">
-          <div class="flex justify-between font-cinzel text-xs text-gray-500 mb-2">
+          <div class="flex justify-between font-cinzel text-xs text-gray-500 dark:text-slate-400 mb-2">
             <span>{{ getXpInfo().xp }} XP</span>
             <span>{{ getXpInfo().nextLevelXp }} XP</span>
           </div>
@@ -122,39 +126,11 @@
             <div class="xp-bar-fill rounded-full h-4 transition-all duration-700"
               [style.width.%]="getXpInfo().xpProgress"></div>
           </div>
-          <p class="font-playfair text-xs text-gray-500 mt-2 text-center">
+          <p class="font-playfair text-xs text-gray-500 dark:text-slate-400 mt-2 text-center">
             {{ getXpInfo().xpProgress }}% hacia el nivel {{ (profile().level ?? 1) + 1 }}
           </p>
         </div>
       </div>
-    </div>
-
-    <!-- Cambiar contraseña -->
-    <div class="adventure-card p-6 mt-8 max-w-xl mx-auto animate-fade-in-up">
-      <h3 class="font-cinzel font-bold text-gray-800 text-lg mb-4">🔒 Cambiar contraseña</h3>
-      @if (pwMessage()) {
-        <div class="mb-3 px-4 py-2 rounded-lg font-cinzel text-xs"
-          [class]="pwMessage()!.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'">
-          {{ pwMessage()!.text }}
-        </div>
-      }
-      <div class="flex flex-col sm:flex-row gap-3">
-        <input [(ngModel)]="newPassword" type="password" placeholder="Nueva contraseña (mín. 8)"
-          class="input-epic text-sm flex-1" />
-        <input [(ngModel)]="confirmPassword" type="password" placeholder="Confirmar contraseña"
-          class="input-epic text-sm flex-1" />
-        <button (click)="changePassword()" [disabled]="savingPw()"
-          class="btn-epic btn-purple text-sm py-2 px-6 whitespace-nowrap disabled:opacity-50">
-          {{ savingPw() ? '...' : 'Actualizar' }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Foto de perfil -->
-    <div class="adventure-card p-6 mt-8 max-w-xl mx-auto animate-fade-in-up">
-      <h3 class="font-cinzel font-bold text-gray-800 text-lg mb-4">🖼️ Foto de perfil</h3>
-      <app-avatar-upload uploadPath="/users/profile/avatar" [currentAvatar]="profile().avatar"
-        (uploaded)="onAvatarUploaded($event)" />
     </div>
 
   }
