@@ -353,6 +353,10 @@ export class GamificationService {
 
     await this.rankingGateway
       .emitRankingUpdate(classroomId)
-      .catch((err) => console.error('ranking emit failed', err));
+      .catch((err) => console.error('classroom ranking emit failed', err));
+
+    await this.rankingGateway
+      .emitGlobalRankingUpdate()
+      .catch((err) => console.error('global ranking emit failed', err));
   }
 }
