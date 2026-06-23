@@ -3,11 +3,12 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { NgClass } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-public-layout',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, NgClass],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, NgClass, ThemeToggleComponent],
   templateUrl: './public-layout.component.html',
 })
 export class PublicLayoutComponent implements OnDestroy {

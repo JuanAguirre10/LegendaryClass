@@ -5,7 +5,7 @@
     <div class="text-center mb-12 animate-fade-in-up">
       <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Guía del Aventurero</p>
       <h1 class="font-cinzel-decorative text-4xl md:text-6xl font-black epic-title-static mb-4">¿Cómo Funciona?</h1>
-      <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+      <p class="font-playfair text-gray-600 dark:text-slate-300 text-lg max-w-xl mx-auto leading-relaxed">
         LegendaryClass está diseñado para toda la comunidad educativa.
         Elige tu rol y descubre tu camino épico.
       </p>
@@ -18,7 +18,7 @@
                 class="font-cinzel text-xs uppercase tracking-widest px-6 py-3 rounded-xl border-2 transition-all duration-300"
                 [ngClass]="activeRole() === tab
                   ? [roleData[tab].tabColor, 'shadow-lg scale-105']
-                  : 'border-gray-200 text-gray-500 hover:border-amber-300 bg-white/60 hover:bg-white/80'">
+                  : 'border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 hover:border-amber-300 bg-white/60 dark:bg-slate-800/60 hover:bg-white/80'">
           {{ roleData[tab].icon }} {{ roleData[tab].label }}
         </button>
       }
@@ -26,7 +26,7 @@
 
     <!-- Pasos del rol activo -->
     <div class="glass-panel p-8 md:p-12 mb-10 animate-fade-in-up">
-      <h2 class="font-cinzel font-bold text-center text-lg text-gray-700 uppercase tracking-widest mb-8">
+      <h2 class="font-cinzel font-bold text-center text-lg text-gray-700 dark:text-slate-200 uppercase tracking-widest mb-8">
         {{ roleData[activeRole()].icon }} Camino del {{ roleData[activeRole()].label }}
       </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -36,8 +36,8 @@
               {{ i + 1 }}
             </div>
             <div class="text-4xl mb-3">{{ step.icon }}</div>
-            <h4 class="font-cinzel font-bold text-gray-800 text-sm mb-2 uppercase tracking-wide">{{ step.title }}</h4>
-            <p class="font-playfair text-gray-500 text-xs leading-relaxed">{{ step.desc }}</p>
+            <h4 class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm mb-2 uppercase tracking-wide">{{ step.title }}</h4>
+            <p class="font-playfair text-gray-500 dark:text-slate-400 text-xs leading-relaxed">{{ step.desc }}</p>
           </div>
         }
       </div>

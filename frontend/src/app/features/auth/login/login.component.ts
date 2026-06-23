@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/auth/auth.service';
+import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
 interface WelcomeInfo { icon: string; title: string; subtitle: string; }
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, ThemeToggleComponent],
   templateUrl: './login.component.html',
 })
 

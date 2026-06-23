@@ -5,7 +5,7 @@
     <div class="text-center mb-16 animate-fade-in-up">
       <p class="font-cinzel text-amber-600 text-xs uppercase tracking-widest mb-3">Planes y Rangos</p>
       <h1 class="font-cinzel-decorative text-4xl md:text-6xl font-black epic-title-static mb-4">Escoge tu Rango</h1>
-      <p class="font-playfair text-gray-600 text-lg max-w-xl mx-auto leading-relaxed">
+      <p class="font-playfair text-gray-600 dark:text-slate-300 text-lg max-w-xl mx-auto leading-relaxed">
         Comienza gratis y escala según tus necesidades. Sin contratos ocultos,
         sin sorpresas. Cancela cuando quieras.
       </p>
@@ -45,17 +45,17 @@
               <!-- Ícono + nombre -->
               <div class="flex items-center gap-3 mb-4">
                 <span class="text-4xl">{{ plan.icon }}</span>
-                <h3 class="font-cinzel-decorative font-black text-xl text-gray-800">{{ plan.name }}</h3>
+                <h3 class="font-cinzel-decorative font-black text-xl text-gray-800 dark:text-slate-100">{{ plan.name }}</h3>
               </div>
 
               <!-- Precio -->
               <div class="flex items-baseline gap-1 mb-2">
                 <span class="font-cinzel-decorative text-5xl font-black" [class]="plan.priceColor">{{ plan.price }}</span>
-                <span class="font-cinzel text-gray-400 text-sm">{{ plan.period }}</span>
+                <span class="font-cinzel text-gray-400 dark:text-slate-500 text-sm">{{ plan.period }}</span>
               </div>
 
               <!-- Descripción -->
-              <p class="font-playfair text-gray-500 text-sm mb-6 leading-relaxed">{{ plan.desc }}</p>
+              <p class="font-playfair text-gray-500 dark:text-slate-400 text-sm mb-6 leading-relaxed">{{ plan.desc }}</p>
 
               <!-- Botón CTA -->
               @if (plan.btnGold) {
@@ -71,16 +71,16 @@
               }
 
               <!-- Features — flex-grow para que todos los cards empujen el contenido igual -->
-              <div class="border-t border-gray-100 pt-4 flex-grow">
+              <div class="border-t border-gray-100 dark:border-slate-700 pt-4 flex-grow">
                 <div class="space-y-2">
                   @for (feat of plan.features; track feat) {
-                    <div class="flex items-start gap-2 font-playfair text-sm text-gray-600">
+                    <div class="flex items-start gap-2 font-playfair text-sm text-gray-600 dark:text-slate-300">
                       <span class="text-green-500 flex-shrink-0 mt-0.5 font-bold">✓</span>
                       {{ feat }}
                     </div>
                   }
                   @for (feat of plan.disabled; track feat) {
-                    <div class="flex items-start gap-2 font-playfair text-sm text-gray-400">
+                    <div class="flex items-start gap-2 font-playfair text-sm text-gray-400 dark:text-slate-500">
                       <span class="text-gray-300 flex-shrink-0 mt-0.5">✗</span>
                       <span class="line-through">{{ feat }}</span>
                     </div>
@@ -95,22 +95,22 @@
 
     <!-- Garantía -->
     <div class="text-center mb-20">
-      <p class="font-playfair text-gray-500 text-sm">
+      <p class="font-playfair text-gray-500 dark:text-slate-400 text-sm">
         🛡️ 14 días de prueba gratuita en planes de pago · Sin tarjeta de crédito · Cancela cuando quieras
       </p>
     </div>
 
     <!-- Comparativa rápida -->
     <div class="glass-panel p-8 mb-16">
-      <h2 class="font-cinzel font-bold text-center text-gray-700 uppercase tracking-widest text-sm mb-6">
+      <h2 class="font-cinzel font-bold text-center text-gray-700 dark:text-slate-200 uppercase tracking-widest text-sm mb-6">
         📋 Comparativa Detallada
       </h2>
       <div class="overflow-x-auto">
         <table class="w-full">
           <thead>
             <tr class="border-b-2 border-amber-100">
-              <th class="font-cinzel text-xs text-gray-500 uppercase tracking-wide text-left py-3 px-4 min-w-48">Característica</th>
-              <th class="font-cinzel text-xs text-gray-500 uppercase tracking-wide text-center py-3 px-4">Explorador</th>
+              <th class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide text-left py-3 px-4 min-w-48">Característica</th>
+              <th class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide text-center py-3 px-4">Explorador</th>
               <th class="font-cinzel text-xs text-amber-600 uppercase tracking-wide text-center py-3 px-4">Aventurero</th>
               <th class="font-cinzel text-xs text-purple-600 uppercase tracking-wide text-center py-3 px-4">Legendario</th>
             </tr>
@@ -128,9 +128,9 @@
               ['API Integración',    '✗',           '✗',           '✓'           ],
               ['Soporte',            'Email',       'Prioritario', 'Dedicado 24/7'],
             ]; track row[0]) {
-              <tr class="border-b border-gray-100 hover:bg-amber-50/20 transition-colors">
-                <td class="py-3 px-4 font-semibold text-gray-700">{{ row[0] }}</td>
-                <td class="py-3 px-4 text-center text-gray-500">{{ row[1] }}</td>
+              <tr class="border-b border-gray-100 dark:border-slate-700 hover:bg-amber-50/20 dark:hover:bg-slate-700/20 transition-colors">
+                <td class="py-3 px-4 font-semibold text-gray-700 dark:text-slate-200">{{ row[0] }}</td>
+                <td class="py-3 px-4 text-center text-gray-500 dark:text-slate-400">{{ row[1] }}</td>
                 <td class="py-3 px-4 text-center text-amber-700 font-semibold">{{ row[2] }}</td>
                 <td class="py-3 px-4 text-center text-purple-700 font-semibold">{{ row[3] }}</td>
               </tr>
@@ -145,12 +145,12 @@
       @for (t of testimonials; track t.name) {
         <div class="legendary-card p-6">
           <div class="text-amber-400 text-lg mb-3 tracking-wider">★★★★★</div>
-          <p class="font-playfair text-gray-600 text-sm leading-relaxed italic mb-4">"{{ t.text }}"</p>
-          <div class="flex items-center gap-3 border-t border-gray-100 pt-3">
+          <p class="font-playfair text-gray-600 dark:text-slate-300 text-sm leading-relaxed italic mb-4">"{{ t.text }}"</p>
+          <div class="flex items-center gap-3 border-t border-gray-100 dark:border-slate-700 pt-3">
             <div class="w-10 h-10 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-xl">{{ t.avatar }}</div>
             <div>
-              <div class="font-cinzel font-bold text-gray-800 text-xs">{{ t.name }}</div>
-              <div class="font-playfair text-gray-500 text-xs">{{ t.role }}</div>
+              <div class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-xs">{{ t.name }}</div>
+              <div class="font-playfair text-gray-500 dark:text-slate-400 text-xs">{{ t.role }}</div>
             </div>
           </div>
         </div>
