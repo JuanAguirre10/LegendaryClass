@@ -11,12 +11,16 @@ describe('MathPipe', () => {
     pipe = new MathPipe(sanitizer);
   });
 
-  it('returns empty string for null input', () => {
-    expect(pipe.transform(null) as string).toBe('');
+  it('returns SafeHtml with empty content for null input', () => {
+    const result = pipe.transform(null) as any;
+    const html: string = result?.changingThisBreaksApplicationSecurity ?? String(result);
+    expect(html).toBe('');
   });
 
-  it('returns empty string for empty string', () => {
-    expect(pipe.transform('') as string).toBe('');
+  it('returns SafeHtml with empty content for empty string', () => {
+    const result = pipe.transform('') as any;
+    const html: string = result?.changingThisBreaksApplicationSecurity ?? String(result);
+    expect(html).toBe('');
   });
 
   it('renders inline math $x^2$ as katex HTML', () => {
@@ -36,5 +40,19 @@ describe('MathPipe', () => {
     const result = pipe.transform('Texto sin fórmulas') as any;
     const html: string = result?.changingThisBreaksApplicationSecurity ?? String(result);
     expect(html).toBe('Texto sin fórmulas');
+  });
+
+  it('renders escaped dollar inside math delimiters: $\\$250$ produces KaTeX output', () => {
+    const result = pipe.transform('Price: $\\$250$') as any;
+    const html: string = result?.changingThisBreaksApplicationSecurity ?? String(result);
+    // KaTeX should have rendered the expression; check for KaTeX markup and the digits
+    expect(html).toContain('katex');
+    expect(html).toContain('250');
+  });
+
+  it('restores escaped dollar outside math delimiters as literal $', () => {
+    const result = pipe.transform('Cost is \\$50 today') as any;
+    const html: string = result?.changingThisBreaksApplicationSecurity ?? String(result);
+    expect(html).toContain('$50');
   });
 });
