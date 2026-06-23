@@ -1,4 +1,3 @@
-// frontend/src/app/core/realtime/realtime.service.ts
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
@@ -6,12 +5,16 @@ import { environment } from '@env/environment';
 import { AuthService } from '../auth/auth.service';
 
 export interface RankingEntry {
-  studentId: string;
-  name: string;
+  studentId:     string;
+  name:          string;
+  avatar:        string | null;
   characterType: string | null;
-  level: number;
-  totalPoints: number;
-  rank: number;
+  level:         number;
+  totalPoints:   number;
+  rank:          number;
+  weeklyXpDelta: number;
+  streakDays:    number;
+  rankChange:    number | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,7 +31,6 @@ export class RealtimeService implements OnDestroy {
       this.socket = undefined;
     }
     if (!this.socket) {
-      // environment.apiUrl = http://localhost:3000/api/v1 → origin = http://localhost:3000
       const origin = environment.apiUrl.replace(/\/api\/v1\/?$/, '');
       this.socket = io(origin, {
         auth: { token },
@@ -51,6 +53,15 @@ export class RealtimeService implements OnDestroy {
         socket.emit('leave', { classroomId });
         socket.off('ranking:update', handler);
       };
+    });
+  }
+
+  onGlobalRanking(): Observable<RankingEntry[]> {
+    const socket = this.ensureSocket();
+    return new Observable<RankingEntry[]>((subscriber) => {
+      const handler = (payload: { ranking: RankingEntry[] }) => subscriber.next(payload.ranking);
+      socket.on('ranking:global', handler);
+      return () => socket.off('ranking:global', handler);
     });
   }
 
