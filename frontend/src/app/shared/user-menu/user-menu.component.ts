@@ -67,9 +67,6 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
           <!-- ── CHARACTER CARD ── -->
           @if (charType()) {
             <div class="relative flex" [style.background]="charGradient()" style="min-height:130px">
-              <!-- Capa oscura para garantizar contraste en cualquier color de personaje -->
-              <div class="absolute inset-0 pointer-events-none"
-                   style="background:rgba(0,0,0,0.45)"></div>
 
               <!-- Imagen -->
               <div class="relative flex-shrink-0 z-10" style="width:100px; overflow:hidden">
@@ -84,38 +81,35 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
               <div class="flex-1 py-3 pr-4 pl-2 flex flex-col justify-center gap-1.5 relative z-10">
                 <!-- Nombre -->
                 <p class="font-cinzel font-black leading-snug"
-                   style="font-size:14px; word-break:break-word; color:#fff;
-                          text-shadow:0 1px 4px rgba(0,0,0,0.9)">
+                   style="font-size:14px; word-break:break-word; color:#0f172a">
                   {{ user()?.name }}
                 </p>
                 <!-- Raza · Tier -->
-                <p class="font-cinzel text-xs leading-tight"
-                   style="color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8)">
+                <p class="font-cinzel text-xs leading-tight" style="color:#1e293b">
                   {{ charInfo()?.icon }} {{ charInfo()?.name }}
-                  <span style="color:rgba(255,255,255,0.75)">&nbsp;· {{ tierName() }}</span>
+                  <span style="color:#334155">&nbsp;· {{ tierName() }}</span>
                 </p>
                 <!-- Nivel -->
                 <span class="self-start inline-flex items-center font-cinzel font-black text-xs rounded-full px-2.5 py-0.5"
-                      style="background:#fbbf24; color:#1c1917; box-shadow:0 2px 6px rgba(0,0,0,0.4)">
+                      style="background:#fbbf24; color:#1c1917; box-shadow:0 2px 4px rgba(0,0,0,0.2)">
                   Nv. {{ user()?.level ?? 1 }}
                 </span>
                 <!-- Gemas -->
                 <div class="flex items-baseline gap-1">
                   <span style="font-size:16px; line-height:1">💎</span>
                   <span class="font-cinzel font-black"
-                        style="font-size:20px; line-height:1; color:#fde68a;
-                               text-shadow:0 1px 4px rgba(0,0,0,0.7)">
+                        style="font-size:20px; line-height:1; color:#0f172a">
                     {{ user()?.points ?? 0 }}
                   </span>
-                  <span class="font-cinzel text-xs" style="color:rgba(255,255,255,0.65)">pts</span>
+                  <span class="font-cinzel text-xs" style="color:#334155">pts</span>
                 </div>
                 <!-- XP bar -->
-                <div class="w-full rounded-full overflow-hidden" style="height:5px; background:rgba(255,255,255,0.2)">
+                <div class="w-full rounded-full overflow-hidden" style="height:5px; background:rgba(0,0,0,0.15)">
                   <div class="h-full rounded-full transition-all duration-500"
-                       style="background:#fbbf24"
+                       style="background:#1e293b"
                        [style.width.%]="xpPercent()"></div>
                 </div>
-                <p class="font-cinzel" style="font-size:9px; color:rgba(255,255,255,0.6)">
+                <p class="font-cinzel" style="font-size:9px; color:#334155">
                   {{ user()?.experiencePoints ?? 0 }} / {{ xpNext() }} XP
                 </p>
               </div>
