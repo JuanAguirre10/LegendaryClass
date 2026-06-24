@@ -51,19 +51,6 @@
 
     <!-- User info + puntos -->
     <div class="flex items-center gap-3">
-      <!-- Mini avatar del personaje -->
-      @if (user?.characterType) {
-        <div class="relative hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl"
-          style="background: rgba(255,255,255,0.1); border: 1px solid rgba(251,191,36,0.3);">
-          <img [src]="getShieldImage()" alt="Escudo del personaje"
-            class="w-7 h-7 object-contain animate-float-shield"
-            (error)="hideElement($event)" />
-          <div>
-            <div class="font-cinzel text-amber-400 text-xs font-bold leading-tight">{{ charInfo?.name ?? user!.characterType }}</div>
-            <div class="font-cinzel text-white/50 text-[10px] leading-tight">Nv. {{ data()?.xpInfo?.level ?? 1 }}</div>
-          </div>
-        </div>
-      }
       <span class="points-indicator">💎 {{ user?.points ?? 0 }}</span>
       <app-notification-bell />
       <app-user-menu />
