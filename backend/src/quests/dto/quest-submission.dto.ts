@@ -1,13 +1,16 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, MinLength } from 'class-validator';
+import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
 
 export class ApproveSubmissionDto {
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   teacherNotes?: string;
 }
 
 export class RejectSubmissionDto {
-  @IsOptional()
+  @ApiProperty({ description: 'Feedback obligatorio al rechazar' })
   @IsString()
-  teacherNotes?: string;
+  @MinLength(1)
+  teacherNotes!: string;
 }

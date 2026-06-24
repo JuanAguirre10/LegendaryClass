@@ -1,5 +1,9 @@
-import { Controller, Get, Post, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller, Get, Post, Patch, Delete,
+  Body, Param, Query, UseGuards, UseInterceptors, UploadedFile,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -7,6 +11,8 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { QuestsService } from './quests.service';
 import { CreateQuestDto } from './dto/create-quest.dto';
+import { ApproveSubmissionDto, RejectSubmissionDto } from './dto/quest-submission.dto';
+import { multerSubmissionOptions } from '../common/upload/submission-upload';
 
 @ApiTags('Quests')
 @ApiBearerAuth()
@@ -43,5 +49,53 @@ export class QuestsController {
   @Roles(Role.teacher)
   delete(@Param('id') id: string, @CurrentUser() user: any) {
     return this.questsService.delete(id, user.id);
+  }
+
+  // ─── Submission endpoints ─────────────────────────────────────────────────
+
+  @Post(':id/submit')
+  @Roles(Role.student)
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file', multerSubmissionOptions))
+  submitEvidence(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.questsService.submitEvidence(id, user.id, file);
+  }
+
+  // IMPORTANT: this route must be declared BEFORE /:id/submissions to avoid
+  // NestJS treating "submissions" as the :id parameter value.
+  @Get('submissions/pending')
+  @Roles(Role.teacher)
+  getPendingSubmissions(@CurrentUser() user: any) {
+    return this.questsService.getPendingSubmissions(user.id);
+  }
+
+  @Get(':id/submissions')
+  @Roles(Role.teacher)
+  getQuestSubmissions(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.questsService.getQuestSubmissions(id, user.id);
+  }
+
+  @Patch('submissions/:subId/approve')
+  @Roles(Role.teacher)
+  approveSubmission(
+    @Param('subId') subId: string,
+    @CurrentUser() user: any,
+    @Body() dto: ApproveSubmissionDto,
+  ) {
+    return this.questsService.approveSubmission(subId, user.id, dto);
+  }
+
+  @Patch('submissions/:subId/reject')
+  @Roles(Role.teacher)
+  rejectSubmission(
+    @Param('subId') subId: string,
+    @CurrentUser() user: any,
+    @Body() dto: RejectSubmissionDto,
+  ) {
+    return this.questsService.rejectSubmission(subId, user.id, dto);
   }
 }
