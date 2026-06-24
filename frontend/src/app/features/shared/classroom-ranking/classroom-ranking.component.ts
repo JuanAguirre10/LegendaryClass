@@ -120,10 +120,10 @@ export class ClassroomRankingComponent implements OnInit, OnDestroy {
     return type ? (CHARACTER_ICONS[type] ?? '👤') : '👤';
   }
 
-  rankChangeClass(change: number): string {
+  rankChangeClass(change: number | null): string {
+    if (change === null || change === 0) return 'bg-gray-100 text-gray-500 dark:bg-slate-700 dark:text-slate-400';
     if (change > 0) return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-    if (change < 0) return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
-    return 'bg-gray-100 text-gray-500 dark:bg-slate-700 dark:text-slate-400';
+    return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
   }
 
   rankChangeLabel(change: number): string {

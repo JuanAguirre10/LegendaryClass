@@ -59,6 +59,7 @@
         @if (classrooms().length > 1) {
           <div class="mb-4 flex justify-center">
             <select [(ngModel)]="selectedIdValue"
+              aria-label="Seleccionar salón"
               class="input-epic max-w-xs font-cinzel text-sm">
               @for (c of classrooms(); track c.id) {
                 <option [value]="c.id">{{ c.name }}</option>
