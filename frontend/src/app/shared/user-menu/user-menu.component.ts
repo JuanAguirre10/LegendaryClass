@@ -134,52 +134,57 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
           }
 
           <!-- ── ITEMS ── -->
-          <div class="bg-white dark:bg-slate-900 py-2 px-2 flex flex-col gap-0.5">
+          <div class="py-2 px-2 flex flex-col gap-1" style="background:#fff">
 
             @if (profileLink()) {
               <a [routerLink]="profileLink()" (click)="open.set(false)"
-                 class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer
-                        bg-indigo-50 dark:bg-indigo-950/60
-                        hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-colors">
-                <span class="w-8 h-8 flex items-center justify-center rounded-lg
-                             bg-indigo-500 text-white text-base flex-shrink-0 shadow-sm">👤</span>
-                <span class="font-cinzel font-bold text-sm text-indigo-900 dark:text-indigo-200 flex-1">Mi Perfil</span>
-                <span class="text-indigo-400 font-bold text-xl leading-none">›</span>
+                 class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors"
+                 style="background:#eef2ff"
+                 onmouseenter="this.style.background='#e0e7ff'"
+                 onmouseleave="this.style.background='#eef2ff'">
+                <span class="w-8 h-8 flex items-center justify-center rounded-lg text-base flex-shrink-0"
+                      style="background:#6366f1;color:#fff">👤</span>
+                <span class="font-cinzel font-bold text-sm flex-1" style="color:#1e1b4b">Mi Perfil</span>
+                <span class="font-bold text-xl leading-none" style="color:#6366f1">›</span>
               </a>
             }
 
             <a [routerLink]="settingsLink()" (click)="open.set(false)"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer
-                      bg-slate-50 dark:bg-slate-800
-                      hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-              <span class="w-8 h-8 flex items-center justify-center rounded-lg
-                           bg-slate-500 text-white text-base flex-shrink-0 shadow-sm">⚙️</span>
-              <span class="font-cinzel font-bold text-sm text-slate-800 dark:text-slate-100 flex-1">Configuración</span>
-              <span class="text-slate-400 font-bold text-xl leading-none">›</span>
+               class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors"
+               style="background:#f1f5f9"
+               onmouseenter="this.style.background='#e2e8f0'"
+               onmouseleave="this.style.background='#f1f5f9'">
+              <span class="w-8 h-8 flex items-center justify-center rounded-lg text-base flex-shrink-0"
+                    style="background:#475569;color:#fff">⚙️</span>
+              <span class="font-cinzel font-bold text-sm flex-1" style="color:#0f172a">Configuración</span>
+              <span class="font-bold text-xl leading-none" style="color:#64748b">›</span>
             </a>
 
+            <!-- Fila del tema: fondo violeta sólido, texto blanco -->
             <button (click)="cycleTheme($event)"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer w-full text-left
-                           bg-violet-50 dark:bg-violet-950/50
-                           hover:bg-violet-100 dark:hover:bg-violet-900/50 transition-colors">
-              <span class="w-8 h-8 flex items-center justify-center rounded-lg
-                           bg-violet-500 text-white text-base flex-shrink-0 shadow-sm">{{ themeIcon() }}</span>
-              <span class="font-cinzel font-bold text-sm text-violet-900 dark:text-violet-200 flex-1">Modo {{ themeLabel() }}</span>
-              <span class="font-cinzel text-[10px] font-black px-2 py-0.5 rounded-full
-                           bg-amber-400 text-amber-900">TAP</span>
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer w-full text-left transition-colors"
+                    style="background:#7c3aed"
+                    onmouseenter="this.style.background='#6d28d9'"
+                    onmouseleave="this.style.background='#7c3aed'">
+              <span class="w-8 h-8 flex items-center justify-center rounded-lg text-base flex-shrink-0"
+                    style="background:rgba(255,255,255,0.2);color:#fff">{{ themeIcon() }}</span>
+              <span class="font-cinzel font-bold text-sm flex-1" style="color:#fff">Modo {{ themeLabel() }}</span>
+              <span class="font-cinzel font-black rounded-full px-2 py-0.5"
+                    style="font-size:10px;background:#fbbf24;color:#78350f">TAP</span>
             </button>
 
           </div>
 
           <!-- ── LOGOUT ── -->
-          <div class="bg-white dark:bg-slate-900 pb-2 px-2 border-t border-amber-300 dark:border-amber-700/50">
+          <div class="pb-2 px-2" style="background:#fff;border-top:1px solid #fde68a">
             <button (click)="logout()"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer w-full text-left mt-1.5
-                           bg-red-50 dark:bg-red-950/40
-                           hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors">
-              <span class="w-8 h-8 flex items-center justify-center rounded-lg
-                           bg-red-500 text-white text-base flex-shrink-0 shadow-sm">🚪</span>
-              <span class="font-cinzel font-bold text-sm text-red-700 dark:text-red-400 flex-1">Cerrar sesión</span>
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer w-full text-left mt-1.5 transition-colors"
+                    style="background:#fff1f2"
+                    onmouseenter="this.style.background='#ffe4e6'"
+                    onmouseleave="this.style.background='#fff1f2'">
+              <span class="w-8 h-8 flex items-center justify-center rounded-lg text-base flex-shrink-0"
+                    style="background:#ef4444;color:#fff">🚪</span>
+              <span class="font-cinzel font-bold text-sm flex-1" style="color:#991b1b">Cerrar sesión</span>
             </button>
           </div>
 
