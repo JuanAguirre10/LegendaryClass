@@ -1,4 +1,51 @@
-<!-- ══════════════════ EVOLUTION OVERLAY ══════════════════ -->
+<!-- ══════════════════ TIER EVOLUTION OVERLAY (25 / 50 / 75) ══════════════════ -->
+@if (tierEvolution() > 0) {
+  <div class="tier-evolution-overlay"
+       [style.background]="getTierConfig(tierEvolution()).gradient"
+       (click)="closeTierEvolution()" (keyup.enter)="closeTierEvolution()" (keyup.escape)="closeTierEvolution()"
+       tabindex="0" role="button" aria-label="Cerrar">
+
+    <!-- Partículas grandes -->
+    <div class="evolution-particles">
+      @for (p of evolutionParticles; track p.id) {
+        <div class="tier-particle"
+          [style.left.%]="p.x" [style.top.%]="p.y"
+          [style.animation-delay]="p.delay + 's'"
+          [style.background]="getTierConfig(tierEvolution()).particleColor"></div>
+      }
+    </div>
+
+    <!-- Anillo de glow exterior -->
+    <div class="tier-glow-ring"
+         [style.box-shadow]="'0 0 80px 40px ' + getTierConfig(tierEvolution()).glow + '55, 0 0 160px 80px ' + getTierConfig(tierEvolution()).glow + '22'"></div>
+
+    <!-- Contenido central -->
+    <div class="tier-content">
+      <!-- Icono tier + personaje -->
+      <div class="tier-icon-wrap">
+        <div class="tier-char-icon character-evolved">{{ charInfo?.icon ?? '⚔️' }}</div>
+        <div class="tier-badge-icon">{{ getTierConfig(tierEvolution()).icon }}</div>
+      </div>
+
+      <!-- Texto NUEVO RANGO -->
+      <p class="tier-new-rank-label" [style.color]="getTierConfig(tierEvolution()).particleColor">— NUEVO RANGO —</p>
+      <div class="tier-rank-name" [style.text-shadow]="'0 0 40px ' + getTierConfig(tierEvolution()).glow + ', 0 0 80px ' + getTierConfig(tierEvolution()).glow + '88'">
+        {{ getTierConfig(tierEvolution()).name }}
+      </div>
+      <p class="tier-rank-sub">{{ getTierConfig(tierEvolution()).subtitle }}</p>
+
+      <!-- Nivel alcanzado -->
+      <div class="tier-level-badge" [style.background]="getTierConfig(tierEvolution()).glow + '33'" [style.border-color]="getTierConfig(tierEvolution()).glow">
+        <span style="opacity:.7;font-size:.8em">NIVEL</span>
+        <span class="tier-level-num">{{ tierEvolution() }}</span>
+      </div>
+
+      <p class="font-playfair text-white/40 text-sm mt-10 tracking-widest uppercase">Toca para continuar</p>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════ EVOLUTION OVERLAY (nivel normal) ══════════════════ -->
 @if (showEvolution()) {
   <div class="evolution-overlay" (click)="closeEvolution()" (keyup.enter)="closeEvolution()" (keyup.escape)="closeEvolution()" tabindex="0" role="button" aria-label="Cerrar">
     <div class="evolution-particles">
@@ -86,7 +133,7 @@
   <div class="max-w-7xl mx-auto px-6">
 
     <!-- Sección de evolución del personaje -->
-    <div class="legendary-card mb-8 overflow-hidden">
+    <div id="character-section" class="legendary-card mb-8 overflow-hidden">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6" style="height: 650px;">
 
         <!-- Panel izquierdo — Stats del personaje -->
@@ -176,13 +223,38 @@
             </div>
 
             <!-- Imagen del personaje — llena todo el panel como en PHP -->
-            <div class="absolute inset-0 z-10 flex items-center justify-center p-5" (mouseenter)="onCharacterHover($event)">
-              <img [src]="getCharacterImage()"
-                [alt]="charInfo?.name"
-                class="character-evolved"
-                style="width: 100%; height: 100%; object-fit: contain; max-width: none; max-height: none; filter: drop-shadow(0 8px 30px rgba(251,191,36,0.4));"
-                (error)="onImgError($event, charInfo?.icon ?? '🧙‍♂️')" />
-            </div>
+            @if (charEvolutionActive()) {
+              <!-- Layer 1: old tier image — shakes then fades -->
+              <div class="absolute inset-0 z-10 flex items-center justify-center p-5 pointer-events-none">
+                <img [src]="getCharEvolutionImages().oldSrc"
+                  alt=""
+                  class="char-evo-old"
+                  style="width:100%;height:100%;object-fit:contain;" />
+              </div>
+              <!-- Layer 2: sweep overlay — golden light rises bottom→top then exits top -->
+              <div class="char-evo-sweep absolute inset-0 z-20 pointer-events-none rounded-2xl"></div>
+              <!-- Layer 3: new tier image — clip-path reveal from feet up, then glow -->
+              <div class="absolute inset-0 z-10 flex items-center justify-center p-5 pointer-events-none">
+                <img [src]="getCharEvolutionImages().newSrc"
+                  [alt]="charInfo?.name"
+                  class="char-evo-new"
+                  style="width:100%;height:100%;object-fit:contain;"
+                  (error)="onImgError($event, charInfo?.icon ?? '🧙‍♂️')" />
+              </div>
+            } @else {
+              <div class="absolute inset-0 z-10 flex items-center justify-center p-5" (mouseenter)="onCharacterHover($event)">
+                <img [src]="getCharacterImage()"
+                  [alt]="charInfo?.name"
+                  [class.char-levelup]="characterLevelUp()"
+                  class="character-evolved"
+                  style="width: 100%; height: 100%; object-fit: contain; max-width: none; max-height: none; filter: drop-shadow(0 8px 30px rgba(251,191,36,0.4));"
+                  (error)="onImgError($event, charInfo?.icon ?? '🧙‍♂️')" />
+              </div>
+              <!-- Flash de evolución sobre la imagen (non-tier levelup) -->
+              @if (characterLevelUp()) {
+                <div class="char-levelup-flash absolute inset-0 z-30 pointer-events-none rounded-2xl"></div>
+              }
+            }
 
             <!-- Badge de tier superpuesto (z-20) -->
             <div class="absolute top-3 right-3 z-20">
@@ -390,6 +462,139 @@
       </div>
 
     </div>
+
+    <!-- ⚡ XP INBOX ──────────────────────────────────────────────────── -->
+    <div class="mt-8 mb-2 animate-fade-in-up" style="animation-delay:0.3s">
+      <div class="rounded-3xl overflow-hidden"
+           style="border:2px solid rgba(124,58,237,0.35); box-shadow:0 8px 32px rgba(124,58,237,0.15);">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 flex-wrap gap-3"
+             style="background:linear-gradient(135deg,rgba(88,28,135,0.95),rgba(124,58,237,0.9))">
+          <div class="flex items-center gap-3">
+            <span style="font-size:1.8rem">⚡</span>
+            <div>
+              <h3 class="font-cinzel font-black text-white" style="font-size:1.1rem">Buzón de XP</h3>
+              <p class="font-cinzel text-purple-200 text-xs">
+                @if (inboxItems().length > 0) {
+                  {{ inboxItems().length }} elemento(s) · <strong class="text-white">+{{ inboxTotalPending() }} XP</strong> pendientes
+                } @else {
+                  Sin XP pendiente
+                }
+              </p>
+            </div>
+          </div>
+          @if (inboxItems().length > 0) {
+            <div class="flex items-center gap-2 flex-wrap">
+              <!-- Canjear Seleccionados -->
+              @if (selectedCount > 0) {
+                <button (click)="claimSelected()"
+                        [disabled]="isBusy()"
+                        class="font-cinzel font-black text-sm px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2"
+                        style="background:linear-gradient(135deg,#6d28d9,#5b21b6); color:#fff; border:2px solid rgba(255,255,255,0.25);"
+                        onmouseenter="this.style.transform='scale(1.04)'"
+                        onmouseleave="this.style.transform='scale(1)'">
+                  @if (claimingSelected()) {
+                    ⏳ Canjeando...
+                  } @else {
+                    <span>⚡ Canjear {{ selectedCount }} (+{{ selectedXpTotal }} XP)</span>
+                  }
+                </button>
+              }
+              <!-- Canjear Todo -->
+              <button (click)="claimAll()"
+                      [disabled]="isBusy()"
+                      class="font-cinzel font-black text-sm px-5 py-2.5 rounded-xl transition-all duration-200"
+                      style="background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#78350f; border:2px solid rgba(255,255,255,0.3);"
+                      onmouseenter="this.style.transform='scale(1.04)'"
+                      onmouseleave="this.style.transform='scale(1)'">
+                {{ claimingAll() ? '⏳ Canjeando...' : '⚡ Canjear Todo' }}
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Body -->
+        <div class="bg-white dark:bg-slate-900 px-4 py-3">
+
+          @if (inboxLoading()) {
+            <div class="text-center py-8">
+              <div class="font-cinzel text-gray-400 dark:text-slate-500">Cargando buzón...</div>
+            </div>
+          } @else if (inboxItems().length === 0) {
+            <div class="text-center py-8 flex flex-col items-center gap-2">
+              <span style="font-size:2.5rem">✅</span>
+              <p class="font-cinzel font-bold text-gray-600 dark:text-slate-300">¡Todo al día!</p>
+              <p class="font-playfair text-sm text-gray-400 dark:text-slate-500">Completa misiones, muestra buen comportamiento o desbloquea logros para acumular XP aquí.</p>
+            </div>
+          } @else {
+            <!-- Select-all bar -->
+            <div class="flex items-center gap-3 px-2 py-2 mb-1"
+                 style="border-bottom:2px solid rgba(124,58,237,0.1)">
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox"
+                       [checked]="allSelected"
+                       (change)="toggleSelectAll()"
+                       [disabled]="isBusy()"
+                       style="width:18px;height:18px;accent-color:#7c3aed;cursor:pointer" />
+                <span class="font-cinzel font-bold text-xs text-gray-600 dark:text-slate-300">
+                  Seleccionar todo
+                </span>
+              </label>
+              @if (selectedCount > 0) {
+                <span class="font-cinzel text-xs text-purple-600 dark:text-purple-400 ml-auto">
+                  {{ selectedCount }} seleccionado(s) · +{{ selectedXpTotal }} XP
+                </span>
+              }
+            </div>
+
+            <div class="divide-y divide-purple-50 dark:divide-slate-800">
+              @for (item of inboxItems(); track item.id) {
+                <div class="flex items-center gap-3 py-3 px-2 rounded-xl transition-colors duration-150"
+                     [style.background]="isSelected(item.id) ? 'rgba(124,58,237,0.07)' : 'transparent'"
+                     (click)="toggleSelect(item.id)"
+                     style="cursor:pointer">
+                  <!-- Checkbox -->
+                  <input type="checkbox"
+                         [checked]="isSelected(item.id)"
+                         (click)="$event.stopPropagation(); toggleSelect(item.id)"
+                         [disabled]="isBusy()"
+                         style="width:18px;height:18px;accent-color:#7c3aed;flex-shrink:0;cursor:pointer" />
+                  <!-- Icon badge -->
+                  <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+                       [style.background]="item.type === 'quest' ? 'rgba(16,185,129,0.12)' : item.type === 'behavior' ? 'rgba(59,130,246,0.12)' : 'rgba(124,58,237,0.12)'">
+                    {{ item.icon }}
+                  </div>
+                  <!-- Info -->
+                  <div class="flex-1 min-w-0">
+                    <p class="font-cinzel font-bold text-gray-800 dark:text-slate-100 text-sm truncate">{{ item.label }}</p>
+                    <p class="font-cinzel text-xs"
+                       [style.color]="item.type === 'quest' ? '#059669' : item.type === 'behavior' ? '#2563eb' : '#7c3aed'">
+                      {{ item.type === 'quest' ? '🗡️ Misión' : item.type === 'behavior' ? '⭐ Comportamiento' : '🏆 Logro' }}
+                    </p>
+                  </div>
+                  <!-- XP badge -->
+                  <div class="flex-shrink-0 font-cinzel font-black text-sm px-3 py-1 rounded-full"
+                       style="background:linear-gradient(135deg,#7c3aed,#5b21b6); color:#fff; min-width:60px; text-align:center">
+                    +{{ item.xp }} XP
+                  </div>
+                  <!-- Individual claim button -->
+                  <button (click)="$event.stopPropagation(); claimItem(item)"
+                          [disabled]="isBusy()"
+                          class="flex-shrink-0 font-cinzel font-bold text-xs px-4 py-2 rounded-xl transition-all duration-150"
+                          style="background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#78350f; border:none;"
+                          onmouseenter="this.style.transform='scale(1.05)'"
+                          onmouseleave="this.style.transform='scale(1)'">
+                    {{ claimingId() === item.id ? '⏳' : '⚡' }}
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    <!-- ──────────────────────────────────────────────────────────────── -->
 
   </div>
 </main>

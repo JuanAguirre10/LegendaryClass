@@ -20,8 +20,21 @@ export class StudentDashboardComponent implements OnInit {
   loading = signal(true);
   showEvolution = signal(false);
   evolutionBonus = 100;
+  tierEvolution = signal<0 | 25 | 50 | 75>(0);
+  characterLevelUp = signal(false);
+  prevCharImage = signal('');
+  charEvolutionActive = signal(false);
   upgradingStat = signal<string | null>(null);
   toasts = signal<{ id: number; message: string; type: string; icon: string; fadingOut: boolean }[]>([]);
+
+  // XP Inbox
+  inboxItems = signal<{ id: string; type: 'quest' | 'behavior' | 'achievement'; label: string; icon: string; xp: number; earnedAt: string | null }[]>([]);
+  inboxTotalPending = signal(0);
+  inboxLoading = signal(false);
+  claimingId = signal<string | null>(null);
+  claimingAll = signal(false);
+  selectedIds = signal<Set<string>>(new Set());
+  claimingSelected = signal(false);
 
   // 10 background particles with pseudo-random positions (like PHP)
   bgParticles = Array.from({ length: 10 }, (_, i) => ({
@@ -53,10 +66,129 @@ export class StudentDashboardComponent implements OnInit {
   constructor(private http: HttpClient, public auth: AuthService, private router: Router) {}
 
   ngOnInit() {
-    this.http.get(`${environment.apiUrl}/student/dashboard`).subscribe({
-      next: (res) => { this.data.set(res); this.loading.set(false); },
+    this.loadDashboard();
+    this.loadInbox();
+  }
+
+  private loadDashboard() {
+    this.http.get<any>(`${environment.apiUrl}/student/dashboard`).subscribe({
+      next: (res) => {
+        if (res?.user) this.auth.updateUser({ experiencePoints: res.user.experiencePoints, level: res.user.level, points: res.user.points });
+        this.data.set(res);
+        this.loading.set(false);
+      },
       error: () => this.loading.set(false),
     });
+  }
+
+  loadInbox() {
+    this.inboxLoading.set(true);
+    this.http.get<any>(`${environment.apiUrl}/student/xp-inbox`).subscribe({
+      next: (res) => {
+        this.inboxItems.set(res.items ?? []);
+        this.inboxTotalPending.set(res.totalPending ?? 0);
+        this.selectedIds.set(new Set());
+        this.inboxLoading.set(false);
+      },
+      error: (err) => { console.error('[XP Inbox] error:', err); this.inboxLoading.set(false); },
+    });
+  }
+
+  isSelected(id: string): boolean { return this.selectedIds().has(id); }
+
+  toggleSelect(id: string) {
+    this.selectedIds.update(s => {
+      const next = new Set(s);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  toggleSelectAll() {
+    const all = this.inboxItems().map(i => i.id);
+    const allSelected = all.every(id => this.selectedIds().has(id));
+    this.selectedIds.set(allSelected ? new Set() : new Set(all));
+  }
+
+  get allSelected(): boolean {
+    const items = this.inboxItems();
+    return items.length > 0 && items.every(i => this.selectedIds().has(i.id));
+  }
+
+  get selectedXpTotal(): number {
+    return this.inboxItems()
+      .filter(i => this.selectedIds().has(i.id))
+      .reduce((sum, i) => sum + i.xp, 0);
+  }
+
+  get selectedCount(): number { return this.selectedIds().size; }
+
+  isBusy(): boolean { return this.claimingAll() || this.claimingSelected() || !!this.claimingId(); }
+
+  claimItem(item: { id: string; type: 'quest' | 'behavior' | 'achievement'; xp: number }) {
+    if (this.isBusy()) return;
+    this.claimingId.set(item.id);
+    this.http.post<any>(`${environment.apiUrl}/student/claim-xp`, { claims: [{ type: item.type, id: item.id }] }).subscribe({
+      next: (res) => this.handleClaimResult(res),
+      error: () => { this.claimingId.set(null); this.showToast('Error al canjear XP', 'error', '⚠️'); },
+    });
+  }
+
+  claimSelected() {
+    if (this.isBusy() || this.selectedIds().size === 0) return;
+    const claims = this.inboxItems()
+      .filter(i => this.selectedIds().has(i.id))
+      .map(i => ({ type: i.type, id: i.id }));
+    this.claimingSelected.set(true);
+    this.http.post<any>(`${environment.apiUrl}/student/claim-xp`, { claims }).subscribe({
+      next: (res) => this.handleClaimResult(res),
+      error: () => { this.claimingSelected.set(false); this.showToast('Error al canjear XP', 'error', '⚠️'); },
+    });
+  }
+
+  claimAll() {
+    if (this.isBusy() || this.inboxItems().length === 0) return;
+    this.claimingAll.set(true);
+    this.http.post<any>(`${environment.apiUrl}/student/claim-xp`, { claimAll: true }).subscribe({
+      next: (res) => this.handleClaimResult(res),
+      error: () => { this.claimingAll.set(false); this.showToast('Error al canjear XP', 'error', '⚠️'); },
+    });
+  }
+
+  private handleClaimResult(res: any) {
+    this.claimingId.set(null);
+    this.claimingAll.set(false);
+    this.claimingSelected.set(false);
+    if (res.totalXpClaimed > 0) {
+      const isTierChange = ([25, 50, 75] as number[]).includes(res.newLevel);
+      if (isTierChange) {
+        const currentType = this.user?.characterType;
+        if (currentType) {
+          const oldTier = levelToTier(this.user?.level ?? 1);
+          this.prevCharImage.set(charImagePath(currentType, oldTier));
+        }
+      }
+      this.auth.updateUser({ experiencePoints: res.newXp, level: res.newLevel });
+      this.showToast(`+${res.totalXpClaimed} XP canjeados!`, 'success', '⚡');
+      if (res.leveledUp) {
+        const tier = isTierChange ? res.newLevel as 25 | 50 | 75 : 0;
+        if (tier) {
+          this.tierEvolution.set(tier);
+        } else {
+          this.showEvolution.set(true);
+        }
+      }
+      this.loadDashboard();
+    }
+    this.loadInbox();
+  }
+
+  closeTierEvolution() { this.tierEvolution.set(0); this.scrollToCharacter(); }
+
+  getTierConfig(tier: number): { gradient: string; glow: string; particleColor: string; name: string; subtitle: string; icon: string } {
+    if (tier === 25) return { gradient: 'linear-gradient(135deg,#0c1a4a,#1565c0,#0d47a1,#01579b)', glow: '#42a5f5', particleColor: '#90caf9', name: 'VETERANO', subtitle: 'La batalla te ha forjado', icon: '🛡️' };
+    if (tier === 50) return { gradient: 'linear-gradient(135deg,#1a0033,#6a1b9a,#8e24aa,#4a148c)', glow: '#ce93d8', particleColor: '#e040fb', name: 'ÉPICO', subtitle: 'Leyendas hablan de ti', icon: '💜' };
+    return { gradient: 'linear-gradient(135deg,#1a0800,#e65100,#f57f17,#bf360c)', glow: '#ffd54f', particleColor: '#ffca28', name: 'LEGENDARIO', subtitle: 'Has alcanzado la cúspide del poder', icon: '👑' };
   }
 
   get user() { return this.auth.user(); }
@@ -126,6 +258,7 @@ export class StudentDashboardComponent implements OnInit {
 
   closeEvolution() {
     this.showEvolution.set(false);
+    this.scrollToCharacter();
   }
 
   showToast(message: string, type: 'success' | 'error' | 'info' = 'success', icon = '⚔️') {
@@ -148,6 +281,26 @@ export class StudentDashboardComponent implements OnInit {
       span.textContent = fallbackIcon;
       parent.insertBefore(span, img);
     }
+  }
+
+  getCharEvolutionImages(): { oldSrc: string; newSrc: string } {
+    return { oldSrc: this.prevCharImage(), newSrc: this.getCharacterImage() };
+  }
+
+  private scrollToCharacter() {
+    setTimeout(() => {
+      document.getElementById('character-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (this.prevCharImage()) {
+        this.charEvolutionActive.set(true);
+        setTimeout(() => {
+          this.charEvolutionActive.set(false);
+          this.prevCharImage.set('');
+        }, 2200);
+      } else {
+        this.characterLevelUp.set(true);
+        setTimeout(() => this.characterLevelUp.set(false), 2200);
+      }
+    }, 50);
   }
 
   hideElement(event: Event) {
