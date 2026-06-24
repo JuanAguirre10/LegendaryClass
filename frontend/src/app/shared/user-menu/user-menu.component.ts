@@ -34,13 +34,13 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
         (click)="toggle($event)"
         class="flex items-center gap-2 pl-3 pr-2.5 py-1.5
                font-cinzel text-sm font-bold
-               bg-amber-400/10 dark:bg-amber-500/10
                border border-amber-400 dark:border-amber-500
                rounded-r-xl
                text-gray-800 dark:text-slate-100
-               hover:bg-amber-400/25 dark:hover:bg-amber-500/25
                transition-all duration-150 select-none"
-        [class.bg-amber-400/25]="open()"
+        [ngClass]="open()
+          ? 'bg-amber-300/40 dark:bg-amber-500/30'
+          : 'bg-amber-400/10 dark:bg-amber-500/10 hover:bg-amber-300/30 dark:hover:bg-amber-500/20'"
         aria-haspopup="true"
         [attr.aria-expanded]="open()">
         @if (charType()) {
