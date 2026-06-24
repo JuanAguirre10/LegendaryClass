@@ -1,0 +1,162 @@
+<!-- Nav -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a [routerLink]="backRoute()" class="legendary-logo text-xl">⚔️ LegendaryClass</a>
+    <div class="flex items-center gap-3">
+      <app-theme-toggle />
+      <a [routerLink]="backRoute()" class="btn-epic btn-blue text-xs py-2 px-4">← Volver</a>
+    </div>
+  </div>
+</nav>
+
+<div class="z-content py-8">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+    <!-- Header -->
+    <div class="text-center mb-8 animate-fade-in-up">
+      <h1 class="font-cinzel-decorative font-black text-gray-900 dark:text-slate-50 mb-2"
+        style="font-size: clamp(2rem,5vw,3rem);">
+        🏆 CLASIFICACIÓN LEGENDARIA
+      </h1>
+      <p class="font-cinzel text-gray-500 dark:text-slate-400">
+        Los guerreros más poderosos del reino
+      </p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-6 p-1 bg-gray-100 dark:bg-slate-800 rounded-2xl w-fit mx-auto">
+      <button (click)="activeTab.set('classroom')"
+        class="font-cinzel font-bold text-sm px-6 py-2 rounded-xl transition-all duration-200"
+        [class.bg-white]="activeTab() === 'classroom'"
+        [class.shadow-md]="activeTab() === 'classroom'"
+        [class.text-amber-700]="activeTab() === 'classroom'"
+        [class.text-gray-500]="activeTab() !== 'classroom'"
+        [ngClass]="{
+          'dark:bg-slate-700': activeTab() === 'classroom',
+          'dark:text-amber-400': activeTab() === 'classroom',
+          'dark:text-slate-400': activeTab() !== 'classroom'
+        }">
+        🏰 Por Salón
+      </button>
+      <button (click)="activeTab.set('global')"
+        class="font-cinzel font-bold text-sm px-6 py-2 rounded-xl transition-all duration-200"
+        [class.bg-white]="activeTab() === 'global'"
+        [class.shadow-md]="activeTab() === 'global'"
+        [class.text-amber-700]="activeTab() === 'global'"
+        [class.text-gray-500]="activeTab() !== 'global'"
+        [ngClass]="{
+          'dark:bg-slate-700': activeTab() === 'global',
+          'dark:text-amber-400': activeTab() === 'global',
+          'dark:text-slate-400': activeTab() !== 'global'
+        }">
+        🌍 Global
+      </button>
+    </div>
+
+    <!-- Tab: Por Salón -->
+    @if (activeTab() === 'classroom') {
+      <div class="animate-fade-in-up">
+        @if (classrooms().length > 1) {
+          <div class="mb-4 flex justify-center">
+            <select [(ngModel)]="selectedIdValue"
+              class="input-epic max-w-xs font-cinzel text-sm">
+              @for (c of classrooms(); track c.id) {
+                <option [value]="c.id">{{ c.name }}</option>
+              }
+            </select>
+          </div>
+        }
+        @if (selectedId()) {
+          <app-classroom-ranking [classroomId]="selectedId()" />
+        } @else {
+          <p class="text-center font-cinzel text-gray-400 dark:text-slate-500 py-12">
+            No perteneces a ningún salón todavía.
+          </p>
+        }
+      </div>
+    }
+
+    <!-- Tab: Global -->
+    @if (activeTab() === 'global') {
+      <div class="animate-fade-in-up">
+        @if (loadingGlobal()) {
+          <div class="text-center py-16">
+            <div class="text-6xl mb-4 animate-float">🏆</div>
+            <p class="font-cinzel text-gray-400 dark:text-slate-500">Cargando clasificación...</p>
+          </div>
+        } @else if (globalRanking().length === 0) {
+          <p class="text-center font-cinzel text-gray-400 dark:text-slate-500 py-12">
+            Aún no hay estudiantes registrados.
+          </p>
+        } @else {
+          <!-- Podio top 3 -->
+          <div class="grid grid-cols-3 gap-4 mb-8">
+            @for (p of podium(); track p.studentId) {
+              <div class="legendary-card p-4 text-center"
+                [class.ring-2]="p.rank === 1"
+                [class.ring-amber-400]="p.rank === 1">
+                <div class="text-4xl mb-1">{{ medal(p.rank) }}</div>
+                <div class="text-3xl mb-1">{{ charIcon(p.characterType) }}</div>
+                <div class="font-cinzel font-bold text-sm truncate dark:text-slate-50">{{ p.name }}</div>
+                <div class="font-cinzel text-xs text-gray-500 dark:text-slate-400">Lv.{{ p.level }}</div>
+                <div class="font-cinzel font-black text-purple-600 dark:text-purple-400 text-lg mt-1">
+                  {{ p.totalPoints }} XP
+                </div>
+                @if (p.weeklyXpDelta > 0) {
+                  <div class="text-xs text-green-600 dark:text-green-400 font-cinzel mt-1">
+                    +{{ p.weeklyXpDelta }} esta semana
+                  </div>
+                }
+                @if (p.rankChange !== null) {
+                  <span class="text-xs px-2 py-0.5 rounded-full font-bold mt-1 inline-block"
+                    [ngClass]="rankChangeClass(p.rankChange)">
+                    {{ rankChangeLabel(p.rankChange) }}
+                  </span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Filas 4–10 -->
+          <div class="legendary-card p-4 space-y-1">
+            @for (r of rest(); track r.studentId) {
+              <div class="flex items-center gap-3 px-3 py-2 rounded-xl transition-colors"
+                [class.bg-amber-50]="r.studentId === auth.user()?.id"
+                [class.bg-opacity-30]="r.studentId === auth.user()?.id"
+                [ngClass]="{ 'dark:bg-amber-900': r.studentId === auth.user()?.id }">
+                <span class="font-cinzel font-black text-gray-400 dark:text-slate-500 w-6 text-sm">{{ r.rank }}</span>
+                <span class="text-xs px-1.5 py-0.5 rounded font-bold w-8 text-center"
+                  [ngClass]="rankChangeClass(r.rankChange)">
+                  {{ rankChangeLabel(r.rankChange) }}
+                </span>
+                <span class="text-lg">{{ charIcon(r.characterType) }}</span>
+                <span class="font-cinzel text-sm flex-1 truncate dark:text-slate-100">
+                  {{ r.name }}
+                  @if (r.studentId === auth.user()?.id) { <span class="text-amber-600 dark:text-amber-400">(tú)</span> }
+                </span>
+                <span class="font-cinzel text-xs text-gray-400 dark:text-slate-500">Lv.{{ r.level }}</span>
+                <span class="font-cinzel text-purple-600 dark:text-purple-400 font-bold text-sm">{{ r.totalPoints }}</span>
+                @if (r.streakDays > 0) {
+                  <span class="text-xs text-orange-500" title="Racha">🔥{{ r.streakDays }}</span>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Tu posición si estás fuera del top 10 -->
+          @if (myGlobalEntry(); as me) {
+            <div class="legendary-card p-4 mt-4 flex items-center gap-3 border-2 border-amber-400 dark:border-amber-500">
+              <span class="font-cinzel font-black text-amber-600 dark:text-amber-400 w-6">{{ me.rank }}</span>
+              <span class="text-lg">{{ charIcon(me.characterType) }}</span>
+              <span class="font-cinzel text-sm flex-1 dark:text-slate-100">
+                {{ me.name }} <span class="text-amber-600 dark:text-amber-400">(tú)</span>
+              </span>
+              <span class="font-cinzel text-purple-600 dark:text-purple-400 font-bold">{{ me.totalPoints }} XP</span>
+            </div>
+          }
+        }
+      </div>
+    }
+
+  </div>
+</div>
