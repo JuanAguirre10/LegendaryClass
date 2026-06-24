@@ -48,5 +48,11 @@ export const teacherRoutes: Routes = [
       import('../../shared/leaderboard/leaderboard-page.component')
         .then((m) => m.LeaderboardPageComponent),
   },
+  {
+    path: 'quest-submissions',
+    loadComponent: () =>
+      import('./quest-submissions/teacher-quest-submissions.component')
+        .then((m) => m.TeacherQuestSubmissionsComponent),
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 ];
