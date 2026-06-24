@@ -1,4 +1,4 @@
-import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsBoolean, IsDateString, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateQuestDto {
@@ -37,4 +37,16 @@ export class CreateQuestDto {
   @ApiPropertyOptional({ description: 'IDs de estudiantes a quienes asignar la quest' })
   @IsOptional()
   studentIds?: string[];
+
+  @ApiPropertyOptional({ description: 'Si la quest requiere entrega de evidencia', default: false })
+  @IsOptional()
+  @IsBoolean()
+  requiresSubmission?: boolean;
+
+  @ApiPropertyOptional({ description: 'Número máximo de intentos de entrega', default: 1, minimum: 1, maximum: 10 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(10)
+  maxAttempts?: number;
 }

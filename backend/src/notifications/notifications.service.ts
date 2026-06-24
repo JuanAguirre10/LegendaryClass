@@ -30,6 +30,24 @@ export class NotificationsService {
         return data.approved
           ? { title: 'Plantilla aprobada', message: `Tu plantilla "${data.title}" fue aprobada y ya está en el banco`, link: '/teacher/courses' }
           : { title: 'Plantilla rechazada', message: `Tu plantilla "${data.title}" fue rechazada${data.note ? ': ' + data.note : ''}`, link: '/teacher/courses' };
+      case 'quest_submission':
+        return {
+          title: '📎 Nueva entrega',
+          message: `${data.studentName} entregó evidencia para "${data.questTitle}"`,
+          link: '/teacher/quest-submissions',
+        };
+      case 'quest_approved':
+        return {
+          title: '✅ Entrega aprobada',
+          message: `Tu entrega para "${data.questTitle}" fue aprobada. +${data.xpReward} XP`,
+          link: '/student/quests',
+        };
+      case 'quest_rejected':
+        return {
+          title: '❌ Entrega rechazada',
+          message: `Tu entrega para "${data.questTitle}" fue rechazada: ${data.teacherNotes}`,
+          link: '/student/quests',
+        };
       default:
         // Fallback exhaustivo: un tipo futuro no produce un payload undefined.
         return { title: 'Notificación', message: 'Tienes una nueva notificación' };
