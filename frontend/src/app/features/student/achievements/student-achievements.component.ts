@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
-import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
+import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component';
 
 @Component({
   selector: 'app-student-achievements',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, UserMenuComponent],
   templateUrl: './student-achievements.component.html',
 })
 export class StudentAchievementsComponent implements OnInit {

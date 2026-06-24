@@ -4,12 +4,12 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { ClassroomRankingComponent } from '../../shared/classroom-ranking/classroom-ranking.component';
-import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
+import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component';
 
 @Component({
   selector: 'app-classroom-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ClassroomRankingComponent, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ClassroomRankingComponent, UserMenuComponent],
   templateUrl: './classroom-detail.component.html',
 })
 export class ClassroomDetailComponent implements OnInit {

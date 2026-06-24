@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
-import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
+import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component';
 
 interface QuestSubmission {
   id:            string;
@@ -21,7 +21,7 @@ interface QuestSubmission {
 @Component({
   selector: 'app-student-quests',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, UserMenuComponent],
   templateUrl: './student-quests.component.html',
 })
 export class StudentQuestsComponent implements OnInit {

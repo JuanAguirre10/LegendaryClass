@@ -5,12 +5,12 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/auth/auth.service';
 import { CHARACTER_DATA, charImagePath, charShieldPath, levelToTier } from '../../../core/models/user.model';
 import { environment } from '@env/environment';
-import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
+import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component';
 
 @Component({
   selector: 'app-student-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, UserMenuComponent],
   templateUrl: './student-profile.component.html',
 })
 export class StudentProfileComponent implements OnInit {

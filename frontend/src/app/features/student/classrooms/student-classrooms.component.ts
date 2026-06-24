@@ -4,12 +4,12 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
-import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
+import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component';
 
 @Component({
   selector: 'app-student-classrooms',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule, UserMenuComponent],
   templateUrl: './student-classrooms.component.html',
 })
 export class StudentClassroomsComponent implements OnInit {

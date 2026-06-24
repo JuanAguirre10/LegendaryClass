@@ -6,12 +6,12 @@ import { forkJoin, of } from 'rxjs';
 import { switchMap, map, catchError } from 'rxjs/operators';
 import { AuthService } from '../../../core/auth/auth.service';
 import { environment } from '@env/environment';
-import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
+import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component';
 
 @Component({
   selector: 'app-student-rewards',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, UserMenuComponent],
   templateUrl: './student-rewards.component.html',
 })
 export class StudentRewardsComponent implements OnInit {
