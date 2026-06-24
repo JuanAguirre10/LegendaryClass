@@ -52,5 +52,11 @@ export const studentRoutes: Routes = [
       import('../../shared/settings/settings-page.component')
         .then((m) => m.SettingsPageComponent),
   },
+  {
+    path: 'leaderboard',
+    loadComponent: () =>
+      import('../../shared/leaderboard/leaderboard-page.component')
+        .then((m) => m.LeaderboardPageComponent),
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 ];
