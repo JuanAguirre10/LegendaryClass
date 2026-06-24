@@ -3,10 +3,7 @@
   <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
     <a routerLink="/parent/dashboard" class="legendary-logo text-xl">👨‍👩‍👧 LegendaryClass</a>
     <div class="flex items-center gap-3">
-      <a routerLink="/parent/settings" class="nav-link-epic">⚙️ Config</a>
-      <span class="font-cinzel text-sm text-gray-600 dark:text-slate-300 font-semibold">{{ user?.name }}</span>
-      <app-theme-toggle />
-      <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
+      <app-user-menu />
     </div>
   </div>
 </nav>

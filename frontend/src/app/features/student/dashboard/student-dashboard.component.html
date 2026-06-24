@@ -48,7 +48,6 @@
       <a routerLink="/student/achievements" routerLinkActive="active" class="nav-link-epic">🏆 Logros</a>
       <a routerLink="/student/profile" routerLinkActive="active" class="nav-link-epic">👤 Perfil</a>
       <a routerLink="/student/leaderboard" routerLinkActive="active" class="nav-link-epic">🏆 Ranking</a>
-      <a routerLink="/student/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
     </div>
 
     <!-- User info + puntos -->
@@ -68,8 +67,7 @@
       }
       <span class="points-indicator">💎 {{ user?.points ?? 0 }}</span>
       <app-notification-bell />
-      <app-theme-toggle />
-      <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
+      <app-user-menu />
     </div>
   </div>
 </nav>

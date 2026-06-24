@@ -11,13 +11,10 @@
       <a routerLink="/director/users"      routerLinkActive="active" class="nav-link-epic">👥 Usuarios</a>
       <a routerLink="/director/reports"    routerLinkActive="active" class="nav-link-epic">📊 Reportes</a>
       <a routerLink="/director/leaderboard" routerLinkActive="active" class="nav-link-epic">🏆 Ranking</a>
-      <a routerLink="/director/settings"   routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
     </div>
 
     <div class="flex items-center gap-3">
-      <span class="font-cinzel text-sm text-gray-600 dark:text-slate-300 font-semibold">{{ user?.name }}</span>
-      <app-theme-toggle />
-      <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
+      <app-user-menu />
     </div>
   </div>
 </nav>

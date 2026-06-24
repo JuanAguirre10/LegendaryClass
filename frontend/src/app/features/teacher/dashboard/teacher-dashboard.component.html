@@ -11,14 +11,11 @@
       <a routerLink="/teacher/quest-submissions" routerLinkActive="active" class="nav-link-epic">📋 Entregas</a>
       <a routerLink="/teacher/rewards"           routerLinkActive="active" class="nav-link-epic">🎁 Recompensas</a>
       <a routerLink="/teacher/leaderboard" routerLinkActive="active" class="nav-link-epic">🏆 Ranking</a>
-      <a routerLink="/teacher/settings" routerLinkActive="active" class="nav-link-epic">⚙️ Config</a>
     </div>
 
     <div class="flex items-center gap-3">
-      <span class="font-cinzel text-sm text-gray-600 dark:text-slate-300 font-semibold">{{ user?.name }}</span>
       <app-notification-bell />
-      <app-theme-toggle />
-      <button (click)="logout()" class="btn-epic btn-red text-xs py-2 px-4">Salir</button>
+      <app-user-menu />
     </div>
   </div>
 </nav>
