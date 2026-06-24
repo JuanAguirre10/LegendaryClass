@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard } from './core/auth/auth.guard';
+import { authGuard, guestGuard, characterSelectGuard } from './core/auth/auth.guard';
 import { roleGuard } from './core/auth/role.guard';
 
 export const routes: Routes = [
@@ -54,6 +54,7 @@ export const routes: Routes = [
   {
     path: 'student',
     canActivate: [authGuard, roleGuard(['student'])],
+    canActivateChild: [characterSelectGuard],
     loadChildren: () =>
       import('./features/student/student.routes').then((m) => m.studentRoutes),
   },
