@@ -220,6 +220,9 @@ export class QuestsService {
 
   async approveSubmission(subId: string, teacherId: string, dto: ApproveSubmissionDto) {
     const sub = await this.loadAndVerifySubmission(subId, teacherId);
+    if (sub.status !== 'pending') {
+      throw new BadRequestException('Esta entrega ya fue revisada');
+    }
     await this.prisma.questSubmission.update({
       where: { id: subId },
       data: { status: 'approved', teacherNotes: dto.teacherNotes ?? null, reviewedAt: new Date() },
@@ -235,6 +238,9 @@ export class QuestsService {
 
   async rejectSubmission(subId: string, teacherId: string, dto: RejectSubmissionDto) {
     const sub = await this.loadAndVerifySubmission(subId, teacherId);
+    if (sub.status !== 'pending') {
+      throw new BadRequestException('Esta entrega ya fue revisada');
+    }
     await this.prisma.questSubmission.update({
       where: { id: subId },
       data: { status: 'rejected', teacherNotes: dto.teacherNotes, reviewedAt: new Date() },

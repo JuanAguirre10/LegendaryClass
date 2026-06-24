@@ -108,3 +108,33 @@ describe('QuestsService.rejectSubmission', () => {
     expect(completeSpy).not.toHaveBeenCalled();
   });
 });
+
+describe('QuestsService.approveSubmission double-action guard', () => {
+  it('lanza BadRequest si la entrega ya fue aprobada', async () => {
+    const prisma: any = {
+      questSubmission: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'sub1', status: 'approved', questId: 'q1', studentId: 's1',
+          quest: { id: 'q1', title: 'T', xpReward: 50, classroomId: 'c1', teacherId: 't1' },
+        }),
+      },
+      classroom: { findFirst: jest.fn().mockResolvedValue({ id: 'c1' }) },
+    };
+    const svc = new QuestsService(prisma as PrismaService, {} as GamificationService, {} as any);
+    await expect(svc.approveSubmission('sub1', 't1', {})).rejects.toThrow(BadRequestException);
+  });
+
+  it('lanza BadRequest si la entrega ya fue rechazada', async () => {
+    const prisma: any = {
+      questSubmission: {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'sub1', status: 'rejected', questId: 'q1', studentId: 's1',
+          quest: { id: 'q1', title: 'T', xpReward: 50, classroomId: 'c1', teacherId: 't1' },
+        }),
+      },
+      classroom: { findFirst: jest.fn().mockResolvedValue({ id: 'c1' }) },
+    };
+    const svc = new QuestsService(prisma as PrismaService, {} as GamificationService, {} as any);
+    await expect(svc.rejectSubmission('sub1', 't1', { teacherNotes: 'x' })).rejects.toThrow(BadRequestException);
+  });
+});

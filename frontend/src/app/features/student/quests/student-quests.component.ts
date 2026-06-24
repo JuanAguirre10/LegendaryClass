@@ -82,6 +82,7 @@ export class StudentQuestsComponent implements OnInit {
   }
 
   closeModal() {
+    this.submitting.set(false);
     this.modalQuestId.set(null);
     this.selectedFile.set(null);
     this.previewUrl.set(null);
