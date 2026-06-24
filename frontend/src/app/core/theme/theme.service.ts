@@ -39,13 +39,8 @@ export class ThemeService {
     if (this.isBrowser) localStorage.setItem(this.STORAGE_KEY, mode);
   }
 
-  /** Cycles: system → dark → light → system */
+  /** Toggles between dark and light only */
   cycleMode(): void {
-    const next: Record<ThemeMode, ThemeMode> = {
-      system: 'dark',
-      dark:   'light',
-      light:  'system',
-    };
-    this.setMode(next[this.mode()]);
+    this.setMode(this.isDark() ? 'light' : 'dark');
   }
 }

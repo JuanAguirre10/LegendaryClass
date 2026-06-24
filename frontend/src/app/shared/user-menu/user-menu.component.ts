@@ -106,7 +106,7 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
                 <!-- XP bar -->
                 <div class="w-full rounded-full overflow-hidden" style="height:5px; background:rgba(0,0,0,0.15)">
                   <div class="h-full rounded-full transition-all duration-500"
-                       style="background:#1e293b"
+                       style="background:#7c3aed"
                        [style.width.%]="xpPercent()"></div>
                 </div>
                 <p class="font-cinzel" style="font-size:9px; color:#334155">
