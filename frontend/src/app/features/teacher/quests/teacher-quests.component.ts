@@ -78,6 +78,26 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
               class="input-epic text-sm" />
             <input [(ngModel)]="newQuest.description" type="text" placeholder="Descripción (opcional)"
               class="input-epic text-sm sm:col-span-2 lg:col-span-3" />
+
+            <!-- requiresSubmission toggle -->
+            <div class="flex items-center gap-3 mt-2 sm:col-span-2 lg:col-span-3">
+              <input type="checkbox" id="requires-submission" [(ngModel)]="newQuest.requiresSubmission"
+                class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+              <label for="requires-submission" class="font-cinzel text-sm font-bold text-gray-600 dark:text-slate-300 uppercase tracking-wide">
+                Requiere entrega de evidencia
+              </label>
+            </div>
+
+            <!-- maxAttempts — shown only when requiresSubmission is true -->
+            @if (newQuest.requiresSubmission) {
+              <div class="sm:col-span-2 lg:col-span-3">
+                <label class="block font-cinzel text-xs font-bold text-gray-600 dark:text-slate-300 uppercase tracking-wide mb-1">
+                  Intentos permitidos (1–10)
+                </label>
+                <input type="number" [(ngModel)]="newQuest.maxAttempts" min="1" max="10"
+                  class="input-epic" />
+              </div>
+            }
           </div>
           <div class="flex gap-3 justify-end mt-4">
             <button (click)="showCreate = false"
@@ -138,7 +158,7 @@ export class TeacherQuestsComponent implements OnInit {
   showCreate = false;
   toasts     = signal<{ id: number; message: string; type: string; icon: string; fadingOut: boolean }[]>([]);
 
-  newQuest = { title: '', description: '', xpReward: 50, dueDate: '' };
+  newQuest = { title: '', description: '', xpReward: 50, dueDate: '', requiresSubmission: false, maxAttempts: 1 };
 
   constructor(private http: HttpClient) {}
 
@@ -171,11 +191,13 @@ export class TeacherQuestsComponent implements OnInit {
     };
     if (this.newQuest.description) body.description = this.newQuest.description;
     if (this.newQuest.dueDate) body.dueDate = new Date(this.newQuest.dueDate).toISOString();
+    body.requiresSubmission = this.newQuest.requiresSubmission;
+    if (this.newQuest.requiresSubmission) body.maxAttempts = this.newQuest.maxAttempts;
 
     this.http.post<any>(`${environment.apiUrl}/quests`, body).subscribe({
       next: (q) => {
         this.quests.update((list) => [q, ...list]);
-        this.newQuest = { title: '', description: '', xpReward: 50, dueDate: '' };
+        this.newQuest = { title: '', description: '', xpReward: 50, dueDate: '', requiresSubmission: false, maxAttempts: 1 };
         this.showCreate = false;
         this.showToast(`Misión "${q.title}" creada`, 'success', '🗡️');
         this.saving.set(false);
