@@ -117,11 +117,43 @@
                   style="background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#92400e;">
                   +{{ quest.xpReward }} XP
                 </span>
-                <button (click)="completeQuest(quest.id)"
-                  class="font-cinzel font-bold text-sm text-white px-5 py-2 rounded-xl transition-all duration-200 hover:scale-105"
-                  style="background:linear-gradient(135deg,#d97706,#b45309); border:none;">
-                  Completar ✓
-                </button>
+
+                <!-- Submission status badge -->
+                @if (quest.requiresSubmission && submissionBadge(quest)) {
+                  <div class="mt-3 flex items-center gap-2 flex-wrap">
+                    <span class="font-cinzel text-xs font-bold px-3 py-1 rounded-full"
+                      [ngClass]="submissionBadge(quest)!.cls">
+                      {{ submissionBadge(quest)!.label }}
+                    </span>
+                    @if (latestSub(quest)?.status === 'rejected' && latestSub(quest)?.teacherNotes) {
+                      <span class="font-playfair text-xs text-red-600 dark:text-red-400 italic">
+                        "{{ latestSub(quest)!.teacherNotes }}"
+                      </span>
+                    }
+                  </div>
+                }
+
+                <!-- Attempts remaining -->
+                @if (quest.requiresSubmission) {
+                  <p class="font-cinzel text-xs text-gray-400 dark:text-slate-500 mt-2">
+                    Intentos: {{ (quest.latestSubmission?.attemptNumber ?? 0) }} / {{ quest.maxAttempts ?? 1 }}
+                  </p>
+                }
+
+                <!-- Action button -->
+                @if (!quest.requiresSubmission) {
+                  <button (click)="completeQuest(quest.id)"
+                    class="mt-4 w-full font-cinzel font-bold text-sm py-3 rounded-xl text-white transition-all duration-300"
+                    style="background:linear-gradient(135deg,#16a34a,#15803d);">
+                    ⚔️ Completar Misión
+                  </button>
+                } @else if (canSubmit(quest)) {
+                  <button (click)="openModal(quest.id)"
+                    class="mt-4 w-full font-cinzel font-bold text-sm py-3 rounded-xl text-white transition-all duration-300"
+                    style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
+                    📎 {{ latestSub(quest)?.status === 'rejected' ? 'Volver a entregar' : 'Entregar Evidencia' }}
+                  </button>
+                }
               </div>
             </div>
           </div>
@@ -167,5 +199,57 @@
       ← Volver al Dashboard
     </a>
   </div>
+
+  <!-- Submission modal -->
+  @if (modalQuestId()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      (click)="closeModal()">
+      <div class="legendary-card p-8 w-full max-w-md mx-4 animate-fade-in-up"
+        (click)="$event.stopPropagation()">
+        <h2 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-6 text-center">
+          📎 Entregar Evidencia
+        </h2>
+
+        <!-- Drop zone -->
+        <label class="block cursor-pointer">
+          <div class="border-2 border-dashed border-purple-300 dark:border-purple-700 rounded-2xl p-8 text-center hover:border-purple-500 dark:hover:border-purple-500 transition-colors"
+            [ngClass]="selectedFile() ? 'border-purple-500 dark:border-purple-500' : ''">
+            @if (previewUrl()) {
+              <img [src]="previewUrl()" alt="preview" class="max-h-40 mx-auto rounded-xl mb-3 object-contain">
+            } @else if (selectedFile()) {
+              <div class="text-4xl mb-2">📄</div>
+              <p class="font-cinzel text-sm text-gray-700 dark:text-slate-300">{{ selectedFile()!.name }}</p>
+            } @else {
+              <div class="text-5xl mb-3">☁️</div>
+              <p class="font-cinzel text-sm text-gray-500 dark:text-slate-400">
+                Arrastra o haz clic para seleccionar
+              </p>
+              <p class="font-playfair text-xs text-gray-400 dark:text-slate-500 mt-1">
+                JPG · PNG · GIF · WEBP · PDF — máx. 10 MB
+              </p>
+            }
+          </div>
+          <input type="file" class="hidden" accept="image/*,.pdf" (change)="onFileSelected($event)">
+        </label>
+
+        @if (fileError()) {
+          <p class="text-red-500 dark:text-red-400 text-sm font-playfair mt-2">{{ fileError() }}</p>
+        }
+
+        <div class="flex gap-3 mt-6">
+          <button (click)="closeModal()"
+            class="flex-1 font-cinzel font-bold text-sm py-3 rounded-xl border-2 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+            Cancelar
+          </button>
+          <button (click)="submitEvidence()"
+            [disabled]="!selectedFile() || submitting()"
+            class="flex-1 font-cinzel font-bold text-sm py-3 rounded-xl text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
+            {{ submitting() ? '⏳ Enviando...' : '📤 Enviar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
 </div>
