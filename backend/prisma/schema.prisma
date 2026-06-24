@@ -93,6 +93,9 @@ enum NotificationType {
   reward_status
   reward_pending
   template_review
+  quest_submission
+  quest_approved
+  quest_rejected
 }
 
 enum CourseCategory {
@@ -196,6 +199,7 @@ model User {
   createdBehaviors  Behavior[]
   createdRewards    Reward[]
   notifications     Notification[]
+  questSubmissions QuestSubmission[]
   rankingSnapshots  RankingSnapshot[]
 
   // Parent relations
@@ -618,6 +622,8 @@ model Quest {
   xpReward       Int         @default(50)
   type           String?
   status         QuestStatus @default(active)
+  requiresSubmission Boolean  @default(false)
+  maxAttempts        Int      @default(1)
   classroomId    String
   teacherId      String
   dueDate        DateTime?
@@ -627,6 +633,7 @@ model Quest {
   classroom Classroom     @relation(fields: [classroomId], references: [id], onDelete: Cascade)
   teacher   User          @relation("TeacherQuests", fields: [teacherId], references: [id])
   students  QuestStudent[]
+  submissions QuestSubmission[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -701,4 +708,33 @@ model RankingSnapshot {
   @@unique([studentId, scope, weekStart])
   @@index([scope, weekStart])
   @@map("ranking_snapshots")
+}
+
+// ─── QuestSubmission ──────────────────────────────────────────────────────────
+
+enum SubmissionStatus {
+  pending
+  approved
+  rejected
+}
+
+model QuestSubmission {
+  id            String           @id @default(cuid())
+  questId       String
+  studentId     String
+  fileUrl       String
+  fileName      String
+  status        SubmissionStatus @default(pending)
+  attemptNumber Int
+  teacherNotes  String?
+  submittedAt   DateTime         @default(now())
+  reviewedAt    DateTime?
+
+  quest   Quest @relation(fields: [questId],   references: [id], onDelete: Cascade)
+  student User  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([questId, studentId, attemptNumber])
+  @@index([questId])
+  @@index([studentId])
+  @@map("quest_submissions")
 }
