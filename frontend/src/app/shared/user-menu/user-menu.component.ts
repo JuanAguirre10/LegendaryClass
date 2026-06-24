@@ -19,23 +19,14 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="relative flex items-center gap-0">
+    <div class="relative">
 
-      <!-- ── 💎 puntos globales (pegado al trigger) ── -->
-      <div class="flex items-center gap-1 px-3 py-1.5 rounded-l-xl font-cinzel text-xs font-bold
-                  bg-amber-400/20 dark:bg-amber-500/20
-                  border border-r-0 border-amber-400 dark:border-amber-500
-                  text-amber-800 dark:text-amber-300 select-none">
-        💎 {{ user()?.points ?? 0 }}
-      </div>
-
-      <!-- ── Trigger con nombre ── -->
+      <!-- ── Trigger ── -->
       <button
         (click)="toggle($event)"
-        class="flex items-center gap-2 pl-3 pr-2.5 py-1.5
+        class="flex items-center gap-2 px-3 py-1.5 rounded-xl
                font-cinzel text-sm font-bold
-               border border-amber-400 dark:border-amber-500
-               rounded-r-xl
+               border-2 border-amber-400 dark:border-amber-500
                text-gray-800 dark:text-slate-100
                transition-all duration-150 select-none"
         [ngClass]="open()
@@ -55,55 +46,83 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
 
       <!-- ── Dropdown panel ── -->
       @if (open()) {
-        <div class="absolute right-0 top-full mt-2 z-[9999]
-                    rounded-2xl overflow-hidden animate-fade-in-up
+        <div class="absolute right-0 top-full mt-2 z-[9999] rounded-2xl overflow-hidden animate-fade-in-up
                     bg-white dark:bg-slate-900
                     border-2 border-amber-400 dark:border-amber-500"
              style="width:280px; animation-duration:0.13s;
-                    box-shadow: 0 0 0 1px rgba(251,191,36,0.3), 0 12px 40px rgba(0,0,0,0.22)">
+                    box-shadow: 0 0 0 1px rgba(251,191,36,0.25), 0 16px 48px rgba(0,0,0,0.25)">
 
-          <!-- ── CHARACTER CARD ── -->
+          <!-- ── CHARACTER CARD (students) ── -->
           @if (charType()) {
-            <div class="relative overflow-hidden" [style.background]="charGradient()">
-              <div class="absolute inset-0 opacity-30"
-                   style="background:radial-gradient(ellipse at 80% 40%, white, transparent 65%)"></div>
-              <div class="relative flex items-center gap-3 px-4 py-4">
-                <div class="relative flex-shrink-0">
+            <div class="relative" [style.background]="charGradient()">
+              <!-- glow -->
+              <div class="absolute inset-0 opacity-25"
+                   style="background:radial-gradient(ellipse at 75% 40%, white, transparent 60%)"></div>
+
+              <div class="relative flex gap-0">
+
+                <!-- Character image — full height left column -->
+                <div class="flex-shrink-0 flex items-end justify-center"
+                     style="width:90px; height:110px; overflow:hidden; position:relative">
                   <img [src]="charImgSrc()" [alt]="charInfo()?.name ?? ''"
-                       class="w-16 h-16 object-contain drop-shadow-xl"
-                       (error)="onImgError($event)" />
-                  <div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center
-                               bg-amber-400 text-slate-900 font-cinzel font-black text-xs
-                               border-2 border-white shadow-lg">
-                    {{ user()?.level ?? 1 }}
-                  </div>
+                       (error)="onImgError($event)"
+                       style="position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+                              height:105px; width:auto; object-fit:contain;
+                              filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4))" />
                 </div>
-                <div class="min-w-0 flex-1">
+
+                <!-- Info right column -->
+                <div class="flex-1 min-w-0 py-3 pr-4 flex flex-col justify-center gap-1">
+                  <!-- Name -->
                   <p class="font-cinzel font-black text-white text-sm leading-tight drop-shadow">
                     {{ user()?.name }}
                   </p>
-                  <p class="font-cinzel text-white/90 text-xs mt-0.5">
+                  <!-- Race + tier -->
+                  <p class="font-cinzel text-white/90 text-xs leading-tight">
                     {{ charInfo()?.icon }} {{ charInfo()?.name }}
-                    <span class="text-white/65">· {{ tierName() }}</span>
+                    &nbsp;<span class="text-white/60">{{ tierName() }}</span>
                   </p>
-                  <p class="font-cinzel text-[10px] text-amber-300 font-bold mt-1.5">
-                    💎 {{ user()?.points ?? 0 }} pts globales
-                  </p>
-                  <div class="mt-1.5 w-full h-1.5 rounded-full overflow-hidden"
-                       style="background:rgba(255,255,255,0.25)">
+                  <!-- Level badge -->
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <span class="inline-flex items-center justify-center
+                                 bg-amber-400 text-slate-900 font-cinzel font-black text-xs
+                                 rounded-full px-2 py-0.5 shadow">
+                      Nv. {{ user()?.level ?? 1 }}
+                    </span>
+                  </div>
+                  <!-- Gems -->
+                  <div class="flex items-center gap-1 mt-0.5">
+                    <span class="font-cinzel text-[11px] font-bold text-amber-300">💎</span>
+                    <span class="font-cinzel text-sm font-black text-amber-300">
+                      {{ user()?.points ?? 0 }}
+                    </span>
+                    <span class="font-cinzel text-[10px] text-white/50">pts</span>
+                  </div>
+                  <!-- XP bar -->
+                  <div class="mt-1 w-full h-1.5 rounded-full overflow-hidden"
+                       style="background:rgba(255,255,255,0.2)">
                     <div class="h-full rounded-full bg-amber-300 transition-all duration-500"
                          [style.width.%]="xpPercent()"></div>
                   </div>
-                  <p class="font-cinzel text-[9px] text-white/55 mt-0.5">
-                    {{ user()?.experiencePoints ?? 0 }} / {{ xpNext() }} XP · próx. Nv.{{ (user()?.level ?? 1) + 1 }}
+                  <p class="font-cinzel text-[9px] text-white/50">
+                    {{ user()?.experiencePoints ?? 0 }} / {{ xpNext() }} XP
                   </p>
                 </div>
               </div>
             </div>
 
           } @else {
+            <!-- Non-student header -->
             <div class="px-4 py-3 border-b-2 border-amber-400 dark:border-amber-500
                         bg-amber-50 dark:bg-slate-800">
+              <!-- Gems row -->
+              <div class="flex items-center gap-1.5 mb-2">
+                <span class="font-cinzel text-base">💎</span>
+                <span class="font-cinzel text-lg font-black text-amber-600 dark:text-amber-400">
+                  {{ user()?.points ?? 0 }}
+                </span>
+                <span class="font-cinzel text-xs text-gray-400">pts</span>
+              </div>
               <p class="font-cinzel text-sm font-black text-amber-800 dark:text-amber-300">
                 {{ user()?.name }}
               </p>
@@ -124,10 +143,10 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
                         transition-colors duration-100">
                 <span class="w-8 h-8 flex items-center justify-center rounded-lg text-base
                              bg-indigo-500 text-white flex-shrink-0 shadow-sm">👤</span>
-                <span class="font-cinzel font-bold text-sm text-indigo-900 dark:text-indigo-200">
+                <span class="font-cinzel font-bold text-sm text-indigo-900 dark:text-indigo-200 flex-1">
                   Mi Perfil
                 </span>
-                <span class="ml-auto text-indigo-400 font-bold text-base leading-none">›</span>
+                <span class="text-indigo-400 font-bold text-lg leading-none">›</span>
               </a>
             }
 
@@ -138,10 +157,10 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
                       transition-colors duration-100">
               <span class="w-8 h-8 flex items-center justify-center rounded-lg text-base
                            bg-slate-500 text-white flex-shrink-0 shadow-sm">⚙️</span>
-              <span class="font-cinzel font-bold text-sm text-slate-800 dark:text-slate-100">
+              <span class="font-cinzel font-bold text-sm text-slate-800 dark:text-slate-100 flex-1">
                 Configuración
               </span>
-              <span class="ml-auto text-slate-400 font-bold text-base leading-none">›</span>
+              <span class="text-slate-400 font-bold text-lg leading-none">›</span>
             </a>
 
             <button (click)="cycleTheme($event)"
@@ -150,22 +169,19 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
                            hover:bg-violet-100 dark:hover:bg-violet-900/50
                            transition-colors duration-100">
               <span class="w-8 h-8 flex items-center justify-center rounded-lg text-base
-                           bg-violet-500 text-white flex-shrink-0 shadow-sm">
-                {{ themeIcon() }}
-              </span>
-              <span class="font-cinzel font-bold text-sm text-violet-900 dark:text-violet-200">
+                           bg-violet-500 text-white flex-shrink-0 shadow-sm">{{ themeIcon() }}</span>
+              <span class="font-cinzel font-bold text-sm text-violet-900 dark:text-violet-200 flex-1">
                 Modo {{ themeLabel() }}
               </span>
-              <span class="ml-auto font-cinzel text-[10px] font-bold px-2 py-0.5 rounded-full
-                           bg-amber-400 text-amber-900 shadow-sm">
-                TAP
-              </span>
+              <span class="font-cinzel text-[10px] font-black px-2 py-0.5 rounded-full
+                           bg-amber-400 text-amber-900">TAP</span>
             </button>
 
           </div>
 
           <!-- ── LOGOUT ── -->
-          <div class="bg-white dark:bg-slate-900 pb-2 px-2 border-t border-amber-200 dark:border-amber-800/40">
+          <div class="bg-white dark:bg-slate-900 pb-2 px-2
+                      border-t border-amber-300 dark:border-amber-700/50">
             <button (click)="logout()"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer w-full text-left
                            bg-red-50 dark:bg-red-950/40
@@ -173,7 +189,7 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
                            transition-colors duration-100 mt-1.5">
               <span class="w-8 h-8 flex items-center justify-center rounded-lg text-base
                            bg-red-500 text-white flex-shrink-0 shadow-sm">🚪</span>
-              <span class="font-cinzel font-bold text-sm text-red-700 dark:text-red-400">
+              <span class="font-cinzel font-bold text-sm text-red-700 dark:text-red-400 flex-1">
                 Cerrar sesión
               </span>
             </button>
@@ -205,7 +221,7 @@ export class UserMenuComponent {
   tierName     = computed(() => TIER_NAMES[levelToTier(this.user()?.level ?? 1)]);
   xpNext       = computed(() => xpForNext(this.user()?.level ?? 1));
   xpPercent    = computed(() => {
-    const xp = this.user()?.experiencePoints ?? 0;
+    const xp  = this.user()?.experiencePoints ?? 0;
     const max = this.xpNext();
     return max > 0 ? Math.min(100, Math.round((xp / max) * 100)) : 0;
   });
