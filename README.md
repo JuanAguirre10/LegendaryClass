@@ -42,6 +42,9 @@ LegendaryClass es una plataforma web que convierte el aula en un videojuego de r
 - **🔔 Notificaciones in-app en tiempo real** — avisos de subida de nivel, logros desbloqueados, cambios de estado de canje (al alumno) y canjes pendientes (al profesor), con campana y contador de no-leídas.
 - **📊 Exportación a Excel** — el profesor descarga el reporte de su aula (ranking + comportamientos) y el director un libro institucional (estudiantes, profesores, aulas, resumen).
 - **🖼️ Subida de avatar/foto** — usuarios y aulas suben imagen propia (almacenamiento local, validación de tipo/tamaño).
+- **✨ Animaciones de evolución** — Al subir de nivel aparece un overlay cinematográfico; al alcanzar un tier especial (niveles 25/50/75) el overlay es aún más espectacular y, al cerrarlo, el panel del personaje anima el cambio de imagen: la ilustración antigua se sacude y desvanece, un sweep dorado sube de abajo hacia arriba y la nueva ilustración se revela desde los pies con un pulso de luz.
+- **🌙 Modo oscuro** — Paleta RPG épica en todas las páginas; persiste en `localStorage` y respeta la preferencia del sistema operativo.
+- **⚙️ Página de ajustes** — Tema, datos de cuenta (nombre/email/avatar) y cambio de contraseña para todos los roles.
 - **🔒 Endurecimiento** — JWT con _fail-fast_, rate-limiting + helmet, índices de foreign keys, paginación de listados (`{ data, meta }`), ESLint con reglas de accesibilidad.
 
 ---
@@ -584,7 +587,7 @@ La selección de personaje es **permanente** — solo puede hacerse una vez.
 | 3 | Épico      | 50–74 | +50 a todas las stats |
 | 4 | Legendario | 75+   | +100 a todas las stats |
 
-Al cambiar de tier el personaje muestra una nueva ilustración.
+Al alcanzar un tier especial se muestra un overlay cinematográfico exclusivo (gradiente y partículas únicos por tier). Al cerrarlo, el panel del personaje ejecuta una animación sweep-reveal de 2.2 s: la ilustración del tier anterior se sacude y desvanece, un barrido de luz dorada sube de abajo hacia arriba cubriendo el panel, y la nueva ilustración se revela desde los pies con un pulso de brillo. Esta animación solo se activa en cambios reales de tier (niveles 25, 50 y 75).
 
 ### Stats del personaje (upgrade manual)
 
@@ -682,13 +685,14 @@ Verificación en dos capas:
 
 Disponibles después de ejecutar `npm run db:seed`:
 
-| Rol | Email | Contraseña |
-|-----|-------|------------|
-| Director | director@legendaryclass.com | password123 |
-| Profesor | teacher@legendaryclass.com | password123 |
-| Estudiante 1 (Mago Lv3) | student1@legendaryclass.com | password123 |
-| Estudiante 2 (Guerrero Lv2) | student2@legendaryclass.com | password123 |
-| Padre | parent@legendaryclass.com | password123 |
+| Rol | Email | Contraseña | Notas |
+|-----|-------|------------|-------|
+| Director | director@legendaryclass.com | password123 | |
+| Profesor | teacher@legendaryclass.com | password123 | |
+| Estudiante principal | student15@legendaryclass.com | password123 | Tomás Iglesias · Arquero |
+| Padre | parent@legendaryclass.com | password123 | |
+
+Ejecuta también `npx ts-node prisma/seed-rich.ts` desde `backend/` para poblar los 15 estudiantes (student1–student15) y 5 aulas adicionales (DEMO01–DEMO05).
 
 El aula de demo tiene código: **`DEMO01`**
 
