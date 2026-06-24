@@ -67,49 +67,55 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
           <!-- ── CHARACTER CARD ── -->
           @if (charType()) {
             <div class="relative flex" [style.background]="charGradient()" style="min-height:130px">
-              <div class="absolute inset-0 opacity-25 pointer-events-none"
-                   style="background:radial-gradient(ellipse at 75% 40%, white, transparent 60%)"></div>
+              <!-- Capa oscura para garantizar contraste en cualquier color de personaje -->
+              <div class="absolute inset-0 pointer-events-none"
+                   style="background:rgba(0,0,0,0.45)"></div>
 
-              <!-- Imagen: ocupa el alto completo de la card -->
-              <div class="relative flex-shrink-0" style="width:100px; overflow:hidden">
+              <!-- Imagen -->
+              <div class="relative flex-shrink-0 z-10" style="width:100px; overflow:hidden">
                 <img [src]="charImgSrc()" [alt]="charInfo()?.name ?? ''"
                      (error)="onImgError($event)"
                      style="position:absolute; bottom:0; left:50%; transform:translateX(-50%);
                             height:130px; width:auto; object-fit:contain;
-                            filter:drop-shadow(0 6px 14px rgba(0,0,0,0.45))" />
+                            filter:drop-shadow(0 4px 12px rgba(0,0,0,0.6))" />
               </div>
 
               <!-- Info -->
               <div class="flex-1 py-3 pr-4 pl-2 flex flex-col justify-center gap-1.5 relative z-10">
-                <!-- Nombre (wraps si es largo) -->
-                <p class="font-cinzel font-black text-white leading-snug drop-shadow"
-                   style="font-size:14px; word-break:break-word">
+                <!-- Nombre -->
+                <p class="font-cinzel font-black leading-snug"
+                   style="font-size:14px; word-break:break-word; color:#fff;
+                          text-shadow:0 1px 4px rgba(0,0,0,0.9)">
                   {{ user()?.name }}
                 </p>
                 <!-- Raza · Tier -->
-                <p class="font-cinzel text-white/90 text-xs leading-tight">
+                <p class="font-cinzel text-xs leading-tight"
+                   style="color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8)">
                   {{ charInfo()?.icon }} {{ charInfo()?.name }}
-                  <span class="text-white/60">&nbsp;· {{ tierName() }}</span>
+                  <span style="color:rgba(255,255,255,0.75)">&nbsp;· {{ tierName() }}</span>
                 </p>
                 <!-- Nivel -->
-                <span class="self-start inline-flex items-center
-                             bg-amber-400 text-slate-900 font-cinzel font-black text-xs
-                             rounded-full px-2.5 py-0.5 shadow">
+                <span class="self-start inline-flex items-center font-cinzel font-black text-xs rounded-full px-2.5 py-0.5"
+                      style="background:#fbbf24; color:#1c1917; box-shadow:0 2px 6px rgba(0,0,0,0.4)">
                   Nv. {{ user()?.level ?? 1 }}
                 </span>
                 <!-- Gemas -->
                 <div class="flex items-baseline gap-1">
                   <span style="font-size:16px; line-height:1">💎</span>
-                  <span class="font-cinzel font-black text-amber-300"
-                        style="font-size:20px; line-height:1">{{ user()?.points ?? 0 }}</span>
-                  <span class="font-cinzel text-white/50 text-xs">pts</span>
+                  <span class="font-cinzel font-black"
+                        style="font-size:20px; line-height:1; color:#fde68a;
+                               text-shadow:0 1px 4px rgba(0,0,0,0.7)">
+                    {{ user()?.points ?? 0 }}
+                  </span>
+                  <span class="font-cinzel text-xs" style="color:rgba(255,255,255,0.65)">pts</span>
                 </div>
                 <!-- XP bar -->
                 <div class="w-full rounded-full overflow-hidden" style="height:5px; background:rgba(255,255,255,0.2)">
-                  <div class="h-full rounded-full bg-amber-300 transition-all duration-500"
+                  <div class="h-full rounded-full transition-all duration-500"
+                       style="background:#fbbf24"
                        [style.width.%]="xpPercent()"></div>
                 </div>
-                <p class="font-cinzel text-white/50" style="font-size:9px">
+                <p class="font-cinzel" style="font-size:9px; color:rgba(255,255,255,0.6)">
                   {{ user()?.experiencePoints ?? 0 }} / {{ xpNext() }} XP
                 </p>
               </div>
