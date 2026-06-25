@@ -17,6 +17,7 @@ import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component
 export class DirectorDashboardComponent implements OnInit {
   stats = signal<any>(null);
   loading = signal(true);
+  menuOpen = false;
 
   constructor(private http: HttpClient, public auth: AuthService, private router: Router, private exportService: ExportService) {}
 

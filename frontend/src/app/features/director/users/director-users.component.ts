@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { environment } from '@env/environment';
@@ -18,11 +18,11 @@ interface ManagedUser {
 @Component({
   selector: 'app-director-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent],
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-      <a routerLink="/director/dashboard" class="legendary-logo text-xl">👑 LegendaryClass</a>
+      <a routerLink="/director/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:36px;width:auto;vertical-align:middle;"> LegendaryClass</a>
       <div class="hidden md:flex gap-1">
         <a routerLink="/director/dashboard"  class="nav-link-epic">🏰 Inicio</a>
         <a routerLink="/director/classrooms" class="nav-link-epic">🏛️ Aulas</a>
@@ -35,9 +35,40 @@ interface ManagedUser {
       <div class="flex items-center gap-3">
         <app-theme-toggle />
         <a routerLink="/director/dashboard" class="btn-epic btn-purple text-xs py-2 px-4">← Dashboard</a>
+        <!-- Hamburger — mobile only -->
+        <button class="md:hidden flex flex-col justify-center gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors"
+                (click)="menuOpen = !menuOpen" aria-label="Abrir menú">
+          <span class="block w-6 h-0.5 bg-current transition-all"></span>
+          <span class="block w-6 h-0.5 bg-current transition-all"></span>
+          <span class="block w-6 h-0.5 bg-current transition-all"></span>
+        </button>
       </div>
     </div>
   </nav>
+
+  @if (menuOpen) {
+    <div class="fixed inset-0 z-50 md:hidden" (click)="menuOpen = false">
+      <div class="absolute inset-0 bg-black/60"></div>
+      <div class="absolute top-0 left-0 right-0 legendary-nav shadow-2xl p-4 pt-3"
+           (click)="$event.stopPropagation()">
+        <div class="flex justify-between items-center mb-4">
+          <span class="legendary-logo text-lg">LegendaryClass</span>
+          <button (click)="menuOpen = false"
+                  class="text-2xl font-bold px-2 py-1 rounded hover:bg-white/10 transition-colors"
+                  aria-label="Cerrar menú">✕</button>
+        </div>
+        <div class="flex flex-col gap-1">
+          <a routerLink="/director/dashboard"   routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">🏰 Inicio</a>
+          <a routerLink="/director/classrooms"  routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">🏛️ Aulas</a>
+          <a routerLink="/director/teachers"    routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">👩‍🏫 Profesores</a>
+          <a routerLink="/director/students"    routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">🎓 Estudiantes</a>
+          <a routerLink="/director/users"       routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">👥 Usuarios</a>
+          <a routerLink="/director/reports"     routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">📊 Reportes</a>
+          <a routerLink="/director/leaderboard" routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">🏆 Ranking</a>
+        </div>
+      </div>
+    </div>
+  }
 
   <div class="z-content py-10 max-w-6xl mx-auto px-6">
     <div class="mb-8">
@@ -139,6 +170,7 @@ export class DirectorUsersComponent implements OnInit {
   users = signal<ManagedUser[]>([]);
   loading = signal(true);
   creating = signal(false);
+  menuOpen = false;
   toast = signal<{ msg: string; type: 'success' | 'error' } | null>(null);
 
   form = { name: '', email: '', password: '', role: 'teacher' };
