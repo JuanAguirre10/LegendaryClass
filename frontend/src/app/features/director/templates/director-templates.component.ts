@@ -2,7 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { environment } from '@env/environment';
 import { MathPipe } from '../../../shared/math/math.pipe';
 interface Template {
@@ -14,7 +14,7 @@ interface Template {
 @Component({
   selector: 'app-director-templates',
   standalone: true,
-  imports: [CommonModule, FormsModule, MathPipe],
+  imports: [CommonModule, FormsModule, MathPipe, RouterLink, RouterLinkActive],
   templateUrl: './director-templates.component.html',
 })
 export class DirectorTemplatesComponent implements OnInit {
@@ -23,6 +23,7 @@ export class DirectorTemplatesComponent implements OnInit {
   tab = signal<'pending' | 'approved' | 'rejected'>('pending');
   rejectNote = '';
   rejectingId = signal<{ id: string; type: string } | null>(null);
+  menuOpen = false;
 
   filtered = computed(() => this.templates().filter(t => t.status === this.tab()));
   pendingCount = computed(() => this.templates().filter(t => t.status === 'pending').length);

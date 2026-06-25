@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { environment } from '@env/environment';
 interface Course {
   id: string; name: string; description?: string; icon?: string;
@@ -13,13 +13,14 @@ interface Course {
 @Component({
   selector: 'app-director-courses',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, RouterLinkActive],
   templateUrl: './director-courses.component.html',
 })
 export class DirectorCoursesComponent implements OnInit {
   courses = signal<Course[]>([]);
   showForm = signal(false);
   editingId = signal<string | null>(null);
+  menuOpen = false;
   categories = ['mathematics', 'sciences', 'language', 'social', 'arts', 'other'];
   form = { name: '', description: '', icon: '', color: '#6366F1', category: 'mathematics' };
 
