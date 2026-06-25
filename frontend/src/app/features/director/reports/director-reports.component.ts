@@ -11,7 +11,7 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
   imports: [CommonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
       <a routerLink="/director/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:36px;width:auto;vertical-align:middle;"> LegendaryClass</a>
       <div class="hidden md:flex gap-1">
         <a routerLink="/director/dashboard"  class="nav-link-epic">🏰 Inicio</a>
@@ -60,7 +60,7 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
     </div>
   }
 
-  <div class="z-content py-10 max-w-5xl mx-auto px-6">
+  <div class="z-content py-6 md:py-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-8">
       <h1 class="epic-title" style="font-size:clamp(1.8rem,4vw,2.8rem);">📊 Reportes del Sistema</h1>
       <p class="font-cinzel text-gray-500 dark:text-slate-400 text-sm tracking-widest uppercase mt-1">Estadísticas globales de la institución</p>

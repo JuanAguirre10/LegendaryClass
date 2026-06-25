@@ -1,6 +1,6 @@
 <!-- Navegación épica — tema púrpura director -->
 <nav class="legendary-nav sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
     <a routerLink="/director/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:36px;width:auto;vertical-align:middle;"> LegendaryClass</a>
 
     <div class="hidden md:flex items-center gap-1">
@@ -62,7 +62,7 @@
   </div>
 </header>
 
-<div class="max-w-7xl mx-auto px-6 pt-6 flex justify-end">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 flex justify-end">
   <button (click)="exportExcel()" class="btn-epic btn-purple text-sm py-2 px-5">📊 Exportar institución a Excel</button>
 </div>
 
@@ -76,8 +76,8 @@
   </div>
 } @else if (stats()) {
 
-<main class="z-content py-8">
-  <div class="max-w-7xl mx-auto px-6">
+<main class="z-content py-6 md:py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <!-- Stats grid -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -100,7 +100,7 @@
     </div>
 
     <!-- Acciones de gestión -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 
       <div class="adventure-card p-7">
         <h3 class="font-cinzel font-bold text-xl text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-3">

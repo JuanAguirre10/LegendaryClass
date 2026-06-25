@@ -11,7 +11,7 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
   imports: [CommonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
       <a routerLink="/director/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:36px;width:auto;vertical-align:middle;"> LegendaryClass</a>
       <div class="hidden md:flex gap-1">
         <a routerLink="/director/dashboard"  class="nav-link-epic">🏰 Inicio</a>
@@ -60,7 +60,7 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
     </div>
   }
 
-  <div class="z-content py-10 max-w-5xl mx-auto px-6">
+  <div class="z-content py-6 md:py-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-8">
       <h1 class="epic-title" style="font-size:clamp(1.8rem,4vw,2.8rem);">📚 Profesores</h1>
       <p class="font-cinzel text-gray-500 dark:text-slate-400 text-sm tracking-widest uppercase mt-1">Cuerpo docente de la institución</p>
@@ -72,7 +72,7 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
         <p class="font-cinzel text-gray-500 dark:text-slate-400">Convocando a los maestros...</p>
       </div>
     } @else if (teachers().length > 0) {
-      <div class="adventure-card overflow-hidden animate-fade-in-up">
+      <div class="adventure-card overflow-x-auto animate-fade-in-up">
         <table class="w-full">
           <thead>
             <tr style="background: linear-gradient(135deg, rgba(88,28,135,0.08) 0%, rgba(124,58,237,0.05) 100%); border-bottom: 2px solid rgba(124,58,237,0.15);">
