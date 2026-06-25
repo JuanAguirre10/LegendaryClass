@@ -16,7 +16,7 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
   imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule, ClassroomRankingComponent, AvatarUploadComponent, MathPipe, ThemeToggleComponent],
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
       <a routerLink="/teacher/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:36px;width:auto;vertical-align:middle;"> LegendaryClass</a>
       <div class="hidden md:flex gap-1">
         <a routerLink="/teacher/dashboard"  class="nav-link-epic">🏰 Inicio</a>
@@ -73,7 +73,7 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
     }
   </div>
 
-  <div class="z-content py-10 max-w-6xl mx-auto px-6">
+  <div class="z-content py-6 md:py-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     @if (loading()) {
       <div class="legendary-card p-12 text-center animate-fade-in-up">
         <div class="text-8xl mb-6 animate-float">🏛️</div>
@@ -197,7 +197,7 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
 
       <!-- Tab: Aventureros (students) -->
       @if (activeTab() === 'students') {
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
           <!-- Lista de estudiantes (col-span-2) -->
           <div class="lg:col-span-2">
