@@ -1,6 +1,6 @@
 <!-- Nav -->
 <nav class="legendary-nav sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
     <a routerLink="/student/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:36px;width:auto;vertical-align:middle;"> LegendaryClass</a>
     <div class="hidden md:flex items-center gap-1">
       <a routerLink="/student/dashboard"    class="nav-link-epic">🏰 Inicio</a>
@@ -55,11 +55,11 @@
   }
 </div>
 
-<div class="z-content py-8">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+<div class="z-content py-6 md:py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <!-- Store header — purple shimmer -->
-    <div class="rounded-3xl p-8 mb-8 animate-fade-in-up relative overflow-hidden"
+    <div class="rounded-3xl p-4 md:p-8 mb-8 animate-fade-in-up relative overflow-hidden"
       style="background: linear-gradient(135deg, rgba(147,51,234,0.95) 0%, rgba(79,70,229,0.9) 50%, rgba(147,51,234,0.95) 100%);
              border: 3px solid rgba(255,255,255,0.3);
              box-shadow: 0 15px 40px rgba(147,51,234,0.3);">
@@ -189,7 +189,7 @@
           <h2 class="font-cinzel font-bold text-2xl text-gray-800 dark:text-slate-100 mb-1">🎒 Mis Recompensas</h2>
           <p class="font-playfair text-gray-500 dark:text-slate-400 text-sm">Recompensas que has canjeado recientemente</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           @for (mr of myRewards(); track mr.id) {
             <div class="rounded-2xl p-4 dark:bg-slate-800"
               style="border:2px solid rgba(147,51,234,0.2); box-shadow:0 4px 15px rgba(0,0,0,0.06);">

@@ -1,6 +1,6 @@
 <!-- Nav -->
 <nav class="legendary-nav sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
     <a routerLink="/student/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:36px;width:auto;vertical-align:middle;"> LegendaryClass</a>
     <div class="hidden md:flex items-center gap-1">
       <a routerLink="/student/dashboard"    class="nav-link-epic">🏰 Inicio</a>
@@ -110,16 +110,15 @@
           <div class="font-cinzel font-bold text-purple-900 text-base flex items-center gap-2 mb-3">
             {{ rarityLabel(rarity) }}
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             @for (a of byRarity(rarity); track a.id) {
               <div class="rounded-2xl p-5 relative overflow-hidden transition-all duration-300 hover:-translate-y-1"
                 [style.background]="rarityCardBg(rarity)"
                 [style.border]="'2px solid ' + rarityCardBorder(rarity)"
                 style="box-shadow:0 8px 25px rgba(0,0,0,0.08);">
                 <div class="flex items-start gap-4">
-                  <!-- 60px icon circle -->
-                  <div class="flex items-center justify-center flex-shrink-0"
-                    style="width:60px; height:60px; border-radius:50%; font-size:1.8rem;"
+                  <!-- icon circle -->
+                  <div class="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center flex-shrink-0 rounded-full text-[1.8rem]"
                     [style.background]="rarityIconBg(rarity)"
                     [style.border]="'2px solid ' + rarityIconBorder(rarity)">
                     {{ a.icon ?? '🏆' }}

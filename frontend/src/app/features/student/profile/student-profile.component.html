@@ -1,6 +1,6 @@
 <!-- Navegación épica -->
 <nav class="legendary-nav sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
     <a routerLink="/student/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:36px;width:auto;vertical-align:middle;"> LegendaryClass</a>
     <div class="hidden md:flex items-center gap-1">
       <a routerLink="/student/dashboard"   class="nav-link-epic">🏰 Inicio</a>
@@ -46,7 +46,7 @@
   </div>
 }
 
-<div class="z-content py-10 max-w-4xl mx-auto px-6">
+<div class="z-content py-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
   @if (!profile()) {
     <div class="glass-panel p-12 text-center animate-fade-in-up">
       <div class="text-8xl mb-6 animate-float">👤</div>
@@ -55,7 +55,7 @@
   } @else {
 
     <!-- Hero card del perfil (estilo PHP) -->
-    <div class="rounded-3xl p-8 mb-8 relative overflow-hidden animate-fade-in-up"
+    <div class="rounded-3xl p-4 sm:p-8 mb-8 relative overflow-hidden animate-fade-in-up"
       style="background: linear-gradient(135deg, rgba(15,23,42,0.97) 0%, rgba(88,28,135,0.95) 40%, rgba(124,58,237,0.92) 70%, rgba(88,28,135,0.95) 100%);
              border: 3px solid rgba(251,191,36,0.5);
              box-shadow: 0 20px 50px rgba(0,0,0,0.3), 0 0 30px rgba(124,58,237,0.3);">

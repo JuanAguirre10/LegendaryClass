@@ -1,6 +1,6 @@
 <!-- Nav -->
 <nav class="legendary-nav sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
     <a routerLink="/student/dashboard" class="legendary-logo text-xl"><img src="assets/logosinfondo.png" alt="LegendaryClass" style="height:38px;width:auto;"></a>
     <div class="hidden md:flex items-center gap-1">
       <a routerLink="/student/dashboard"    routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link-epic">🏰 Inicio</a>
@@ -134,7 +134,7 @@
 
   <!-- ── QUIZ INTERACTIVO ── -->
   } @else if (questHasForm() && canSubmit()) {
-    <div class="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]" style="max-width:1400px; margin:0 auto;">
+    <div class="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] max-w-7xl mx-auto">
 
       <!-- ╔══════════════════════════════════════╗ -->
       <!-- ║           ÁREA PRINCIPAL             ║ -->
@@ -176,7 +176,7 @@
             style="border:2px solid rgba(37,99,235,0.15); flex:1;">
 
             <!-- Número de pregunta -->
-            <div class="px-8 pt-8 pb-4 flex items-start gap-6">
+            <div class="px-4 md:px-8 pt-6 md:pt-8 pb-4 flex items-start gap-6">
               <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center flex-col"
                 style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">
                 <span class="font-cinzel font-black text-2xl text-white leading-none">{{ currentIndex() + 1 }}</span>
@@ -196,7 +196,7 @@
             </div>
 
             <!-- Opciones -->
-            <div class="px-8 pb-4 flex-1">
+            <div class="px-4 md:px-8 pb-4 flex-1">
 
               @if (currentQ().type === 'multiple_choice') {
                 <div class="space-y-3 mt-2">
@@ -257,7 +257,7 @@
             </div>
 
             <!-- Nav anterior / siguiente -->
-            <div class="px-8 py-5 flex items-center justify-between border-t border-gray-100 dark:border-slate-700 flex-shrink-0">
+            <div class="px-4 md:px-8 py-5 flex items-center justify-between border-t border-gray-100 dark:border-slate-700 flex-shrink-0">
               <button (click)="prev()" [disabled]="currentIndex() === 0"
                 class="font-cinzel font-bold px-6 py-3 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 style="border:2px solid rgba(37,99,235,0.25); color:#2563eb; background:rgba(37,99,235,0.05);">
