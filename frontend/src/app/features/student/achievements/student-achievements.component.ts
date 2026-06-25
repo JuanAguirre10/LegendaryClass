@@ -12,6 +12,7 @@ import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component
   templateUrl: './student-achievements.component.html',
 })
 export class StudentAchievementsComponent implements OnInit {
+  menuOpen = false;
   achievements = signal<any[]>([]);
   loading      = signal(true);
 

@@ -1,0 +1,468 @@
+<!-- Nav -->
+<nav class="legendary-nav sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl"><img src="assets/logosinfondo.png" alt="LegendaryClass" style="height:38px;width:auto;"></a>
+    <div class="hidden md:flex items-center gap-1">
+      <a routerLink="/student/dashboard"    routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link-epic">🏰 Inicio</a>
+      <a routerLink="/student/classrooms"   routerLinkActive="active" class="nav-link-epic">📚 Dominios</a>
+      <a routerLink="/student/quests"       routerLinkActive="active" class="nav-link-epic">🗡️ Misiones</a>
+      <a routerLink="/student/rewards"      routerLinkActive="active" class="nav-link-epic">🛒 Tienda</a>
+      <a routerLink="/student/achievements" routerLinkActive="active" class="nav-link-epic">🏆 Logros</a>
+      <a routerLink="/student/leaderboard"  routerLinkActive="active" class="nav-link-epic">🥇 Ranking</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <app-notification-bell />
+      <app-user-menu />
+      <!-- Hamburger — mobile only -->
+      <button class="md:hidden flex flex-col justify-center gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors"
+              (click)="menuOpen = !menuOpen" aria-label="Abrir menú">
+        <span class="block w-6 h-0.5 bg-current"></span>
+        <span class="block w-6 h-0.5 bg-current"></span>
+        <span class="block w-6 h-0.5 bg-current"></span>
+      </button>
+    </div>
+  </div>
+</nav>
+@if (menuOpen) {
+  <div class="fixed inset-0 z-50 md:hidden" (click)="menuOpen = false">
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="absolute top-0 left-0 right-0 legendary-nav shadow-2xl p-4 pt-3"
+         (click)="$event.stopPropagation()">
+      <div class="flex justify-between items-center mb-4">
+        <span class="legendary-logo text-lg">LegendaryClass</span>
+        <button (click)="menuOpen = false"
+                class="text-2xl font-bold px-2 py-1 rounded hover:bg-white/10 transition-colors"
+                aria-label="Cerrar menú">✕</button>
+      </div>
+      <div class="flex flex-col gap-1">
+        <a routerLink="/student/dashboard"    routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">🏰 Inicio</a>
+        <a routerLink="/student/classrooms"   routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">📚 Dominios</a>
+        <a routerLink="/student/quests"       routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">🗡️ Misiones</a>
+        <a routerLink="/student/rewards"      routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">🛒 Tienda</a>
+        <a routerLink="/student/achievements" routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">🏆 Logros</a>
+        <a routerLink="/student/leaderboard"  routerLinkActive="active" class="nav-link-epic" (click)="menuOpen = false">🥇 Ranking</a>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Toasts -->
+<div class="toast-container">
+  @for (t of toasts(); track t.id) {
+    <div class="toast-message" [class.success]="t.type==='success'" [class.error]="t.type==='error'" [class.info]="t.type==='info'">{{ t.message }}</div>
+  }
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+@if (loading()) {
+  <div class="flex items-center justify-center min-h-[70vh]">
+    <div class="text-center">
+      <div class="text-8xl mb-4 animate-float">📜</div>
+      <p class="font-cinzel text-gray-500 dark:text-slate-400">Cargando misión...</p>
+    </div>
+  </div>
+
+} @else if (notFound()) {
+  <div class="flex items-center justify-center min-h-[70vh] px-4">
+    <div class="text-center legendary-card rounded-3xl p-12">
+      <div class="text-6xl mb-4">🗡️</div>
+      <p class="font-cinzel font-bold text-gray-600 dark:text-slate-300 text-xl mb-4">Misión no encontrada</p>
+      <a routerLink="/student/quests" class="font-cinzel font-bold px-8 py-3 rounded-xl text-white inline-block"
+        style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">← Volver</a>
+    </div>
+  </div>
+
+} @else {
+
+  <!-- ── RESULTADO ── -->
+  @if (formResult()) {
+    <div class="flex items-center justify-center min-h-[80vh] px-4">
+      <div class="legendary-card rounded-3xl p-10 max-w-lg w-full text-center animate-fade-in-up">
+        @if (formResult()!.passed) {
+          <div class="text-7xl mb-4 animate-float">🏆</div>
+          <h2 class="font-cinzel font-black text-3xl text-green-600 dark:text-green-400 mb-2">¡Aprobado!</h2>
+        } @else {
+          <div class="text-7xl mb-4 animate-float">📚</div>
+          <h2 class="font-cinzel font-black text-3xl text-amber-600 dark:text-amber-400 mb-2">
+            {{ formResult()!.score === 0 ? 'En revisión' : 'Sigue practicando' }}
+          </h2>
+        }
+        <p class="font-playfair text-gray-600 dark:text-slate-300 text-lg mb-8">{{ formResult()!.message }}</p>
+        @if (formResult()!.score > 0) {
+          <div class="flex items-center justify-center mb-8">
+            <div class="relative w-40 h-40">
+              <svg class="w-40 h-40 -rotate-90" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" stroke-width="12"/>
+                <circle cx="60" cy="60" r="50" fill="none"
+                  [attr.stroke]="formResult()!.passed ? '#16a34a' : '#f59e0b'"
+                  stroke-width="12" stroke-linecap="round"
+                  [attr.stroke-dasharray]="(formResult()!.score / 100 * 314) + ' 314'"
+                  style="transition:stroke-dasharray 1s ease"/>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="font-cinzel font-black text-4xl"
+                  [class.text-green-600]="formResult()!.passed"
+                  [class.text-amber-600]="!formResult()!.passed">{{ formResult()!.score }}</span>
+                <span class="font-cinzel text-sm text-gray-500">/ 100</span>
+              </div>
+            </div>
+          </div>
+        }
+        <div class="flex gap-3 justify-center flex-wrap">
+          <a routerLink="/student/quests" class="font-cinzel font-bold px-8 py-3 rounded-xl text-white"
+            style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">← Misiones</a>
+          @if (!formResult()!.passed && attemptsRemaining() > 0) {
+            <button (click)="formResult.set(null); currentIndex.set(0); formAnswers.set({})"
+              class="font-cinzel font-bold px-8 py-3 rounded-xl text-white"
+              style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">🔄 Reintentar</button>
+          }
+        </div>
+      </div>
+    </div>
+
+  <!-- ── COMPLETADA ── -->
+  } @else if (isCompleted()) {
+    <div class="flex items-center justify-center min-h-[80vh] px-4">
+      <div class="legendary-card rounded-3xl p-10 max-w-lg w-full text-center animate-fade-in-up">
+        <div class="text-6xl mb-4">✅</div>
+        <h2 class="font-cinzel font-black text-2xl text-green-600 dark:text-green-400 mb-2">¡Misión Completada!</h2>
+        <p class="font-playfair text-gray-500 dark:text-slate-400 mb-6">Ya obtuviste los {{ quest().xpReward }} XP de esta misión.</p>
+        <a routerLink="/student/quests" class="inline-block font-cinzel font-bold px-8 py-3 rounded-xl text-white"
+          style="background:linear-gradient(135deg,#16a34a,#15803d);">← Volver a Misiones</a>
+      </div>
+    </div>
+
+  <!-- ── QUIZ INTERACTIVO ── -->
+  } @else if (questHasForm() && canSubmit()) {
+    <div class="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]" style="max-width:1400px; margin:0 auto;">
+
+      <!-- ╔══════════════════════════════════════╗ -->
+      <!-- ║           ÁREA PRINCIPAL             ║ -->
+      <!-- ╚══════════════════════════════════════╝ -->
+      <div class="flex-1 flex flex-col px-4 py-6 lg:px-8 lg:py-8">
+
+        <!-- Encabezado de la misión -->
+        <div class="rounded-2xl p-4 mb-6 flex items-center gap-4 animate-fade-in-up"
+          style="background:linear-gradient(135deg,rgba(217,119,6,0.9),rgba(245,158,11,0.85));
+                 border:2px solid rgba(255,255,255,0.25);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+            style="background:rgba(255,255,255,0.2);">
+            {{ questIcon(quest().type) }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-cinzel text-xs text-yellow-100 uppercase tracking-widest">{{ quest().type }}</p>
+            <h1 class="font-cinzel font-black text-white text-lg truncate">{{ quest().title }}</h1>
+          </div>
+          <a routerLink="/student/quests" class="font-cinzel text-xs text-yellow-100 hover:text-white flex-shrink-0 transition-colors">← Salir</a>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div class="mb-6 animate-fade-in-up">
+          <div class="flex justify-between mb-2">
+            <span class="font-cinzel text-sm text-gray-600 dark:text-slate-400">Progreso</span>
+            <span class="font-cinzel text-sm font-bold text-blue-600 dark:text-blue-400">{{ answeredCount() }}/{{ totalQ() }} respondidas</span>
+          </div>
+          <div class="w-full h-3 rounded-full" style="background:rgba(0,0,0,0.06);">
+            <div class="h-3 rounded-full transition-all duration-500"
+              style="background:linear-gradient(90deg,#2563eb,#7c3aed);"
+              [style.width]="progress() + '%'">
+            </div>
+          </div>
+        </div>
+
+        <!-- ── TARJETA DE PREGUNTA ── -->
+        @if (currentQ()) {
+          <div class="legendary-card rounded-3xl flex flex-col animate-fade-in-up"
+            style="border:2px solid rgba(37,99,235,0.15); flex:1;">
+
+            <!-- Número de pregunta -->
+            <div class="px-8 pt-8 pb-4 flex items-start gap-6">
+              <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center flex-col"
+                style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">
+                <span class="font-cinzel font-black text-2xl text-white leading-none">{{ currentIndex() + 1 }}</span>
+                <span class="font-cinzel text-[10px] text-blue-200 leading-none">/ {{ totalQ() }}</span>
+              </div>
+              <div class="flex-1 pt-1">
+                <p class="font-cinzel text-xs text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">
+                  @if (currentQ().type === 'multiple_choice') { Selección múltiple }
+                  @else if (currentQ().type === 'true_false') { Verdadero / Falso }
+                  @else { Respuesta abierta }
+                  · {{ currentQ().points }} pts
+                </p>
+                <p class="font-playfair font-semibold text-gray-800 dark:text-slate-100 text-xl leading-snug">
+                  {{ currentQ().text }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Opciones -->
+            <div class="px-8 pb-4 flex-1">
+
+              @if (currentQ().type === 'multiple_choice') {
+                <div class="space-y-3 mt-2">
+                  @for (opt of currentQ().options; track opt; let oi = $index) {
+                    <label class="flex items-center gap-4 cursor-pointer rounded-2xl p-4 transition-all duration-150"
+                      [style.border]="formAnswers()[currentQ().id] === opt ? '2px solid #2563eb' : '2px solid rgba(0,0,0,0.07)'"
+                      [style.background]="formAnswers()[currentQ().id] === opt ? 'rgba(37,99,235,0.08)' : 'rgba(255,255,255,0.6)'">
+                      <div class="w-8 h-8 rounded-full flex items-center justify-center font-cinzel font-black text-sm flex-shrink-0 transition-all"
+                        [style.background]="formAnswers()[currentQ().id] === opt ? '#2563eb' : 'rgba(0,0,0,0.06)'"
+                        [style.color]="formAnswers()[currentQ().id] === opt ? '#fff' : '#6b7280'">
+                        {{ ['A','B','C','D','E'][oi] }}
+                      </div>
+                      <input type="radio" [name]="'q'+currentQ().id" [value]="opt"
+                        [checked]="formAnswers()[currentQ().id] === opt"
+                        (change)="setAnswer(currentQ().id, opt)" class="hidden">
+                      <span class="font-playfair text-gray-800 dark:text-slate-200 text-base flex-1">{{ opt }}</span>
+                      @if (formAnswers()[currentQ().id] === opt) {
+                        <span class="text-blue-600 text-xl font-bold">✓</span>
+                      }
+                    </label>
+                  }
+                </div>
+              }
+
+              @if (currentQ().type === 'true_false') {
+                <div class="flex gap-4 mt-4">
+                  @for (opt of [['true','✅ Verdadero','#16a34a'],['false','❌ Falso','#dc2626']]; track opt[0]) {
+                    <label class="flex-1 cursor-pointer" (click)="setAnswer(currentQ().id, opt[0])">
+                      <div class="rounded-2xl p-6 text-center transition-all duration-150"
+                        [style.border]="formAnswers()[currentQ().id] === opt[0] ? '3px solid ' + opt[2] : '2px solid rgba(0,0,0,0.08)'"
+                        [style.background]="formAnswers()[currentQ().id] === opt[0]
+                          ? (opt[0] === 'true' ? 'rgba(22,163,74,0.08)' : 'rgba(220,38,38,0.08)')
+                          : 'rgba(255,255,255,0.7)'">
+                        <p class="font-cinzel font-bold text-xl"
+                          [style.color]="formAnswers()[currentQ().id] === opt[0] ? opt[2] : '#6b7280'">
+                          {{ opt[1] }}
+                        </p>
+                      </div>
+                    </label>
+                  }
+                </div>
+              }
+
+              @if (currentQ().type === 'open') {
+                <div class="mt-4">
+                  <textarea rows="6"
+                    [value]="formAnswers()[currentQ().id] || ''"
+                    (input)="setAnswer(currentQ().id, $any($event.target).value)"
+                    placeholder="Escribe tu respuesta aquí..."
+                    class="w-full rounded-2xl p-4 font-playfair text-base text-gray-800 dark:text-slate-200 resize-none"
+                    style="border:2px solid rgba(37,99,235,0.2); background:rgba(255,255,255,0.9); outline:none;">
+                  </textarea>
+                  <p class="font-cinzel text-xs text-gray-400 mt-2 text-right">
+                    {{ (formAnswers()[currentQ().id] || '').length }} caracteres
+                  </p>
+                </div>
+              }
+            </div>
+
+            <!-- Nav anterior / siguiente -->
+            <div class="px-8 py-5 flex items-center justify-between border-t border-gray-100 dark:border-slate-700 flex-shrink-0">
+              <button (click)="prev()" [disabled]="currentIndex() === 0"
+                class="font-cinzel font-bold px-6 py-3 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                style="border:2px solid rgba(37,99,235,0.25); color:#2563eb; background:rgba(37,99,235,0.05);">
+                ← Anterior
+              </button>
+              <span class="font-cinzel text-sm text-gray-400 hidden sm:block">
+                Pregunta {{ currentIndex() + 1 }} de {{ totalQ() }}
+              </span>
+              @if (isLast()) {
+                <button (click)="submitFormAnswers()"
+                  [disabled]="!allAnswered() || formSubmitting()"
+                  class="font-cinzel font-bold px-8 py-3 rounded-xl text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                  style="background:linear-gradient(135deg,#16a34a,#15803d); box-shadow:0 6px 20px rgba(22,163,74,0.35);">
+                  {{ formSubmitting() ? '⏳ Enviando...' : '✅ Entregar' }}
+                </button>
+              } @else {
+                <button (click)="next()"
+                  class="font-cinzel font-bold px-8 py-3 rounded-xl text-white transition-all"
+                  style="background:linear-gradient(135deg,#2563eb,#1d4ed8); box-shadow:0 6px 20px rgba(37,99,235,0.35);">
+                  Siguiente →
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+      </div><!-- fin área principal -->
+
+      <!-- ╔══════════════════════════════════════╗ -->
+      <!-- ║              SIDEBAR                 ║ -->
+      <!-- ╚══════════════════════════════════════╝ -->
+      <div class="w-full lg:w-72 xl:w-80 flex-shrink-0 px-4 pb-6 lg:px-4 lg:py-8 flex flex-col gap-4">
+
+        <!-- TEMPORIZADOR -->
+        @if (quest().type === 'exam' && timeLeft() > 0) {
+          <div class="legendary-card rounded-2xl p-5 text-center animate-fade-in-up"
+            [style.border]="timerDanger() ? '2px solid #dc2626' : timerWarning() ? '2px solid #f59e0b' : '2px solid rgba(37,99,235,0.2)'"
+            [style.background]="timerDanger() ? 'rgba(220,38,38,0.05)' : timerWarning() ? 'rgba(245,158,11,0.05)' : ''">
+            <p class="font-cinzel text-xs uppercase tracking-widest mb-1"
+              [style.color]="timerDanger() ? '#dc2626' : timerWarning() ? '#f59e0b' : '#6b7280'">
+              ⏱ Tiempo restante
+            </p>
+            <div class="font-cinzel font-black text-4xl tabular-nums"
+              [style.color]="timerDanger() ? '#dc2626' : timerWarning() ? '#f59e0b' : '#1d4ed8'"
+              [class.animate-pulse]="timerDanger()">
+              {{ minutesLeft() | number:'2.0-0' }}:{{ secondsLeft() | number:'2.0-0' }}
+            </div>
+            @if (timerWarning()) {
+              <p class="font-cinzel text-xs mt-1"
+                [style.color]="timerDanger() ? '#dc2626' : '#f59e0b'">
+                {{ timerDanger() ? '¡Apúrate!' : 'Poco tiempo' }}
+              </p>
+            }
+          </div>
+        }
+
+        <!-- GRID DE PREGUNTAS -->
+        <div class="legendary-card rounded-2xl p-5 animate-fade-in-up">
+          <p class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-widest mb-3">Preguntas</p>
+          <div class="grid grid-cols-4 gap-2">
+            @for (q of questions(); track q.id; let i = $index) {
+              <button (click)="goTo(i)"
+                class="w-full aspect-square rounded-xl font-cinzel font-black text-sm transition-all duration-150 hover:scale-105"
+                [style.background]="questionStatus(q) === 'current'
+                  ? 'linear-gradient(135deg,#2563eb,#1d4ed8)'
+                  : questionStatus(q) === 'answered'
+                  ? 'linear-gradient(135deg,#16a34a,#15803d)'
+                  : 'rgba(0,0,0,0.06)'"
+                [style.color]="questionStatus(q) === 'unanswered' ? '#9ca3af' : '#fff'"
+                [style.box-shadow]="questionStatus(q) === 'current' ? '0 4px 12px rgba(37,99,235,0.4)' : ''">
+                {{ i + 1 }}
+              </button>
+            }
+          </div>
+          <div class="flex gap-3 mt-4 flex-wrap">
+            <div class="flex items-center gap-1.5">
+              <div class="w-3 h-3 rounded-sm" style="background:linear-gradient(135deg,#2563eb,#1d4ed8)"></div>
+              <span class="font-cinzel text-[10px] text-gray-500">Actual</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <div class="w-3 h-3 rounded-sm" style="background:linear-gradient(135deg,#16a34a,#15803d)"></div>
+              <span class="font-cinzel text-[10px] text-gray-500">Respondida</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <div class="w-3 h-3 rounded-sm" style="background:rgba(0,0,0,0.08)"></div>
+              <span class="font-cinzel text-[10px] text-gray-500">Pendiente</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DETALLES -->
+        <div class="legendary-card rounded-2xl p-5 animate-fade-in-up">
+          <p class="font-cinzel text-xs text-gray-500 dark:text-slate-400 uppercase tracking-widest mb-3">Detalles</p>
+          <ul class="space-y-2">
+            <li class="flex items-center justify-between">
+              <span class="font-cinzel text-xs text-gray-500">Total preguntas</span>
+              <span class="font-cinzel font-bold text-sm text-gray-800 dark:text-slate-200">{{ totalQ() }}</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span class="font-cinzel text-xs text-gray-500">Respondidas</span>
+              <span class="font-cinzel font-bold text-sm text-blue-600">{{ answeredCount() }}</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span class="font-cinzel text-xs text-gray-500">Pendientes</span>
+              <span class="font-cinzel font-bold text-sm text-amber-600">{{ totalQ() - answeredCount() }}</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span class="font-cinzel text-xs text-gray-500">Intentos</span>
+              <span class="font-cinzel font-bold text-sm text-gray-800 dark:text-slate-200">
+                {{ latestSub()?.attemptNumber ?? 0 }}/{{ quest().maxAttempts }}
+              </span>
+            </li>
+            @if (quest().passingScore) {
+              <li class="flex items-center justify-between">
+                <span class="font-cinzel text-xs text-gray-500">Para aprobar</span>
+                <span class="font-cinzel font-bold text-sm text-amber-600">{{ quest().passingScore }}%</span>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Instrucciones -->
+        @if (quest().description) {
+          <div class="legendary-card rounded-2xl p-5 animate-fade-in-up">
+            <p class="font-cinzel text-xs text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-2">📋 Instrucciones</p>
+            <p class="font-playfair text-sm text-gray-600 dark:text-slate-400 leading-relaxed">{{ quest().description }}</p>
+          </div>
+        }
+
+        <!-- Entregar (acceso rápido cuando todo respondido) -->
+        @if (allAnswered()) {
+          <button (click)="submitFormAnswers()" [disabled]="formSubmitting()"
+            class="w-full font-cinzel font-bold py-4 rounded-2xl text-white transition-all disabled:opacity-50 animate-fade-in-up"
+            style="background:linear-gradient(135deg,#16a34a,#15803d); box-shadow:0 8px 25px rgba(22,163,74,0.35);">
+            {{ formSubmitting() ? '⏳ Enviando...' : '✅ Entregar todo' }}
+          </button>
+        }
+
+      </div><!-- fin sidebar -->
+
+    </div><!-- fin quiz layout -->
+
+  <!-- ── ENTREGA DE ARCHIVO ── -->
+  } @else if (quest().requiresSubmission && !questHasForm() && canSubmit()) {
+    <div class="max-w-2xl mx-auto px-4 py-8">
+      <a routerLink="/student/quests" class="inline-flex items-center gap-2 font-cinzel text-sm text-gray-500 hover:text-amber-600 mb-6 transition-colors">← Volver a Misiones</a>
+      <div class="legendary-card rounded-3xl p-8 animate-fade-in-up">
+        <h2 class="font-cinzel font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider mb-2">{{ questIcon(quest().type) }} {{ quest().title }}</h2>
+        <p class="font-playfair text-gray-500 dark:text-slate-400 text-sm mb-6">{{ quest().description }}</p>
+        <label class="block cursor-pointer">
+          <div class="border-2 border-dashed border-purple-300 dark:border-purple-700 rounded-2xl p-10 text-center hover:border-purple-500 transition-colors">
+            @if (previewUrl()) {
+              <img [src]="previewUrl()!" alt="preview" class="max-h-48 mx-auto rounded-xl mb-3 object-contain">
+            } @else if (selectedFile()) {
+              <div class="text-5xl mb-3">📄</div>
+              <p class="font-cinzel text-sm text-gray-700">{{ selectedFile()!.name }}</p>
+            } @else {
+              <div class="text-6xl mb-4">☁️</div>
+              <p class="font-cinzel text-gray-500">Haz clic o arrastra tu archivo</p>
+              <p class="font-playfair text-sm text-gray-400 mt-2">JPG · PNG · PDF — máx. 10 MB</p>
+            }
+          </div>
+          <input type="file" class="hidden" accept="image/*,.pdf" (change)="onFileSelected($event)">
+        </label>
+        @if (fileError()) { <p class="text-red-500 text-sm mt-3">{{ fileError() }}</p> }
+        @if (selectedFile()) {
+          <button (click)="submitEvidence()" [disabled]="fileSubmitting()"
+            class="mt-4 w-full font-cinzel font-bold py-4 rounded-2xl text-white disabled:opacity-50"
+            style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">
+            {{ fileSubmitting() ? '⏳ Enviando...' : '📤 Entregar Evidencia' }}
+          </button>
+        }
+      </div>
+    </div>
+
+  <!-- ── COMPLETAR DIRECTO ── -->
+  } @else if (!quest().requiresSubmission) {
+    <div class="max-w-xl mx-auto px-4 py-16 text-center">
+      <div class="legendary-card rounded-3xl p-10 animate-fade-in-up">
+        <div class="text-6xl mb-4">{{ questIcon(quest().type) }}</div>
+        <h2 class="font-cinzel font-black text-2xl text-gray-800 dark:text-slate-100 mb-2">{{ quest().title }}</h2>
+        <p class="font-playfair text-gray-600 dark:text-slate-400 mb-8">{{ quest().description }}</p>
+        <button (click)="completeQuest()" [disabled]="completing()"
+          class="font-cinzel font-bold px-10 py-4 rounded-2xl text-white disabled:opacity-50"
+          style="background:linear-gradient(135deg,#16a34a,#15803d); box-shadow:0 8px 25px rgba(22,163,74,0.35);">
+          {{ completing() ? '⏳...' : '<img src="assets/imagensinfondo.png" alt="⚔️" style="height:36px;width:auto;display:inline-block;vertical-align:middle;"> Marcar como Completada (+' + quest().xpReward + ' XP)' }}
+        </button>
+      </div>
+    </div>
+
+  <!-- ── SIN ACCESO ── -->
+  } @else {
+    <div class="max-w-xl mx-auto px-4 py-16 text-center">
+      <div class="legendary-card rounded-3xl p-10 animate-fade-in-up">
+        <div class="text-5xl mb-4">{{ latestSub()?.status === 'pending' ? '⏳' : '🔒' }}</div>
+        <p class="font-cinzel font-bold text-gray-600 dark:text-slate-300 text-xl">
+          {{ latestSub()?.status === 'pending' ? 'Entrega en revisión' : 'Sin intentos restantes' }}
+        </p>
+        @if (latestSub()?.teacherNotes) {
+          <p class="font-playfair text-red-500 text-sm mt-3 italic">"{{ latestSub()!.teacherNotes }}"</p>
+        }
+        <a routerLink="/student/quests" class="mt-6 inline-block font-cinzel font-bold px-8 py-3 rounded-xl text-white"
+          style="background:linear-gradient(135deg,#7c3aed,#5b21b6);">← Volver</a>
+      </div>
+    </div>
+  }
+
+}

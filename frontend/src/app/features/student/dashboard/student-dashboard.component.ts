@@ -16,6 +16,7 @@ import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component
   templateUrl: './student-dashboard.component.html',
 })
 export class StudentDashboardComponent implements OnInit {
+  menuOpen = false;
   data = signal<any>(null);
   loading = signal(true);
   showEvolution = signal(false);

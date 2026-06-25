@@ -25,6 +25,7 @@ interface QuestSubmission {
   templateUrl: './student-quests.component.html',
 })
 export class StudentQuestsComponent implements OnInit {
+  menuOpen = false;
   quests    = signal<any[]>([]);
   loading   = signal(true);
   toasts    = signal<{ id: number; message: string; type: string }[]>([]);

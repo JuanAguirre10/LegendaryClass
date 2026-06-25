@@ -14,6 +14,7 @@ import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component
   templateUrl: './student-profile.component.html',
 })
 export class StudentProfileComponent implements OnInit {
+  menuOpen = false;
   profile = signal<any>(null);
   loading = signal(true);
   charInfo: any = null;

@@ -13,6 +13,7 @@ import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component
   templateUrl: './classroom-detail.component.html',
 })
 export class ClassroomDetailComponent implements OnInit {
+  menuOpen = false;
   @Input() id!: string;
   classroom = signal<any>(null);
   loading   = signal(true);

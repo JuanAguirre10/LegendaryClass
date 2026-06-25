@@ -15,6 +15,7 @@ import { UserMenuComponent } from '../../../shared/user-menu/user-menu.component
   templateUrl: './student-rewards.component.html',
 })
 export class StudentRewardsComponent implements OnInit {
+  menuOpen = false;
   rewards    = signal<any[]>([]);
   myRewards  = signal<any[]>([]);
   profile    = signal<any>(null);

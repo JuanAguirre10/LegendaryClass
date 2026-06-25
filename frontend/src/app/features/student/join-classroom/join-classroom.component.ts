@@ -15,6 +15,7 @@ import { environment } from '@env/environment';
   templateUrl: './join-classroom.component.html',
 })
 export class JoinClassroomComponent {
+  menuOpen = false;
   classCode = '';
   loading   = signal(false);
   error     = signal('');
