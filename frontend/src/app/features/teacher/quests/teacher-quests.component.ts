@@ -6,6 +6,16 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.component';
 
+interface QuestionDraft {
+  uid: number;
+  type: 'multiple_choice' | 'true_false' | 'open';
+  text: string;
+  options: string[];
+  correctIndex: number;
+  correctAnswer: 'true' | 'false';
+  points: number;
+}
+
 @Component({
   selector: 'app-teacher-quests',
   standalone: true,
@@ -13,7 +23,7 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
   template: `
   <nav class="legendary-nav sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-      <a routerLink="/teacher/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:36px;width:auto;vertical-align:middle;"> LegendaryClass</a>
+      <a routerLink="/teacher/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" class="brand-logo"> LegendaryClass</a>
       <div class="hidden md:flex gap-1">
         <a routerLink="/teacher/dashboard"  class="nav-link-epic">🏰 Inicio</a>
         <a routerLink="/teacher/classrooms" class="nav-link-epic">🏛️ Aulas</a>
@@ -128,6 +138,78 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
                 <input type="number" [(ngModel)]="newQuest.maxAttempts" min="1" max="10"
                   class="input-epic" />
               </div>
+
+              <!-- Constructor de formulario en línea -->
+              <div class="sm:col-span-2 lg:col-span-3 mt-2 rounded-2xl border border-purple-200 dark:border-purple-900/50 p-4">
+                <div class="flex items-center justify-between flex-wrap gap-2 mb-1">
+                  <p class="font-cinzel text-sm font-bold text-gray-700 dark:text-slate-200">📝 Formulario en línea (opcional)</p>
+                  <button type="button" (click)="addQuestion()" class="btn-epic btn-blue text-xs py-1.5 px-4">➕ Agregar pregunta</button>
+                </div>
+                <p class="font-playfair text-xs text-gray-500 dark:text-slate-400 mb-3">
+                  Si agregas preguntas, los estudiantes responden en la plataforma. Sin preguntas abiertas, se califica automáticamente.
+                </p>
+
+                @if (questions.length > 0) {
+                  <div class="mb-3">
+                    <label class="block font-cinzel text-xs font-bold text-gray-600 dark:text-slate-300 uppercase tracking-wide mb-1">
+                      Nota mínima para aprobar (%)
+                    </label>
+                    <input type="number" [(ngModel)]="newQuest.passingScore" min="0" max="100" class="input-epic text-sm w-32" />
+                  </div>
+                }
+
+                @for (q of questions; track q.uid; let qi = $index) {
+                  <div class="rounded-xl bg-gray-50 dark:bg-slate-800/50 p-3 mb-3">
+                    <div class="flex items-start gap-2 flex-wrap">
+                      <span class="font-cinzel font-black text-purple-600 dark:text-purple-400 text-sm mt-2">{{ qi + 1 }}.</span>
+                      <input [(ngModel)]="q.text" type="text" placeholder="Enunciado de la pregunta *"
+                        class="input-epic text-sm flex-1 min-w-[200px]" />
+                      <select [(ngModel)]="q.type" (ngModelChange)="onTypeChange(q)" class="input-epic text-sm">
+                        <option value="multiple_choice">Opción múltiple</option>
+                        <option value="true_false">Verdadero / Falso</option>
+                        <option value="open">Abierta (revisión manual)</option>
+                      </select>
+                      <input [(ngModel)]="q.points" type="number" min="1" max="100" title="Puntos"
+                        class="input-epic text-sm w-20" />
+                      <button type="button" (click)="removeQuestion(qi)" title="Quitar pregunta"
+                        class="text-red-400 hover:text-red-600 transition text-lg mt-1">🗑️</button>
+                    </div>
+
+                    @if (q.type === 'multiple_choice') {
+                      <div class="mt-2 space-y-1.5 pl-6">
+                        @for (opt of q.options; track $index; let oi = $index) {
+                          <div class="flex items-center gap-2">
+                            <input type="radio" [name]="'correct-' + q.uid" [checked]="q.correctIndex === oi"
+                              (change)="q.correctIndex = oi" title="Marcar como correcta"
+                              class="h-4 w-4 text-green-600 focus:ring-green-500">
+                            <input [(ngModel)]="q.options[oi]" type="text"
+                              [placeholder]="'Opción ' + (oi + 1)" class="input-epic text-sm flex-1" />
+                            @if (q.options.length > 2) {
+                              <button type="button" (click)="removeOption(q, oi)" class="text-gray-400 hover:text-red-500 transition">✕</button>
+                            }
+                          </div>
+                        }
+                        <button type="button" (click)="q.options.push('')" class="font-cinzel text-xs text-purple-600 dark:text-purple-400 hover:underline">
+                          + opción
+                        </button>
+                        <p class="font-playfair text-[11px] text-gray-400 dark:text-slate-500">Marca con el círculo la opción correcta.</p>
+                      </div>
+                    } @else if (q.type === 'true_false') {
+                      <div class="mt-2 pl-6 flex items-center gap-3">
+                        <span class="font-cinzel text-xs font-bold text-gray-600 dark:text-slate-300 uppercase">Respuesta correcta:</span>
+                        <select [(ngModel)]="q.correctAnswer" class="input-epic text-sm w-40">
+                          <option value="true">Verdadero</option>
+                          <option value="false">Falso</option>
+                        </select>
+                      </div>
+                    } @else {
+                      <p class="mt-2 pl-6 font-playfair text-xs text-amber-600 dark:text-amber-400">
+                        ✍️ El profesor revisará esta respuesta manualmente.
+                      </p>
+                    }
+                  </div>
+                }
+              </div>
             }
           </div>
           <div class="flex gap-3 justify-end mt-4">
@@ -164,6 +246,11 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
                     <span class="font-cinzel text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 dark:text-purple-400">
                       {{ q.students?.length ?? 0 }} asignados
                     </span>
+                    @if (q.questions?.length) {
+                      <span class="font-cinzel text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 dark:text-blue-400">
+                        📝 {{ q.questions.length }} preguntas
+                      </span>
+                    }
                     @if (q.dueDate) {
                       <span class="font-playfair text-[11px] text-gray-400 dark:text-slate-500">📅 {{ q.dueDate | date:'dd/MM/yyyy' }}</span>
                     }
@@ -190,7 +277,49 @@ export class TeacherQuestsComponent implements OnInit {
   menuOpen   = false;
   toasts     = signal<{ id: number; message: string; type: string; icon: string; fadingOut: boolean }[]>([]);
 
-  newQuest = { title: '', description: '', xpReward: 50, dueDate: '', requiresSubmission: false, maxAttempts: 1 };
+  newQuest = { title: '', description: '', xpReward: 50, dueDate: '', requiresSubmission: false, maxAttempts: 1, passingScore: 60 };
+  questions: QuestionDraft[] = [];
+  private nextUid = 1;
+
+  addQuestion() {
+    this.questions.push({ uid: this.nextUid++, type: 'multiple_choice', text: '', options: ['', ''], correctIndex: -1, correctAnswer: 'true', points: 10 });
+  }
+
+  removeQuestion(i: number) {
+    this.questions.splice(i, 1);
+  }
+
+  removeOption(q: QuestionDraft, oi: number) {
+    q.options.splice(oi, 1);
+    if (q.correctIndex === oi) q.correctIndex = -1;
+    else if (q.correctIndex > oi) q.correctIndex--;
+  }
+
+  onTypeChange(q: QuestionDraft) {
+    if (q.type === 'multiple_choice' && q.options.length < 2) q.options = ['', ''];
+    if (q.type === 'true_false' && q.correctAnswer !== 'false') q.correctAnswer = 'true';
+  }
+
+  private buildQuestionsPayload(): any[] | string {
+    const payload: any[] = [];
+    for (const [i, q] of this.questions.entries()) {
+      const text = q.text.trim();
+      if (!text) return `La pregunta ${i + 1} no tiene enunciado`;
+      const item: any = { id: i + 1, type: q.type, text, points: Number(q.points) || 1 };
+      if (q.type === 'multiple_choice') {
+        const options = q.options.map((o) => o.trim()).filter(Boolean);
+        if (options.length < 2) return `La pregunta ${i + 1} necesita al menos 2 opciones`;
+        const correct = q.options[q.correctIndex]?.trim();
+        if (!correct) return `Marca la opción correcta de la pregunta ${i + 1}`;
+        item.options = options;
+        item.correctAnswer = correct;
+      } else if (q.type === 'true_false') {
+        item.correctAnswer = q.correctAnswer === 'false' ? 'false' : 'true';
+      }
+      payload.push(item);
+    }
+    return payload;
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -215,7 +344,6 @@ export class TeacherQuestsComponent implements OnInit {
 
   createQuest() {
     if (!this.newQuest.title || this.saving()) return;
-    this.saving.set(true);
     const body: any = {
       title: this.newQuest.title,
       classroomId: this.selectedClassroom,
@@ -224,12 +352,22 @@ export class TeacherQuestsComponent implements OnInit {
     if (this.newQuest.description) body.description = this.newQuest.description;
     if (this.newQuest.dueDate) body.dueDate = new Date(this.newQuest.dueDate).toISOString();
     body.requiresSubmission = this.newQuest.requiresSubmission;
-    if (this.newQuest.requiresSubmission) body.maxAttempts = this.newQuest.maxAttempts;
+    if (this.newQuest.requiresSubmission) {
+      body.maxAttempts = Number(this.newQuest.maxAttempts) || 1;
+      if (this.questions.length > 0) {
+        const payload = this.buildQuestionsPayload();
+        if (typeof payload === 'string') { this.showToast(payload, 'error', '❌'); return; }
+        body.questions = payload;
+        body.passingScore = Math.min(100, Math.max(0, Number(this.newQuest.passingScore) || 60));
+      }
+    }
+    this.saving.set(true);
 
     this.http.post<any>(`${environment.apiUrl}/quests`, body).subscribe({
       next: (q) => {
         this.quests.update((list) => [q, ...list]);
-        this.newQuest = { title: '', description: '', xpReward: 50, dueDate: '', requiresSubmission: false, maxAttempts: 1 };
+        this.newQuest = { title: '', description: '', xpReward: 50, dueDate: '', requiresSubmission: false, maxAttempts: 1, passingScore: 60 };
+        this.questions = [];
         this.showCreate = false;
         this.showToast(`Misión "${q.title}" creada`, 'success', '🗡️');
         this.saving.set(false);
