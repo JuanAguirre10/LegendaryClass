@@ -120,17 +120,35 @@ interface QuestionDraft {
             <input [(ngModel)]="newQuest.description" type="text" placeholder="Descripción (opcional)"
               class="input-epic text-sm sm:col-span-2 lg:col-span-3" />
 
-            <!-- requiresSubmission toggle -->
-            <div class="flex items-center gap-3 mt-2 sm:col-span-2 lg:col-span-3">
-              <input type="checkbox" id="requires-submission" [(ngModel)]="newQuest.requiresSubmission"
-                class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-              <label for="requires-submission" class="font-cinzel text-sm font-bold text-gray-600 dark:text-slate-300 uppercase tracking-wide">
-                Requiere entrega de evidencia
+            <!-- Tipo de misión -->
+            <div class="sm:col-span-2 lg:col-span-3 mt-2">
+              <label class="block font-cinzel text-xs font-bold text-gray-600 dark:text-slate-300 uppercase tracking-wide mb-2">
+                Tipo de misión
               </label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button type="button" (click)="setMode('simple')"
+                  class="text-left p-3 rounded-xl border-2 transition-all"
+                  [ngClass]="newQuest.mode === 'simple' ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-slate-600'">
+                  <span class="font-cinzel font-bold text-sm text-gray-800 dark:text-slate-100 block">⚔️ Tarea simple</span>
+                  <span class="font-playfair text-xs text-gray-500 dark:text-slate-400">El estudiante la marca como completada</span>
+                </button>
+                <button type="button" (click)="setMode('form')"
+                  class="text-left p-3 rounded-xl border-2 transition-all"
+                  [ngClass]="newQuest.mode === 'form' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-slate-600'">
+                  <span class="font-cinzel font-bold text-sm text-gray-800 dark:text-slate-100 block">📝 Formulario en línea</span>
+                  <span class="font-playfair text-xs text-gray-500 dark:text-slate-400">Preguntas con opciones, se califica solo</span>
+                </button>
+                <button type="button" (click)="setMode('file')"
+                  class="text-left p-3 rounded-xl border-2 transition-all"
+                  [ngClass]="newQuest.mode === 'file' ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-gray-200 dark:border-slate-600'">
+                  <span class="font-cinzel font-bold text-sm text-gray-800 dark:text-slate-100 block">📎 Entrega de evidencia</span>
+                  <span class="font-playfair text-xs text-gray-500 dark:text-slate-400">Sube un archivo y tú lo revisas</span>
+                </button>
+              </div>
             </div>
 
-            <!-- maxAttempts — shown only when requiresSubmission is true -->
-            @if (newQuest.requiresSubmission) {
+            <!-- maxAttempts — para formularios y entregas -->
+            @if (newQuest.mode !== 'simple') {
               <div class="sm:col-span-2 lg:col-span-3">
                 <label class="block font-cinzel text-xs font-bold text-gray-600 dark:text-slate-300 uppercase tracking-wide mb-1">
                   Intentos permitidos (1–10)
@@ -138,15 +156,17 @@ interface QuestionDraft {
                 <input type="number" [(ngModel)]="newQuest.maxAttempts" min="1" max="10"
                   class="input-epic" />
               </div>
+            }
 
+            @if (newQuest.mode === 'form') {
               <!-- Constructor de formulario en línea -->
-              <div class="sm:col-span-2 lg:col-span-3 mt-2 rounded-2xl border border-purple-200 dark:border-purple-900/50 p-4">
+              <div class="sm:col-span-2 lg:col-span-3 mt-2 rounded-2xl border border-blue-200 dark:border-blue-900/50 p-4">
                 <div class="flex items-center justify-between flex-wrap gap-2 mb-1">
-                  <p class="font-cinzel text-sm font-bold text-gray-700 dark:text-slate-200">📝 Formulario en línea (opcional)</p>
+                  <p class="font-cinzel text-sm font-bold text-gray-700 dark:text-slate-200">📝 Preguntas del formulario</p>
                   <button type="button" (click)="addQuestion()" class="btn-epic btn-blue text-xs py-1.5 px-4">➕ Agregar pregunta</button>
                 </div>
                 <p class="font-playfair text-xs text-gray-500 dark:text-slate-400 mb-3">
-                  Si agregas preguntas, los estudiantes responden en la plataforma. Sin preguntas abiertas, se califica automáticamente.
+                  Los estudiantes del aula responden en la plataforma. Sin preguntas abiertas, se califica automáticamente.
                 </p>
 
                 @if (questions.length > 0) {
@@ -277,9 +297,15 @@ export class TeacherQuestsComponent implements OnInit {
   menuOpen   = false;
   toasts     = signal<{ id: number; message: string; type: string; icon: string; fadingOut: boolean }[]>([]);
 
-  newQuest = { title: '', description: '', xpReward: 50, dueDate: '', requiresSubmission: false, maxAttempts: 1, passingScore: 60 };
+  newQuest = { title: '', description: '', xpReward: 50, dueDate: '', mode: 'simple' as 'simple' | 'form' | 'file', maxAttempts: 1, passingScore: 60 };
   questions: QuestionDraft[] = [];
   private nextUid = 1;
+
+  setMode(mode: 'simple' | 'form' | 'file') {
+    this.newQuest.mode = mode;
+    // al elegir formulario, deja la primera pregunta lista para editar
+    if (mode === 'form' && this.questions.length === 0) this.addQuestion();
+  }
 
   addQuestion() {
     this.questions.push({ uid: this.nextUid++, type: 'multiple_choice', text: '', options: ['', ''], correctIndex: -1, correctAnswer: 'true', points: 10 });
@@ -351,22 +377,23 @@ export class TeacherQuestsComponent implements OnInit {
     };
     if (this.newQuest.description) body.description = this.newQuest.description;
     if (this.newQuest.dueDate) body.dueDate = new Date(this.newQuest.dueDate).toISOString();
-    body.requiresSubmission = this.newQuest.requiresSubmission;
-    if (this.newQuest.requiresSubmission) {
+    body.requiresSubmission = this.newQuest.mode !== 'simple';
+    if (this.newQuest.mode !== 'simple') {
       body.maxAttempts = Number(this.newQuest.maxAttempts) || 1;
-      if (this.questions.length > 0) {
-        const payload = this.buildQuestionsPayload();
-        if (typeof payload === 'string') { this.showToast(payload, 'error', '❌'); return; }
-        body.questions = payload;
-        body.passingScore = Math.min(100, Math.max(0, Number(this.newQuest.passingScore) || 60));
-      }
+    }
+    if (this.newQuest.mode === 'form') {
+      if (this.questions.length === 0) { this.showToast('Agrega al menos una pregunta al formulario', 'error', '❌'); return; }
+      const payload = this.buildQuestionsPayload();
+      if (typeof payload === 'string') { this.showToast(payload, 'error', '❌'); return; }
+      body.questions = payload;
+      body.passingScore = Math.min(100, Math.max(0, Number(this.newQuest.passingScore) || 60));
     }
     this.saving.set(true);
 
     this.http.post<any>(`${environment.apiUrl}/quests`, body).subscribe({
       next: (q) => {
         this.quests.update((list) => [q, ...list]);
-        this.newQuest = { title: '', description: '', xpReward: 50, dueDate: '', requiresSubmission: false, maxAttempts: 1, passingScore: 60 };
+        this.newQuest = { title: '', description: '', xpReward: 50, dueDate: '', mode: 'simple', maxAttempts: 1, passingScore: 60 };
         this.questions = [];
         this.showCreate = false;
         this.showToast(`Misión "${q.title}" creada`, 'success', '🗡️');
