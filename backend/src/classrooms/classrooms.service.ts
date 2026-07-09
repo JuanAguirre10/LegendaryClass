@@ -27,10 +27,15 @@ export class ClassroomsService {
     const slug = await this.generateUniqueSlug(dto.name, undefined, dto.gradeLevel);
     const classCode = await this.generateUniqueCode();
     const schoolYear = dto.schoolYear ?? this.getCurrentSchoolYear();
+    // la materia visible de la tarjeta sale del curso elegido
+    const course = dto.courseId
+      ? await this.prisma.course.findUnique({ where: { id: dto.courseId }, select: { name: true } })
+      : null;
 
     return this.prisma.classroom.create({
       data: {
         ...dto,
+        subject: course?.name ?? null,
         schoolYear,
         slug,
         classCode,
