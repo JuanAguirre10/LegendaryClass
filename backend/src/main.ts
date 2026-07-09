@@ -25,9 +25,9 @@ async function bootstrap() {
     defaultVersion: '1',
   });
 
-  // CORS
+  // CORS — sin barra final: el navegador compara el Origin de forma exacta
   app.enableCors({
-    origin: process.env.FRONTEND_URL ?? 'http://localhost:4200',
+    origin: (process.env.FRONTEND_URL ?? 'http://localhost:4200').replace(/\/+$/, ''),
     credentials: true,
   });
 

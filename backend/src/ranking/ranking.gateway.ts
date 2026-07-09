@@ -13,7 +13,10 @@ import { RankingService } from './ranking.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @WebSocketGateway({
-  cors: { origin: process.env.FRONTEND_URL ?? 'http://localhost:4200', credentials: true },
+  cors: {
+    origin: (process.env.FRONTEND_URL ?? 'http://localhost:4200').replace(/\/+$/, ''),
+    credentials: true,
+  },
 })
 export class RankingGateway implements OnGatewayConnection {
   @WebSocketServer() server!: Server;
