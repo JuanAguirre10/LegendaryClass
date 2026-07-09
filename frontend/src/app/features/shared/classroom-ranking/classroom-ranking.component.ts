@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, signal, computed, DestroyRef, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges, signal, computed, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
@@ -82,7 +82,7 @@ const CHARACTER_ICONS: Record<string, string> = {
   </div>
   `,
 })
-export class ClassroomRankingComponent implements OnInit, OnDestroy {
+export class ClassroomRankingComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) classroomId!: string;
 
   ranking = signal<RankingEntry[]>([]);
@@ -103,13 +103,27 @@ export class ClassroomRankingComponent implements OnInit, OnDestroy {
     private auth: AuthService,
   ) {}
 
-  ngOnInit() {
+  // ngOnChanges (y no ngOnInit): el leaderboard reutiliza esta instancia al
+  // cambiar de aula, así que hay que recargar cada vez que cambia el @Input
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['classroomId'] && this.classroomId) this.load();
+  }
+
+  private load() {
+    const id = this.classroomId;
     this.myId = this.auth.user()?.id ?? '';
+    this.ranking.set([]);
+    this.sub?.unsubscribe();
     this.http
-      .get<{ ranking: RankingEntry[] }>(`${environment.apiUrl}/ranking/classroom/${this.classroomId}`)
+      .get<{ ranking: RankingEntry[] }>(`${environment.apiUrl}/ranking/classroom/${id}`)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (res) => this.ranking.set(res.ranking) });
-    this.sub = this.realtime.onClassroomRanking(this.classroomId).subscribe((r) => this.ranking.set(r));
+      .subscribe({
+        // descarta respuestas tardías de un aula que ya no está seleccionada
+        next: (res) => { if (id === this.classroomId) this.ranking.set(res.ranking); },
+      });
+    this.sub = this.realtime.onClassroomRanking(id).subscribe((r) => {
+      if (id === this.classroomId) this.ranking.set(r);
+    });
   }
 
   medal(rank: number): string {
