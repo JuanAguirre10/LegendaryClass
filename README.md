@@ -45,7 +45,10 @@ LegendaryClass es una plataforma web que convierte el aula en un videojuego de r
 - **✨ Animaciones de evolución** — Al subir de nivel aparece un overlay cinematográfico; al alcanzar un tier especial (niveles 25/50/75) el overlay es aún más espectacular y, al cerrarlo, el panel del personaje anima el cambio de imagen: la ilustración antigua se sacude y desvanece, un sweep dorado sube de abajo hacia arriba y la nueva ilustración se revela desde los pies con un pulso de luz.
 - **🌙 Modo oscuro** — Paleta RPG épica en todas las páginas; persiste en `localStorage` y respeta la preferencia del sistema operativo.
 - **⚙️ Página de ajustes** — Tema, datos de cuenta (nombre/email/avatar) y cambio de contraseña para todos los roles.
-- **🔒 Endurecimiento** — JWT con _fail-fast_, rate-limiting + helmet, índices de foreign keys, paginación de listados (`{ data, meta }`), ESLint con reglas de accesibilidad.
+- **📝 Exámenes y ejercicios interactivos** — Las misiones de tipo `exam`/`exercise` muestran formularios en el navegador (selección múltiple, verdadero/falso, respuesta abierta). Auto-calificación instantánea para preguntas objetivas; las abiertas van a revisión del profesor. Mínimo 10 preguntas por misión; los exámenes requieren ≥ 70 % para aprobar.
+- **🎮 Quiz de una pregunta a la vez** — Página dedicada `/student/quests/:id` con layout de dos columnas: pregunta grande a la izquierda + sidebar con temporizador countdown (exámenes), grid de navegación de preguntas (azul=actual, verde=respondida, gris=pendiente), detalles del intento y botón de entrega rápida.
+- **🛒 Tienda con catálogo único por aula** — Cada aula tiene 10 recompensas propias y diferentes (sin duplicados entre aulas); incluyen permisos de clase, ventajas académicas, roles sociales y cofre legendario; con íconos emoji, rareza y costo en puntos globales.
+- **🔒 Endurecimiento** — JWT con _fail-fast_, rate-limiting + helmet, índices de foreign keys, paginación de listados (`{ data, meta }`), ESLint con reglas de accesibilidad. Las respuestas correctas se eliminan del payload de la API antes de enviarse al estudiante.
 
 ---
 
@@ -283,8 +286,9 @@ npm test               # Tests Karma/Jasmine
 | `/student/dashboard` | Dashboard: XP, aulas, misiones activas, logros, tienda | ✅ Completo |
 | `/student/classrooms` | Lista de aulas inscritas + unirse por código | ✅ Completo |
 | `/student/classrooms/:id` | Detalle de aula: ranking, comportamientos, misiones | ✅ Completo |
-| `/student/quests` | Lista de misiones activas y completadas | ✅ Completo |
-| `/student/rewards` | Tienda de recompensas por rareza | ✅ Completo |
+| `/student/quests` | Lista de misiones activas y completadas (click → página de detalle) | ✅ Completo |
+| `/student/quests/:id` | Quiz interactivo: una pregunta a la vez, timer, grid de navegación | ✅ Completo |
+| `/student/rewards` | Tienda con catálogo único de 10 recompensas por aula | ✅ Completo |
 | `/student/achievements` | Grid de logros con barra de progreso | ✅ Completo |
 | `/student/profile` | Perfil: stats RPG, barra XP, tier, avatar de personaje | ✅ Completo |
 
@@ -490,8 +494,14 @@ WebSocket (tiempo real): mismo origen, namespace por defecto — eventos `rankin
 | POST   | `/quests` | teacher | Crear misión |
 | GET    | `/quests/classroom/:id` | teacher | Misiones de un aula |
 | GET    | `/quests/my-quests` | student | Mis misiones activas |
-| POST   | `/quests/:id/complete` | student | Completar misión (+XP) |
+| GET    | `/quests/my-quests/:id` | student | Detalle de una misión (sin `correctAnswer`) |
+| POST   | `/quests/:id/submit-answers` | student | Enviar respuestas del formulario (auto-califica) |
+| POST   | `/quests/:id/submit` | student | Entregar evidencia (archivo) |
+| POST   | `/quests/:id/complete` | student | Completar misión sin entrega (+XP al inbox) |
 | DELETE | `/quests/:id` | teacher | Eliminar misión |
+| GET    | `/quests/submissions/pending` | teacher | Ver entregas pendientes de revisión |
+| PATCH  | `/quests/submissions/:id/approve` | teacher | Aprobar entrega |
+| PATCH  | `/quests/submissions/:id/reject` | teacher | Rechazar entrega |
 
 ### Módulos de rol
 
@@ -692,9 +702,13 @@ Disponibles después de ejecutar `npm run db:seed`:
 | Estudiante principal | student15@legendaryclass.com | password123 | Tomás Iglesias · Arquero |
 | Padre | parent@legendaryclass.com | password123 | |
 
-Ejecuta también `npx ts-node prisma/seed-rich.ts` desde `backend/` para poblar los 15 estudiantes (student1–student15) y 5 aulas adicionales (DEMO01–DEMO05).
+Ejecuta también `npx ts-node prisma/seed-rich.ts` desde `backend/` para poblar los 15 estudiantes (student1–student15), 5 aulas adicionales (DEMO01–DEMO05), misiones interactivas con preguntas y recompensas únicas por aula.
 
-El aula de demo tiene código: **`DEMO01`**
+Cuentas ricas adicionales (solo con seed-rich): `teacher2@`, `teacher3@`, `student3@`–`student15@`, `parent2@`, `parent3@` — todas con `password123`.
+
+El aula de demo principal tiene código: **`DEMO01`**
+
+> **Cuenta recomendada para pruebas de estudiante:** `student15@legendaryclass.com` — Tomás Iglesias, Arquero. Tiene misiones de examen y ejercicio con formularios interactivos asignados en DEMO01 y DEMO02.
 
 ---
 
