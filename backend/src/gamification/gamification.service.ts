@@ -60,6 +60,10 @@ const STAT_MULTIPLIERS: Record<CharacterBonusType, Partial<Record<string, number
 // ─── Achievement definitions ───────────────────────────────────────────────
 
 export const ACHIEVEMENT_DEFINITIONS = [
+  // Welcome gifts — se desbloquean al elegir personaje y quedan en el buzón de XP
+  { key: 'welcome',         name: 'Bienvenido al Reino',      icon: '🎁',  xpReward: 50,  category: 'welcome',  maxProgress: 1  },
+  { key: 'first_character', name: 'Identidad Heroica',        icon: '🛡️',  xpReward: 75,  category: 'welcome',  maxProgress: 1  },
+  { key: 'ready_adventure', name: 'Listo para la Aventura',   icon: '🚀',  xpReward: 25,  category: 'welcome',  maxProgress: 1  },
   // Quest achievements
   { key: 'first_quest',   name: 'Primera Aventura',           icon: '🗡️',  xpReward: 25,  category: 'quests',   maxProgress: 1  },
   { key: 'quest_5',       name: 'Aventurero Comprometido',    icon: '🎯',  xpReward: 50,  category: 'quests',   maxProgress: 5  },
@@ -221,6 +225,14 @@ export class GamificationService {
   async checkStreakAchievements(userId: string, streakDays: number) {
     if (streakDays >= 7)  await this.unlockAchievement(userId, 'week_warrior', 75);
     if (streakDays >= 30) await this.unlockAchievement(userId, 'month_champ',  150);
+  }
+
+  // Regalos de bienvenida: logros ya completados que quedan como XP por
+  // reclamar en el buzón del estudiante nuevo (150 XP → nivel 2 al canjear)
+  async grantWelcomeGifts(userId: string) {
+    await this.unlockAchievement(userId, 'welcome', 50);
+    await this.unlockAchievement(userId, 'first_character', 75);
+    await this.unlockAchievement(userId, 'ready_adventure', 25);
   }
 
   private async unlockAchievement(userId: string, key: string, xpReward: number) {

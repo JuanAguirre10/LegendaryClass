@@ -21,7 +21,7 @@ export class StudentService {
 
     const charInfo = CHARACTER_INFO[characterType];
 
-    return this.prisma.user.update({
+    const updated = await this.prisma.user.update({
       where: { id: studentId },
       data: {
         characterType,
@@ -33,6 +33,11 @@ export class StudentService {
         level: true, experiencePoints: true,
       },
     });
+
+    // Regalos de bienvenida al buzón de XP (una sola vez, la selección es permanente)
+    await this.gamification.grantWelcomeGifts(studentId);
+
+    return updated;
   }
 
   // ─── Dashboard data ──────────────────────────────────────────────────────
