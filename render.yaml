@@ -1,0 +1,25 @@
+# Blueprint de Render — crear con "New > Blueprint" apuntando a este repo.
+# El nombre del servicio debe coincidir con la URL usada en
+# frontend/src/environments/environment.prod.ts (legendaryclass-api.onrender.com).
+services:
+  - type: web
+    name: legendaryclass-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma migrate deploy && node dist/src/main.js
+    healthCheckPath: /api/docs
+    envVars:
+      - key: DATABASE_URL # Neon: URL pooled (host con -pooler)
+        sync: false
+      - key: DIRECT_URL # Neon: URL directa (host sin -pooler)
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: FRONTEND_URL # URL del frontend en Vercel (CORS + WebSocket)
+        sync: false
+      - key: NODE_ENV
+        value: production

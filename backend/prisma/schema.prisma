@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // runtime (pooled en Neon/Supabase)
+  directUrl = env("DIRECT_URL") // migraciones (conexión directa, sin pooler)
 }
 
 // ─── Enums ─────────────────────────────────────────────────────────────────
