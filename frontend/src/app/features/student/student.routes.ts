@@ -27,6 +27,11 @@ export const studentRoutes: Routes = [
       import('./quests/student-quests.component').then((m) => m.StudentQuestsComponent),
   },
   {
+    path: 'quests/:id',
+    loadComponent: () =>
+      import('./quests/quest-detail.component').then((m) => m.QuestDetailComponent),
+  },
+  {
     path: 'achievements',
     loadComponent: () =>
       import('./achievements/student-achievements.component').then((m) => m.StudentAchievementsComponent),

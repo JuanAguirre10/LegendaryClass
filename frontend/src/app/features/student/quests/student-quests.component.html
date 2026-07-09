@@ -175,6 +175,13 @@
                     style="background:linear-gradient(135deg,#16a34a,#15803d);">
                     ⚔️ Completar Misión
                   </button>
+                } @else if (quest.questions?.length) {
+                  <!-- Misión con formulario en línea → abre el detalle con las preguntas -->
+                  <a [routerLink]="['/student/quests', quest.id]"
+                    class="mt-4 w-full block text-center font-cinzel font-bold text-sm py-3 rounded-xl text-white transition-all duration-300"
+                    style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">
+                    📝 {{ canSubmit(quest) ? 'Responder Formulario' : 'Ver Formulario' }}
+                  </a>
                 } @else if (canSubmit(quest)) {
                   <button (click)="openModal(quest.id)"
                     class="mt-4 w-full font-cinzel font-bold text-sm py-3 rounded-xl text-white transition-all duration-300"

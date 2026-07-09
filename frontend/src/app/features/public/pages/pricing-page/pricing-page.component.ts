@@ -33,14 +33,14 @@ export class PricingPageComponent {
       disabled: [],
     },
     {
-      name: 'Legendario', icon: '👑', price: 'S/ 79', period: '/mes',
+      name: 'Legendario', icon: '👑', price: 'S/ 20', period: '/profesor',
       desc: 'Para instituciones que quieren transformar la educación a escala completa.',
       popular: false, badge: '🏆 INSTITUCIONAL',
       gradientFrom: '#7c3aed', gradientTo: '#5b21b6',
       priceColor: 'text-purple-700',
       btnLabel: '👑 CONTACTAR VENTAS',
       btnGold: false,
-      features: ['Todo en Aventurero', 'Panel de Director', 'Gestión institucional', 'Analytics avanzados', 'Marca personalizada', 'API de integración', 'Capacitaciones incluidas', 'Soporte dedicado 24/7', 'SLA garantizado'],
+      features: ['Todo en Aventurero', '1 cuenta de Director', 'Hasta 10 profesores', 'Panel de Director', 'Gestión institucional', 'Analytics avanzados', 'Marca personalizada', 'API de integración', 'Capacitaciones incluidas', 'Soporte dedicado 24/7', 'SLA garantizado'],
       disabled: [],
     },
   ];
