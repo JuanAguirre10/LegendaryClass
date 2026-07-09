@@ -181,6 +181,11 @@ export class RewardsService {
       );
     }
 
+    // Devolver los puntos del aula cuando el canje se cancela (solo la primera vez)
+    if (status === RewardStatus.cancelled && sr.status !== RewardStatus.cancelled) {
+      await this.gamification.updateStudentPoints(sr.studentId, sr.classroomId, sr.pointsSpent);
+    }
+
     const updated = await this.prisma.studentReward.update({
       where: { id },
       data: {
