@@ -19,7 +19,7 @@ import { NotificationService, AppNotification } from '../../core/notifications/n
       }
     </button>
     @if (open()) {
-      <div class="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-50">
+      <div class="absolute right-0 mt-2 w-80 max-w-[calc(100vw-1.5rem)] max-h-96 overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-50">
         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
           <span class="font-cinzel font-bold text-gray-800 text-sm">Notificaciones</span>
           <button (click)="notifications.markAllRead()" class="font-cinzel text-xs text-purple-600 hover:underline">Marcar todas</button>

@@ -91,16 +91,16 @@
           </p>
         } @else {
           <!-- Podio top 3 -->
-          <div class="grid grid-cols-3 gap-4 mb-8">
+          <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
             @for (p of podium(); track p.studentId) {
-              <div class="legendary-card p-4 text-center"
+              <div class="legendary-card p-2 sm:p-4 text-center"
                 [class.ring-2]="p.rank === 1"
                 [class.ring-amber-400]="p.rank === 1">
-                <div class="text-4xl mb-1">{{ medal(p.rank) }}</div>
-                <div class="text-3xl mb-1">{{ charIcon(p.characterType) }}</div>
-                <div class="font-cinzel font-bold text-sm truncate dark:text-slate-50">{{ p.name }}</div>
+                <div class="text-3xl sm:text-4xl mb-1">{{ medal(p.rank) }}</div>
+                <div class="text-2xl sm:text-3xl mb-1">{{ charIcon(p.characterType) }}</div>
+                <div class="font-cinzel font-bold text-xs sm:text-sm truncate dark:text-slate-50">{{ p.name }}</div>
                 <div class="font-cinzel text-xs text-gray-500 dark:text-slate-400">Lv.{{ p.level }}</div>
-                <div class="font-cinzel font-black text-purple-600 dark:text-purple-400 text-lg mt-1">
+                <div class="font-cinzel font-black text-purple-600 dark:text-purple-400 text-base sm:text-lg mt-1">
                   {{ p.totalPoints }} XP
                 </div>
                 @if (p.weeklyXpDelta > 0) {

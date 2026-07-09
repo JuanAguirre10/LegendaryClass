@@ -70,8 +70,8 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
     </div>
 
     @if (showCreate) {
-      <div class="legendary-card p-6 mb-6 grid grid-cols-2 gap-4">
-        <input [(ngModel)]="newClass.name"        type="text" placeholder="Nombre del aula *"     class="input-epic col-span-2 text-sm" />
+      <div class="legendary-card p-6 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input [(ngModel)]="newClass.name"        type="text" placeholder="Nombre del aula *"     class="input-epic sm:col-span-2 text-sm" />
         <select
           [(ngModel)]="newClass.courseId"
           name="courseId"
@@ -84,8 +84,8 @@ import { ThemeToggleComponent } from '../../../shared/theme-toggle/theme-toggle.
           }
         </select>
         <input [(ngModel)]="newClass.gradeLevel"  type="text" placeholder="Grado"                  class="input-epic text-sm" />
-        <input [(ngModel)]="newClass.description" type="text" placeholder="Descripción (opcional)" class="input-epic col-span-2 text-sm" />
-        <div class="col-span-2 flex gap-3 justify-end">
+        <input [(ngModel)]="newClass.description" type="text" placeholder="Descripción (opcional)" class="input-epic sm:col-span-2 text-sm" />
+        <div class="sm:col-span-2 flex gap-3 justify-end">
           <button (click)="showCreate = false" class="font-cinzel text-gray-500 dark:text-slate-400 px-4 py-2 text-sm hover:text-gray-700 dark:hover:text-slate-200 transition">Cancelar</button>
           <button (click)="createClassroom()" class="btn-epic btn-green text-sm py-2 px-6">Crear Aula</button>
         </div>
