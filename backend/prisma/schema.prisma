@@ -500,11 +500,13 @@ model StudentBehavior {
   behaviorId     String
   classroomId    String
   pointsAwarded  Int
+  xpAmount       Int      @default(0)
   date           DateTime @default(now())
   notes          String?
   awardedById    String
   isApproved     Boolean  @default(true)
   isManual       Boolean  @default(false)
+  xpClaimed      Boolean  @default(false)
 
   student    User      @relation("StudentBehaviors", fields: [studentId], references: [id], onDelete: Cascade)
   behavior   Behavior  @relation(fields: [behaviorId], references: [id])
@@ -603,6 +605,7 @@ model Achievement {
   progress    Int       @default(0)
   maxProgress Int       @default(1)
   isCompleted Boolean   @default(false)
+  xpClaimed   Boolean   @default(false)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -629,6 +632,8 @@ model Quest {
   dueDate        DateTime?
   completionDate DateTime?
   requirements   Json?
+  questions      Json?
+  passingScore   Int         @default(60)
 
   classroom Classroom     @relation(fields: [classroomId], references: [id], onDelete: Cascade)
   teacher   User          @relation("TeacherQuests", fields: [teacherId], references: [id])
@@ -651,6 +656,7 @@ model QuestStudent {
   studentId   String
   completedAt DateTime?
   isCompleted Boolean   @default(false)
+  xpClaimed   Boolean   @default(false)
 
   quest   Quest @relation(fields: [questId], references: [id], onDelete: Cascade)
   student User  @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -722,8 +728,10 @@ model QuestSubmission {
   id            String           @id @default(cuid())
   questId       String
   studentId     String
-  fileUrl       String
-  fileName      String
+  fileUrl       String?
+  fileName      String?
+  answers       Json?
+  score         Int?
   status        SubmissionStatus @default(pending)
   attemptNumber Int
   teacherNotes  String?

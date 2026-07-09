@@ -31,6 +31,8 @@ export class QuestsService {
         dueDate: dto.dueDate ? new Date(dto.dueDate) : null,
         requiresSubmission: dto.requiresSubmission ?? false,
         maxAttempts: dto.maxAttempts ?? 1,
+        questions: dto.questions ?? undefined,
+        passingScore: dto.passingScore ?? undefined,
       },
     });
 
@@ -64,6 +66,28 @@ export class QuestsService {
     });
   }
 
+  async findOneForStudent(questId: string, studentId: string) {
+    const quest = await this.prisma.quest.findFirst({
+      where: { id: questId, status: 'active', students: { some: { studentId } } },
+      include: { students: { where: { studentId }, select: { isCompleted: true, completedAt: true } } },
+    });
+    if (!quest) throw new NotFoundException('Misión no encontrada');
+
+    const sub = await this.prisma.questSubmission.findFirst({
+      where: { questId, studentId },
+      orderBy: { attemptNumber: 'desc' },
+    });
+
+    return { ...quest, questions: this.sanitizeQuestions(quest.questions), latestSubmission: sub ?? null };
+  }
+
+  // Strip correctAnswer so students cannot see answers via network tab
+  private sanitizeQuestions(questions: unknown) {
+    return Array.isArray(questions)
+      ? (questions as any[]).map(({ correctAnswer: _c, ...q }) => q)
+      : questions;
+  }
+
   async findForStudent(studentId: string, classroomId?: string) {
     const quests = await this.prisma.quest.findMany({
       where: {
@@ -76,8 +100,10 @@ export class QuestsService {
       },
     });
 
-    const submissionQuestIds = quests.filter((q) => q.requiresSubmission).map((q) => q.id);
-    if (submissionQuestIds.length === 0) return quests;
+    const safeQuests = quests.map((q) => ({ ...q, questions: this.sanitizeQuestions(q.questions) }));
+
+    const submissionQuestIds = safeQuests.filter((q) => q.requiresSubmission).map((q) => q.id);
+    if (submissionQuestIds.length === 0) return safeQuests;
 
     const submissions = await this.prisma.questSubmission.findMany({
       where: { questId: { in: submissionQuestIds }, studentId },
@@ -89,7 +115,7 @@ export class QuestsService {
       if (!latestMap.has(sub.questId)) latestMap.set(sub.questId, sub);
     }
 
-    return quests.map((q) => ({ ...q, latestSubmission: latestMap.get(q.id) ?? null }));
+    return safeQuests.map((q) => ({ ...q, latestSubmission: latestMap.get(q.id) ?? null }));
   }
 
   async complete(questId: string, studentId: string) {
@@ -101,18 +127,11 @@ export class QuestsService {
     if (qs.isCompleted) throw new BadRequestException('Ya completaste esta quest');
     if (qs.quest.status !== QuestStatus.active) throw new BadRequestException('Esta quest ya no está activa');
 
+    // Mark completed — XP stays pending in inbox until student claims it
     await this.prisma.questStudent.update({
       where: { questId_studentId: { questId, studentId } },
-      data: { isCompleted: true, completedAt: new Date() },
+      data: { isCompleted: true, completedAt: new Date(), xpClaimed: false },
     });
-
-    const result = await this.gamification.gainExperience(
-      studentId,
-      qs.quest.xpReward,
-      qs.quest.type ?? 'quest',
-      `Quest completada: ${qs.quest.title}`,
-      qs.quest.classroomId,
-    );
 
     const user = await this.prisma.user.update({
       where: { id: studentId },
@@ -121,7 +140,7 @@ export class QuestsService {
 
     await this.gamification.checkQuestAchievements(studentId, user.questsCompleted);
 
-    return { message: 'Quest completada', xpEarned: qs.quest.xpReward, ...result };
+    return { message: 'Quest completada', xpPending: qs.quest.xpReward };
   }
 
   async delete(id: string, teacherId: string) {
@@ -137,28 +156,31 @@ export class QuestsService {
 
   // ─── Submission flow ────────────────────────────────────────────────────────
 
-  async submitEvidence(questId: string, studentId: string, file: Express.Multer.File) {
+  private async getQuestForSubmission(questId: string) {
     const quest = await this.prisma.quest.findUnique({
       where: { id: questId },
-      select: { requiresSubmission: true, maxAttempts: true, status: true, dueDate: true, teacherId: true, classroomId: true, title: true },
+      select: { requiresSubmission: true, maxAttempts: true, status: true, dueDate: true,
+                teacherId: true, classroomId: true, title: true, questions: true, passingScore: true },
     });
     if (!quest) throw new NotFoundException('Quest no encontrada');
-    if (!quest.requiresSubmission) throw new BadRequestException('Esta quest no requiere entrega de evidencia');
+    if (!quest.requiresSubmission) throw new BadRequestException('Esta quest no requiere entrega');
     if (quest.status !== QuestStatus.active) throw new BadRequestException('Esta quest ya no está activa');
     if (quest.dueDate && quest.dueDate < new Date()) throw new BadRequestException('El plazo de entrega ha vencido');
+    return quest;
+  }
+
+  async submitEvidence(questId: string, studentId: string, file: Express.Multer.File) {
+    const quest = await this.getQuestForSubmission(questId);
 
     const attemptCount = await this.prisma.questSubmission.count({ where: { questId, studentId } });
     if (attemptCount >= quest.maxAttempts) throw new ForbiddenException('Sin intentos restantes');
 
-    const pending = await this.prisma.questSubmission.findFirst({
-      where: { questId, studentId, status: 'pending' },
-    });
-    if (pending) throw new BadRequestException('Ya tienes una entrega pendiente de revisión para esta misión');
+    const pending = await this.prisma.questSubmission.findFirst({ where: { questId, studentId, status: 'pending' } });
+    if (pending) throw new BadRequestException('Ya tienes una entrega pendiente de revisión');
 
     const submission = await this.prisma.questSubmission.create({
       data: {
-        questId,
-        studentId,
+        questId, studentId,
         fileUrl: `/uploads/submissions/${file.filename}`,
         fileName: file.originalname,
         attemptNumber: attemptCount + 1,
@@ -175,6 +197,83 @@ export class QuestsService {
     return submission;
   }
 
+  async submitAnswers(questId: string, studentId: string, answers: Record<string, any>) {
+    const quest = await this.getQuestForSubmission(questId);
+    if (!quest.questions) throw new BadRequestException('Esta misión no tiene formulario en línea');
+
+    const qs = await this.prisma.questStudent.findUnique({
+      where: { questId_studentId: { questId, studentId } },
+    });
+    if (!qs) throw new NotFoundException('Misión no encontrada o no asignada');
+    if (qs.isCompleted) throw new BadRequestException('Ya completaste esta misión');
+
+    const attemptCount = await this.prisma.questSubmission.count({ where: { questId, studentId } });
+    if (attemptCount >= quest.maxAttempts) throw new ForbiddenException('Sin intentos restantes');
+
+    const pending = await this.prisma.questSubmission.findFirst({ where: { questId, studentId, status: 'pending' } });
+    if (pending) throw new BadRequestException('Ya tienes una entrega pendiente de revisión');
+
+    const questions = quest.questions as any[];
+    let totalPoints = 0;
+    let earnedPoints = 0;
+    let hasOpen = false;
+
+    for (const q of questions) {
+      const pts = q.points ?? 1;
+      totalPoints += pts;
+      if (q.type === 'open') {
+        hasOpen = true;
+      } else {
+        const given = String(answers[q.id] ?? '').trim().toLowerCase();
+        const correct = String(q.correctAnswer ?? '').trim().toLowerCase();
+        if (given === correct) earnedPoints += pts;
+      }
+    }
+
+    const score = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0;
+    const passing = quest.passingScore ?? 60;
+    const autoApprove = !hasOpen && score >= passing;
+    // A failed all-objective attempt is graded automatically as rejected:
+    // it must not sit as 'pending' (that would block the retry and put a
+    // fake item in the teacher's review queue).
+    const autoReject = !hasOpen && !autoApprove;
+    const attemptsLeft = quest.maxAttempts - (attemptCount + 1);
+
+    await this.prisma.questSubmission.create({
+      data: {
+        questId, studentId,
+        answers: answers as any,
+        score,
+        attemptNumber: attemptCount + 1,
+        status: autoApprove ? 'approved' : autoReject ? 'rejected' : 'pending',
+        reviewedAt: hasOpen ? null : new Date(),
+        teacherNotes: autoReject
+          ? `Calificación automática: ${score}% (mínimo ${passing}%)`
+          : null,
+      },
+    });
+
+    if (autoApprove) {
+      await this.complete(questId, studentId);
+      return { autoApproved: true, score, passed: true, message: `¡Aprobado! Obtuviste ${score}%` };
+    }
+
+    if (hasOpen) {
+      await this.notifications.create(quest.teacherId, {
+        type: 'quest_submission',
+        title: '📝 Nueva entrega en línea',
+        message: `Un estudiante respondió el formulario de "${quest.title}"`,
+        link: '/teacher/quest-submissions',
+      });
+    }
+
+    return { autoApproved: false, score, passed: false,
+      message: hasOpen
+        ? 'Respuestas enviadas. El profesor las revisará pronto.'
+        : `Puntaje: ${score}%. Necesitas ${passing}% para aprobar.` +
+          (attemptsLeft > 0 ? ' Intenta de nuevo.' : ' Sin intentos restantes.') };
+  }
+
   async getPendingSubmissions(teacherId: string) {
     const classrooms = await this.prisma.classroom.findMany({
       where: { teacherId },
@@ -186,7 +285,7 @@ export class QuestsService {
         quest: { classroomId: { in: classrooms.map((c) => c.id) } },
       },
       include: {
-        quest: { select: { id: true, title: true, classroomId: true, xpReward: true } },
+        quest: { select: { id: true, title: true, classroomId: true, xpReward: true, questions: true } },
         student: { select: { id: true, name: true, avatar: true } },
       },
       orderBy: { submittedAt: 'asc' },

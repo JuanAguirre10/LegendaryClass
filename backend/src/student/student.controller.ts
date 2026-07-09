@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Role, CharacterType } from '@prisma/client';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -6,6 +6,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { StudentService } from './student.service';
+import { ClaimXpDto } from './dto/claim-xp.dto';
 
 @ApiTags('Student')
 @ApiBearerAuth()
@@ -46,5 +47,17 @@ export class StudentController {
     @Body() body: { stat: string },
   ) {
     return this.studentService.upgradeStat(user.id, body.stat);
+  }
+
+  @Get('xp-inbox')
+  getXpInbox(@CurrentUser() user: any) {
+    return this.studentService.getXpInbox(user.id);
+  }
+
+  @Post('claim-xp')
+  @HttpCode(HttpStatus.OK)
+  claimXp(@CurrentUser() user: any, @Body() dto: ClaimXpDto) {
+    if (dto.claimAll) return this.studentService.claimAllXp(user.id);
+    return this.studentService.claimXp(user.id, dto.claims ?? []);
   }
 }

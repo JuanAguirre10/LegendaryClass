@@ -197,4 +197,18 @@ export class StudentService {
       progress: this.gamification.getLevelProgress(user.experiencePoints, level),
     };
   }
+
+  // ─── XP Inbox ────────────────────────────────────────────────────────────
+
+  getXpInbox(studentId: string) {
+    return this.gamification.getXpInbox(studentId);
+  }
+
+  claimXp(studentId: string, claims: { type: 'quest' | 'behavior' | 'achievement'; id: string }[]) {
+    return this.gamification.claimXp(studentId, claims);
+  }
+
+  claimAllXp(studentId: string) {
+    return this.gamification.claimAllXp(studentId);
+  }
 }

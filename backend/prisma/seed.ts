@@ -37,17 +37,21 @@ async function main() {
   // Students
   const student1 = await prisma.user.upsert({
     where: { email: 'student1@legendaryclass.com' },
-    update: {},
+    update: {
+      name: 'Carlos Soto',
+      level: 24,
+      experiencePoints: 57590,
+    },
     create: {
-      name: 'Estudiante Uno',
+      name: 'Carlos Soto',
       email: 'student1@legendaryclass.com',
       password: await hash('password123'),
       role: Role.student,
       characterType: CharacterType.mago,
       characterBonusType: CharacterBonusType.knowledge,
       firstCharacterSelection: true,
-      level: 3,
-      experiencePoints: 900,
+      level: 24,
+      experiencePoints: 57590,
       points: 250,
     },
   });
@@ -64,7 +68,7 @@ async function main() {
       characterBonusType: CharacterBonusType.strength,
       firstCharacterSelection: true,
       level: 2,
-      experiencePoints: 400,
+      experiencePoints: 250,
       points: 150,
     },
   });
@@ -190,6 +194,58 @@ async function main() {
     where: { parentId_childId: { parentId: parent.id, childId: student1.id } },
     update: {},
     create: { parentId: parent.id, childId: student1.id },
+  });
+
+  // Demo unclaimed XP inbox items for student1
+  // (existing data was migrated as xpClaimed=true; seed adds fresh unclaimed items for demo)
+  const behaviorParticipacion = await prisma.behavior.findFirst({ where: { classroomId: classroom.id, name: 'Participación activa' } });
+  const behaviorTarea = await prisma.behavior.findFirst({ where: { classroomId: classroom.id, name: 'Tarea completa' } });
+
+  if (behaviorParticipacion) {
+    await prisma.studentBehavior.upsert({
+      where: { id: 'seed-sb-demo-1' },
+      update: {},
+      create: {
+        id: 'seed-sb-demo-1',
+        studentId: student1.id,
+        behaviorId: behaviorParticipacion.id,
+        classroomId: classroom.id,
+        pointsAwarded: behaviorParticipacion.points,
+        xpAmount: behaviorParticipacion.points,
+        awardedById: teacher.id,
+        xpClaimed: false,
+      },
+    });
+  }
+
+  if (behaviorTarea) {
+    await prisma.studentBehavior.upsert({
+      where: { id: 'seed-sb-demo-2' },
+      update: {},
+      create: {
+        id: 'seed-sb-demo-2',
+        studentId: student1.id,
+        behaviorId: behaviorTarea.id,
+        classroomId: classroom.id,
+        pointsAwarded: behaviorTarea.points,
+        xpAmount: behaviorTarea.points,
+        awardedById: teacher.id,
+        xpClaimed: false,
+      },
+    });
+  }
+
+  // Assign quest to student1 and mark it completed-but-unclaimed
+  await prisma.questStudent.upsert({
+    where: { questId_studentId: { questId: 'seed-quest-1', studentId: student1.id } },
+    update: {},
+    create: {
+      questId: 'seed-quest-1',
+      studentId: student1.id,
+      isCompleted: true,
+      completedAt: new Date(),
+      xpClaimed: false,
+    },
   });
 
   // Courses

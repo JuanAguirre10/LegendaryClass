@@ -80,31 +80,24 @@ export class BehaviorsService {
     const behavior = await this.prisma.behavior.findUnique({ where: { id: behaviorId } });
     if (!behavior) throw new NotFoundException('Comportamiento no encontrado');
 
-    // Record the behavior
+    const xpAmount = behavior.points > 0 ? behavior.points : 0;
+
+    // Record the behavior — XP stays pending in inbox until student claims it
     const studentBehavior = await this.prisma.studentBehavior.create({
       data: {
         studentId,
         behaviorId,
         classroomId,
         pointsAwarded: behavior.points,
+        xpAmount,
         awardedById: teacherId,
         notes,
+        xpClaimed: false,
       },
     });
 
-    // Update classroom points
+    // Update classroom points (always immediate)
     await this.gamification.updateStudentPoints(studentId, classroomId, behavior.points);
-
-    // Gain global XP (positive behaviors only)
-    if (behavior.points > 0) {
-      await this.gamification.gainExperience(
-        studentId,
-        behavior.points,
-        behavior.category,
-        `Comportamiento: ${behavior.name}`,
-        classroomId,
-      );
-    }
 
     return studentBehavior;
   }

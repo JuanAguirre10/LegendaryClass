@@ -12,6 +12,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { QuestsService } from './quests.service';
 import { CreateQuestDto } from './dto/create-quest.dto';
 import { ApproveSubmissionDto, RejectSubmissionDto } from './dto/quest-submission.dto';
+import { SubmitAnswersDto } from './dto/submit-answers.dto';
 import { multerSubmissionOptions } from '../common/upload/submission-upload';
 
 @ApiTags('Quests')
@@ -39,6 +40,12 @@ export class QuestsController {
     return this.questsService.findForStudent(user.id, classroomId);
   }
 
+  @Get('my-quests/:id')
+  @Roles(Role.student)
+  questDetail(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.questsService.findOneForStudent(id, user.id);
+  }
+
   @Post(':id/complete')
   @Roles(Role.student)
   complete(@Param('id') id: string, @CurrentUser() user: any) {
@@ -63,6 +70,16 @@ export class QuestsController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.questsService.submitEvidence(id, user.id, file);
+  }
+
+  @Post(':id/submit-answers')
+  @Roles(Role.student)
+  submitAnswers(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+    @Body() dto: SubmitAnswersDto,
+  ) {
+    return this.questsService.submitAnswers(id, user.id, dto.answers);
   }
 
   // IMPORTANT: this route must be declared BEFORE /:id/submissions to avoid

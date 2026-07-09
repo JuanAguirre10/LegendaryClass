@@ -1,4 +1,4 @@
-import { IsBoolean, IsDateString, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsArray, IsBoolean, IsDateString, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateQuestDto {
@@ -49,4 +49,16 @@ export class CreateQuestDto {
   @Min(1)
   @Max(10)
   maxAttempts?: number;
+
+  @ApiPropertyOptional({ description: 'Preguntas del formulario en línea (exámenes/ejercicios)' })
+  @IsOptional()
+  @IsArray()
+  questions?: any[];
+
+  @ApiPropertyOptional({ description: 'Puntaje mínimo (%) para aprobar el formulario', default: 60, minimum: 0, maximum: 100 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  passingScore?: number;
 }
