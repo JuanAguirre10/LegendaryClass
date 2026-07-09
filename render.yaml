@@ -1,13 +1,15 @@
 # Blueprint de Render — crear con "New > Blueprint" apuntando a este repo.
 # El nombre del servicio debe coincidir con la URL usada en
-# frontend/src/environments/environment.prod.ts (legendaryclass-api.onrender.com).
+# frontend/src/environments/environment.prod.ts (legendaryclass-api-zyz9.onrender.com).
 services:
   - type: web
-    name: legendaryclass-api
+    name: legendaryclass-api-zyz9
     runtime: node
     rootDir: backend
     plan: free
-    buildCommand: npm install && npx prisma generate && npm run build
+    # --include=dev: con NODE_ENV=production npm omitiría las devDependencies
+    # y el build necesita @nestjs/cli y typescript
+    buildCommand: npm install --include=dev && npx prisma generate && npm run build
     startCommand: npx prisma migrate deploy && node dist/src/main.js
     healthCheckPath: /api/docs
     envVars:
