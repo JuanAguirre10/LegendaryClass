@@ -179,7 +179,7 @@ export class QuestDetailComponent implements OnInit, OnDestroy {
     if (!q || this.completing()) return;
     this.completing.set(true);
     this.http.post(`${environment.apiUrl}/quests/${q.id}/complete`, {}).subscribe({
-      next: (res: any) => { this.showToast(`¡Misión completada! +${res.xpEarned ?? q.xpReward} XP`, 'success'); this.completing.set(false); this.reloadQuest(); },
+      next: (res: any) => { this.showToast(`¡Misión completada! ⚡ +${res.xpPending ?? q.xpReward} XP te esperan en tu buzón`, 'success'); this.completing.set(false); this.reloadQuest(); },
       error: (err) => { this.showToast(err.error?.message ?? 'Error', 'error'); this.completing.set(false); },
     });
   }

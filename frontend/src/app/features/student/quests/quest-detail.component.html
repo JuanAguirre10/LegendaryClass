@@ -443,7 +443,11 @@
         <button (click)="completeQuest()" [disabled]="completing()"
           class="font-cinzel font-bold px-10 py-4 rounded-2xl text-white disabled:opacity-50"
           style="background:linear-gradient(135deg,#16a34a,#15803d); box-shadow:0 8px 25px rgba(22,163,74,0.35);">
-          {{ completing() ? '⏳...' : '<img src="assets/imagensinfondo.png" alt="⚔️" style="height:36px;width:auto;display:inline-block;vertical-align:middle;"> Marcar como Completada (+' + quest().xpReward + ' XP)' }}
+          @if (completing()) {
+            ⏳...
+          } @else {
+            ⚔️ Marcar como Completada (+{{ quest().xpReward }} XP)
+          }
         </button>
       </div>
     </div>

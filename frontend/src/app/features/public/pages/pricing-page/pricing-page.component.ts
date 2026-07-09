@@ -22,7 +22,7 @@ export class PricingPageComponent {
       disabled: ['Tienda de recompensas', 'Reportes avanzados', 'Portal de padres', 'Misiones ilimitadas'],
     },
     {
-      name: 'Aventurero', icon: '⚔️', price: 'S/ 19', period: '/mes',
+      name: 'Aventurero', icon: '⚔️', price: 'S/ 25', period: '/mes',
       desc: 'El poder completo para transformar tu aula en una aventura legendaria.',
       popular: true, badge: '⚡ MÁS POPULAR',
       gradientFrom: '#fbbf24', gradientTo: '#d97706',

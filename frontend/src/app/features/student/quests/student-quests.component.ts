@@ -65,8 +65,7 @@ export class StudentQuestsComponent implements OnInit {
   completeQuest(questId: string) {
     this.http.post(`${environment.apiUrl}/quests/${questId}/complete`, {}).subscribe({
       next: (res: any) => {
-        const msg = `¡Misión completada! +${res.xpEarned ?? 0} XP` + (res.leveledUp ? ` 🎉 ¡Subiste al nivel ${res.newLevel}!` : '');
-        this.showToast(msg, 'success');
+        this.showToast(`¡Misión completada! ⚡ +${res.xpPending ?? 0} XP te esperan en tu buzón`, 'success');
         this.loadQuests();
       },
       error: (err) => this.showToast(err.error?.message ?? 'Error al completar la misión', 'error'),

@@ -9,8 +9,8 @@
       <div class="flex items-center justify-between h-16">
 
         <!-- Logo -->
-        <a routerLink="/" class="flex items-center gap-2">
-          <span class="text-2xl animate-float inline-block">⚔️</span>
+        <a routerLink="/" class="flex items-center gap-2 shrink-0">
+          <img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:40px;width:auto;">
           <span class="font-cinzel-decorative font-black text-lg tracking-wide transition-colors duration-300"
                 [ngClass]="scrolled() ? 'text-amber-400' : 'text-amber-700'">
             LegendaryClass
@@ -18,10 +18,10 @@
         </a>
 
         <!-- Desktop nav links con routerLinkActive -->
-        <div class="hidden md:flex items-center gap-1">
+        <div class="hidden md:flex items-center gap-0">
           @for (link of navLinks; track link.path) {
             <a [routerLink]="link.path" routerLinkActive #rla="routerLinkActive"
-               class="font-cinzel text-xs uppercase tracking-widest transition-all duration-200 px-3 py-2 rounded-lg relative"
+               class="font-cinzel text-xs uppercase tracking-widest transition-all duration-200 px-2 py-2 rounded-lg relative whitespace-nowrap"
                [ngClass]="rla.isActive
                  ? 'text-amber-400 font-bold bg-amber-500/10'
                  : (scrolled()
@@ -106,7 +106,7 @@
         <!-- Marca -->
         <div class="md:col-span-1">
           <div class="flex items-center gap-2 mb-4">
-            <span class="text-2xl animate-float inline-block">⚔️</span>
+            <img src="assets/imagensinfondo.png" alt="LegendaryClass" style="height:40px;width:auto;">
             <span class="font-cinzel-decorative font-black text-lg text-amber-400">LegendaryClass</span>
           </div>
           <p class="font-playfair text-gray-400 text-sm leading-relaxed mb-6">

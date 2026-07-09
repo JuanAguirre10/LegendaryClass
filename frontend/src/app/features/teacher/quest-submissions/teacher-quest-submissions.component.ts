@@ -10,14 +10,23 @@ interface PendingSubmission {
   id:            string;
   questId:       string;
   studentId:     string;
-  fileUrl:       string;
-  fileName:      string;
+  fileUrl:       string | null;
+  fileName:      string | null;
+  answers:       Record<string, any> | null;
+  score:         number | null;
   status:        'pending' | 'approved' | 'rejected';
   attemptNumber: number;
   teacherNotes:  string | null;
   submittedAt:   string;
-  quest:  { id: string; title: string; classroomId: string; xpReward: number };
+  quest:  { id: string; title: string; classroomId: string; xpReward: number; questions?: any[] | null };
   student: { id: string; name: string; avatar: string | null };
+}
+
+interface AnswerView {
+  key:      string;
+  question: string;
+  answer:   string;
+  verdict:  'correct' | 'incorrect' | 'open';
 }
 
 @Component({
@@ -136,10 +145,31 @@ interface PendingSubmission {
                 <p class="font-playfair text-xs text-gray-400 dark:text-slate-500 mt-1">
                   Intento #{{ sub.attemptNumber }} · {{ sub.submittedAt | date:'d MMM yyyy, HH:mm' }}
                 </p>
-                <a [href]="apiBase + sub.fileUrl" target="_blank" rel="noopener"
-                  class="inline-flex items-center gap-1 mt-2 font-cinzel text-xs text-purple-600 dark:text-purple-400 hover:underline">
-                  📎 Ver archivo: {{ sub.fileName }}
-                </a>
+                @if (sub.fileUrl) {
+                  <a [href]="apiBase + sub.fileUrl" target="_blank" rel="noopener"
+                    class="inline-flex items-center gap-1 mt-2 font-cinzel text-xs text-purple-600 dark:text-purple-400 hover:underline">
+                    📎 Ver archivo: {{ sub.fileName }}
+                  </a>
+                }
+                @if (sub.score !== null && sub.score !== undefined) {
+                  <p class="font-cinzel text-xs font-bold mt-2"
+                    [class]="sub.score >= 60 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                    🎯 Puntaje automático: {{ sub.score }}%
+                  </p>
+                }
+                @if (sub.answers) {
+                  <div class="mt-2 space-y-1.5 rounded-xl bg-gray-50 dark:bg-slate-800/50 p-3">
+                    @for (qa of answersFor(sub); track qa.key) {
+                      <div class="font-playfair text-xs text-gray-600 dark:text-slate-300">
+                        <span class="font-semibold text-gray-700 dark:text-slate-200">{{ qa.question }}</span><br>
+                        <span class="ml-2">↳ {{ qa.answer || '(sin respuesta)' }}</span>
+                        @if (qa.verdict === 'correct') { <span class="text-green-600 dark:text-green-400 font-bold">✔</span> }
+                        @else if (qa.verdict === 'incorrect') { <span class="text-red-600 dark:text-red-400 font-bold">✘</span> }
+                        @else { <span class="text-amber-600 dark:text-amber-400 font-bold">📝 revisar</span> }
+                      </div>
+                    }
+                  </div>
+                }
               </div>
 
               <!-- Approve / Reject buttons -->
@@ -200,6 +230,21 @@ export class TeacherQuestSubmissionsComponent implements OnInit {
     this.http.get<PendingSubmission[]>(`${environment.apiUrl}/quests/submissions/pending`).subscribe({
       next: (res) => { this.submissions.set(res ?? []); this.loading.set(false); },
       error: () => this.loading.set(false),
+    });
+  }
+
+  answersFor(sub: PendingSubmission): AnswerView[] {
+    if (!sub.answers) return [];
+    const questions: any[] = Array.isArray(sub.quest.questions) ? sub.quest.questions : [];
+    return Object.entries(sub.answers).map(([key, value]) => {
+      const q = questions.find((qq) => String(qq.id) === key);
+      const answer = String(value ?? '');
+      if (!q) return { key, question: `Pregunta ${key}`, answer, verdict: 'open' as const };
+      if (q.type === 'open' || q.correctAnswer == null) {
+        return { key, question: q.text ?? `Pregunta ${key}`, answer, verdict: 'open' as const };
+      }
+      const ok = answer.trim().toLowerCase() === String(q.correctAnswer).trim().toLowerCase();
+      return { key, question: q.text ?? `Pregunta ${key}`, answer, verdict: ok ? 'correct' as const : 'incorrect' as const };
     });
   }
 
