@@ -22,7 +22,7 @@ npm run db:reset            # drop, re-migrate, re-seed
 
 ### Backend (`backend/`)
 ```bash
-npm run start:dev           # watch mode → http://localhost:3000/api (Swagger at /api/docs)
+npm run start:dev           # watch mode → API at http://localhost:3000/api/v1 (Swagger at /api/docs)
 npm run build               # nest build
 npm run lint                # eslint --fix
 npm test                    # jest (all)
@@ -46,7 +46,7 @@ Backend reads `.env` (copy from `backend/.env.example`). Key vars: `DATABASE_URL
 
 ### Backend (NestJS)
 - Standard NestJS feature modules, all registered in `src/app.module.ts`. Each domain folder (`auth`, `gamification`, `classrooms`, `behaviors`, `rewards`, `quests`, `achievements`, `student`, `teacher`, `director`, `parent`, `users`) follows the controller/service/module + `dto/` convention.
-- `main.ts` sets a **global `/api` prefix**, enables CORS for `FRONTEND_URL`, and applies a global `ValidationPipe` with `whitelist + forbidNonWhitelisted + transform` — so DTOs must declare every accepted field or requests are rejected.
+- `main.ts` sets a **global `/api` prefix plus URI versioning with default `v1`** — every route is actually served under **`/api/v1/...`** (Swagger stays at `/api/docs`). It also enables CORS for `FRONTEND_URL` and applies a global `ValidationPipe` with `whitelist + forbidNonWhitelisted + transform` — so DTOs must declare every accepted field or requests are rejected.
 - **Auth/authorization** (`src/auth`, `src/common`): JWT via Passport (`jwt.strategy.ts`). Protect routes with `@UseGuards(JwtAuthGuard, RolesGuard)` + the `@Roles(...)` decorator; read the user via the `@CurrentUser()` decorator. **`RolesGuard` lets `director` and `admin` bypass all role checks** — keep this in mind when reasoning about access.
 - `src/prisma` wraps the Prisma client as an injectable module; inject `PrismaService` rather than instantiating clients.
 - `prisma/schema.prisma` (PostgreSQL) is the single source of truth for the data model and its enums (`Role`, `CharacterType`, `CharacterBonusType`, `BehaviorType`, etc.). After changing it, run `db:generate` and `db:migrate`.
