@@ -1,7 +1,7 @@
 <!-- Nav -->
 <nav class="legendary-nav sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-    <a routerLink="/student/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" class="brand-logo"> LegendaryClass</a>
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" class="brand-logo"> <span class="hidden sm:inline">LegendaryClass</span></a>
     <div class="hidden md:flex items-center gap-1">
       <a routerLink="/student/dashboard"    class="nav-link-epic">🏰 Inicio</a>
       <a routerLink="/student/classrooms"   routerLinkActive="active" class="nav-link-epic">📚 Dominios</a>
@@ -113,7 +113,7 @@
     } @else {
       <!-- Classroom grid — min 350px like PHP -->
       <div class="grid gap-6 fade-in-delay"
-        style="grid-template-columns: repeat(auto-fit, minmax(350px,1fr));">
+        style="grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));">
         @for (c of classrooms(); track c.id) {
           <div class="rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1"
             style="background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));

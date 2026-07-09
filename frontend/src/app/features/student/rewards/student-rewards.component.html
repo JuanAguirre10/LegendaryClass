@@ -1,7 +1,7 @@
 <!-- Nav -->
 <nav class="legendary-nav sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-    <a routerLink="/student/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" class="brand-logo"> LegendaryClass</a>
+    <a routerLink="/student/dashboard" class="legendary-logo text-xl"><img src="assets/imagensinfondo.png" alt="LegendaryClass" class="brand-logo"> <span class="hidden sm:inline">LegendaryClass</span></a>
     <div class="hidden md:flex items-center gap-1">
       <a routerLink="/student/dashboard"    class="nav-link-epic">🏰 Inicio</a>
       <a routerLink="/student/classrooms"   class="nav-link-epic">📚 Dominios</a>
@@ -122,7 +122,7 @@
     } @else {
       <!-- Rewards grid — min 350px like PHP -->
       <div class="grid gap-6 animate-fade-in-up"
-        style="grid-template-columns: repeat(auto-fit, minmax(350px,1fr));">
+        style="grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));">
         @for (r of filteredRewards(); track r.id) {
           <div class="relative rounded-2xl overflow-hidden transition-all duration-400 hover:-translate-y-2 hover:scale-[1.02] bg-white/95 dark:bg-slate-800"
             style="border-right:3px solid rgba(147,51,234,0.2);

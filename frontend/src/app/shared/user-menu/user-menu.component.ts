@@ -49,8 +49,8 @@ function xpForNext(lvl: number) { return lvl * lvl * 100; }
                class="w-6 h-6 object-contain flex-shrink-0"
                (error)="onImgError($event)" />
         }
-        <!-- Nombre en dos líneas si es largo -->
-        <span class="leading-tight text-left">{{ user()?.name }}</span>
+        <!-- Nombre en dos líneas si es largo; oculto en móvil para que el nav quepa -->
+        <span class="leading-tight text-left hidden sm:block">{{ user()?.name }}</span>
         <span class="text-amber-600 dark:text-amber-400 font-black text-xs
                      transition-transform duration-200 flex-shrink-0"
               [class.rotate-180]="open()">▾</span>
