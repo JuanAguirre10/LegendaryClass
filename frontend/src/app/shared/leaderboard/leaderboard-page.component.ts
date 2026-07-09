@@ -64,9 +64,9 @@ export class LeaderboardPageComponent implements OnInit, OnDestroy {
 
   private loadClassrooms() {
     const role = this.auth.user()?.role;
-    const endpoint = role === 'teacher'   ? '/classrooms/my'
-                   : role === 'director'  ? '/classrooms'
-                   : '/classrooms/enrolled';
+    const endpoint = role === 'teacher'   ? '/classrooms/mine'
+                   : role === 'director'  ? '/director/classrooms'
+                   : '/classrooms/student/enrolled';
     this.http
       .get<{ data: { id: string; name: string }[] }>(`${environment.apiUrl}${endpoint}`)
       .pipe(takeUntilDestroyed(this.destroyRef))
