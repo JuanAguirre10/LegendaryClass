@@ -123,15 +123,36 @@ export class GamificationService {
     description?: string,
     classroomId?: string,
   ): Promise<{ leveledUp: boolean; oldLevel: number; newLevel: number; newXp: number }> {
+    const { leveledUp, oldLevel, newLevel, newXp } = await this.gainExperienceBatch(userId, [
+      { points, action, description, classroomId },
+    ]);
+    return { leveledUp, oldLevel, newLevel, newXp };
+  }
+
+  // Single implementation of the XP engine: applies the character bonus per
+  // item, updates the user once and writes one ExperienceLog row per item.
+  async gainExperienceBatch(
+    userId: string,
+    items: { points: number; action: string; description?: string; classroomId?: string }[],
+  ): Promise<{ leveledUp: boolean; oldLevel: number; newLevel: number; newXp: number; earnedPoints: number }> {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
 
-    // Apply character bonus (20% extra XP)
-    let multiplier = 1.0;
-    if (user.characterBonusType && this.shouldApplyCharacterBonus(user.characterBonusType, action)) {
-      multiplier = 1.2;
-    }
+    const logs = items.map((item) => {
+      // Apply character bonus (20% extra XP)
+      const bonus =
+        user.characterBonusType && this.shouldApplyCharacterBonus(user.characterBonusType, item.action);
+      const multiplier = bonus ? 1.2 : 1.0;
+      return {
+        userId,
+        points: Math.round(item.points * multiplier),
+        action: item.action,
+        description: item.description,
+        classroomId: item.classroomId,
+        multiplier,
+      };
+    });
 
-    const earnedPoints = Math.round(points * multiplier);
+    const earnedPoints = logs.reduce((sum, log) => sum + log.points, 0);
     const newXp = user.experiencePoints + earnedPoints;
     const oldLevel = user.level;
     const newLevel = this.calculateLevel(newXp);
@@ -141,23 +162,14 @@ export class GamificationService {
       data: { experiencePoints: newXp, level: newLevel },
     });
 
-    await this.prisma.experienceLog.create({
-      data: {
-        userId,
-        points: earnedPoints,
-        action,
-        description,
-        classroomId,
-        multiplier,
-      },
-    });
+    await this.prisma.experienceLog.createMany({ data: logs });
 
     const leveledUp = newLevel > oldLevel;
     if (leveledUp) {
       await this.handleLevelUp(userId, oldLevel, newLevel);
     }
 
-    return { leveledUp, oldLevel, newLevel, newXp };
+    return { leveledUp, oldLevel, newLevel, newXp, earnedPoints };
   }
 
   // ─── Level up handler ───────────────────────────────────────────────────
@@ -311,88 +323,91 @@ export class GamificationService {
   async claimXp(studentId: string, claims: { type: 'quest' | 'behavior' | 'achievement'; id: string }[]) {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: studentId } });
     const oldLevel = user.level;
+    const emptyResult = { totalXpClaimed: 0, leveledUp: false, oldLevel, newLevel: oldLevel, newXp: user.experiencePoints };
 
-    let totalXp = 0;
-    let leveledUp = false;
-    let newLevel = oldLevel;
-    let newXp = user.experiencePoints;
+    const questIds = claims.filter((c) => c.type === 'quest').map((c) => c.id);
+    const behaviorIds = claims.filter((c) => c.type === 'behavior').map((c) => c.id);
+    const achievementIds = claims.filter((c) => c.type === 'achievement').map((c) => c.id);
 
-    for (const claim of claims) {
-      // Each item keeps its original action type and classroom so the character
-      // bonus and per-classroom XP history behave exactly as an immediate award.
-      let xp = 0;
-      let action = '';
-      let description = '';
-      let classroomId: string | undefined;
-      let revert: (() => Promise<unknown>) | null = null;
+    const [quests, behaviors, achievements] = await Promise.all([
+      questIds.length
+        ? this.prisma.questStudent.findMany({
+            where: { id: { in: questIds }, studentId, isCompleted: true, xpClaimed: false },
+            include: { quest: { select: { title: true, xpReward: true, type: true, classroomId: true } } },
+          })
+        : [],
+      behaviorIds.length
+        ? this.prisma.studentBehavior.findMany({
+            where: { id: { in: behaviorIds }, studentId, xpClaimed: false, xpAmount: { gt: 0 } },
+            include: { behavior: { select: { name: true, category: true } } },
+          })
+        : [],
+      achievementIds.length
+        ? this.prisma.achievement.findMany({
+            where: { id: { in: achievementIds }, userId: studentId, isCompleted: true, xpClaimed: false },
+          })
+        : [],
+    ]);
 
-      if (claim.type === 'quest') {
-        const qs = await this.prisma.questStudent.findFirst({
-          where: { id: claim.id, studentId, isCompleted: true, xpClaimed: false },
-          include: { quest: { select: { title: true, xpReward: true, type: true, classroomId: true } } },
-        });
-        if (!qs) continue;
-        // updateMany with the xpClaimed guard: a concurrent claim of the same
-        // item sees count 0 and skips, so the XP can never be paid twice.
-        const marked = await this.prisma.questStudent.updateMany({
-          where: { id: qs.id, xpClaimed: false },
-          data: { xpClaimed: true },
-        });
-        if (marked.count === 0) continue;
-        xp = qs.quest.xpReward;
-        action = qs.quest.type ?? 'quest';
-        description = `Misión completada: ${qs.quest.title}`;
-        classroomId = qs.quest.classroomId;
-        revert = () => this.prisma.questStudent.update({ where: { id: qs.id }, data: { xpClaimed: false } });
-      } else if (claim.type === 'behavior') {
-        const sb = await this.prisma.studentBehavior.findFirst({
-          where: { id: claim.id, studentId, xpClaimed: false, xpAmount: { gt: 0 } },
-          include: { behavior: { select: { name: true, category: true } } },
-        });
-        if (!sb) continue;
-        const marked = await this.prisma.studentBehavior.updateMany({
-          where: { id: sb.id, xpClaimed: false },
-          data: { xpClaimed: true },
-        });
-        if (marked.count === 0) continue;
-        xp = sb.xpAmount;
-        action = sb.behavior.category;
-        description = `Comportamiento: ${sb.behavior.name}`;
-        classroomId = sb.classroomId;
-        revert = () => this.prisma.studentBehavior.update({ where: { id: sb.id }, data: { xpClaimed: false } });
-      } else if (claim.type === 'achievement') {
-        const a = await this.prisma.achievement.findFirst({
-          where: { id: claim.id, userId: studentId, isCompleted: true, xpClaimed: false },
-        });
-        if (!a) continue;
-        const marked = await this.prisma.achievement.updateMany({
-          where: { id: a.id, xpClaimed: false },
-          data: { xpClaimed: true },
-        });
-        if (marked.count === 0) continue;
-        xp = a.xpReward;
-        action = 'achievement';
-        description = `Logro desbloqueado: ${a.name}`;
-        revert = () => this.prisma.achievement.update({ where: { id: a.id }, data: { xpClaimed: false } });
-      }
+    // Each item keeps its original action type and classroom so the character
+    // bonus and per-classroom XP history behave exactly as an immediate award.
+    type PendingClaim = {
+      xp: { points: number; action: string; description: string; classroomId?: string };
+      mark: () => Promise<{ count: number }>;
+      revert: () => Promise<unknown>;
+    };
+    const candidates: PendingClaim[] = [
+      ...quests.map((qs) => ({
+        xp: {
+          points: qs.quest.xpReward,
+          action: qs.quest.type ?? 'quest',
+          description: `Misión completada: ${qs.quest.title}`,
+          classroomId: qs.quest.classroomId,
+        },
+        mark: () => this.prisma.questStudent.updateMany({ where: { id: qs.id, xpClaimed: false }, data: { xpClaimed: true } }),
+        revert: () => this.prisma.questStudent.update({ where: { id: qs.id }, data: { xpClaimed: false } }),
+      })),
+      ...behaviors.map((sb) => ({
+        xp: {
+          points: sb.xpAmount,
+          action: sb.behavior.category as string,
+          description: `Comportamiento: ${sb.behavior.name}`,
+          classroomId: sb.classroomId,
+        },
+        mark: () => this.prisma.studentBehavior.updateMany({ where: { id: sb.id, xpClaimed: false }, data: { xpClaimed: true } }),
+        revert: () => this.prisma.studentBehavior.update({ where: { id: sb.id }, data: { xpClaimed: false } }),
+      })),
+      ...achievements.map((a) => ({
+        xp: {
+          points: a.xpReward,
+          action: 'achievement',
+          description: `Logro desbloqueado: ${a.name}`,
+        },
+        mark: () => this.prisma.achievement.updateMany({ where: { id: a.id, xpClaimed: false }, data: { xpClaimed: true } }),
+        revert: () => this.prisma.achievement.update({ where: { id: a.id }, data: { xpClaimed: false } }),
+      })),
+    ];
 
-      if (xp <= 0) continue;
+    // Per-item guarded mark: a concurrent claim of the same item sees count 0
+    // and drops it, so the XP can never be paid twice.
+    const markResults = await Promise.all(candidates.map((c) => c.mark()));
+    const claimed = candidates.filter((_, i) => markResults[i].count > 0);
+    if (claimed.length === 0) return emptyResult;
 
-      try {
-        const result = await this.gainExperience(studentId, xp, action, description, classroomId);
-        leveledUp = leveledUp || result.leveledUp;
-        newLevel = result.newLevel;
-        newXp = result.newXp;
-        const bonus = user.characterBonusType && this.shouldApplyCharacterBonus(user.characterBonusType, action);
-        totalXp += Math.round(xp * (bonus ? 1.2 : 1.0));
-      } catch (err) {
-        // Un-mark the item so the XP is not lost when granting fails
-        if (revert) await revert().catch(() => undefined);
-        throw err;
-      }
+    try {
+      const result = await this.gainExperienceBatch(studentId, claimed.map((c) => c.xp));
+      return {
+        totalXpClaimed: result.earnedPoints,
+        leveledUp: result.leveledUp,
+        oldLevel,
+        newLevel: result.newLevel,
+        newXp: result.newXp,
+      };
+    } catch (err) {
+      // Un-mark the items so the XP is not lost when granting fails
+      await Promise.all(claimed.map((c) => c.revert().catch(() => undefined)));
+      throw err;
     }
-
-    return { totalXpClaimed: totalXp, leveledUp, oldLevel, newLevel, newXp };
   }
 
   async claimAllXp(studentId: string) {

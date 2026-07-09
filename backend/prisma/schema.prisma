@@ -662,6 +662,7 @@ model QuestStudent {
   student User  @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([questId, studentId])
+  @@index([studentId])
   @@map("quest_students")
 }
 
