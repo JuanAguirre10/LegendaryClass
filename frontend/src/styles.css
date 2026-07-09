@@ -130,6 +130,14 @@
   letter-spacing: 0.03em;
 }
 
+/* Logo de marca en navs — un solo lugar para tamaño/alineación */
+.brand-logo {
+  height: 36px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 /* Nav links — texto oscuro con hover ámbar, igual al PHP */
 .nav-link-epic {
   font-family: 'Cinzel', serif;

@@ -84,7 +84,7 @@ export class QuestDetailComponent implements OnInit, OnDestroy {
 
   questIcon(type: string): string {
     const m: Record<string, string> = { homework:'📚', project:'🔨', writing:'✍️', reading:'📖', exam:'📝', exercise:'💪', participation:'🙋' };
-    return m[type] ?? '<img src="assets/imagensinfondo.png" alt="⚔️" style="height:36px;width:auto;display:inline-block;vertical-align:middle;">';
+    return m[type] ?? '⚔️';
   }
 
   questHasForm(): boolean { return !!this.quest()?.questions?.length; }
