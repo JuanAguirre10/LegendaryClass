@@ -1,6 +1,7 @@
 # Blueprint de Render — crear con "New > Blueprint" apuntando a este repo.
-# El nombre del servicio debe coincidir con la URL usada en
-# frontend/src/environments/environment.prod.ts (legendaryclass-api-zyz9.onrender.com).
+# OJO: no renombrar el servicio — Render regenera el subdominio al renombrar.
+# Subdominio actual: legendaryclass-api-zyz9-zyz9.onrender.com (usado en
+# frontend/src/environments/environment.prod.ts).
 services:
   - type: web
     name: legendaryclass-api-zyz9
